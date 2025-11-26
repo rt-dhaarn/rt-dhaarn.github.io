@@ -76,7 +76,7 @@
 
         /* --- FLOWRRA Visualization Custom Styles --- */
         
-        /* Custom Range Slider to match DhaaRn Theme */
+        /* Custom Range Slider */
         .dhaarn-slider {
             -webkit-appearance: none;
             width: 100%;
@@ -90,16 +90,9 @@
             appearance: none;
             width: 18px; height: 18px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #FCD34D 0%, #EF4444 100%); /* Gold to Red */
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(252, 211, 77, 0.5);
-        }
-        .dhaarn-slider::-moz-range-thumb {
-            width: 18px; height: 18px;
-            border-radius: 50%;
             background: linear-gradient(135deg, #FCD34D 0%, #EF4444 100%);
             cursor: pointer;
-            border: none;
+            box-shadow: 0 0 10px rgba(252, 211, 77, 0.5);
         }
 
         /* Status Indicators */
@@ -110,8 +103,9 @@
             margin-right: 8px;
             animation: pulse-fast 2s infinite;
         }
-        .status-active { background: #2DD4BF; box-shadow: 0 0 8px #2DD4BF; } /* Teal */
-        .status-warning { background: #FCD34D; box-shadow: 0 0 8px #FCD34D; } /* Gold */
+        .status-active { background: #2DD4BF; box-shadow: 0 0 8px #2DD4BF; } 
+        .status-warning { background: #FCD34D; box-shadow: 0 0 8px #FCD34D; }
+        .status-error { background: #EF4444; box-shadow: 0 0 8px #EF4444; }
         
         @keyframes pulse-fast {
             0%, 100% { opacity: 1; }
@@ -122,6 +116,17 @@
             max-width: 100%;
             height: auto !important;
         }
+
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-left-color: #2DD4BF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="antialiased">
@@ -212,17 +217,23 @@
                         For the past six months, we've been teaching swarms of autonomous agents to make that choice - not through rigid programming, but through something more fundamental: the ability to remember failure and reshape themselves around it.
                     </p>
                     <p>
-                        This is FLOWRRA (Flow Recognition Reconfiguration Agent), and it represents DhaaRn's first step toward systems that don't just compute - they maintain, they harmonize, they hold."
+                        This is FLOWRRA (Flow-Optimized Wave Recovery & Resilient Autonomous), and it represents DhaaRn's first step toward systems that don't just compute - they maintain, they harmonize, they hold."
                     </p>
                 </div>
 
                 <div id="flowrra-app" class="w-full">
                     
-                    <div id="fileUpload" class="glass-card p-12 text-center cursor-pointer transition-all duration-300 hover:border-teal-500/50 hover:bg-white/5 group border-2 border-dashed border-gray-700">
-                        <div class="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">📊</div>
-                        <h3 class="text-2xl font-semibold text-white mb-2">Initialize Visualization</h3>
-                        <p class="text-gray-400 mb-6">Drop your <code class="text-teal-400 bg-black/50 px-2 py-1 rounded">deployment_viz.json</code> here or click to browse</p>
-                        <input type="file" id="fileInput" accept=".json" class="hidden">
+                    <div id="loadingState" class="glass-card p-24 text-center flex flex-col items-center justify-center">
+                        <div class="loader mb-6"></div>
+                        <h3 class="text-xl font-semibold text-white">Initializing FLOWRRA Protocol...</h3>
+                        <p class="text-gray-400 mt-2">Loading simulation data from the nexus.</p>
+                    </div>
+
+                    <div id="errorState" class="glass-card p-12 text-center hidden">
+                        <div class="text-5xl mb-4">⚠️</div>
+                        <h3 class="text-2xl font-semibold text-white mb-2">Connection Interrupted</h3>
+                        <p class="text-gray-400 mb-6">Unable to load the simulation manifest.</p>
+                        <p class="text-sm text-red-400 font-mono bg-black/30 p-2 rounded inline-block" id="errorMessage">Error details here</p>
                     </div>
 
                     <div id="mainContent" style="display: none;">
@@ -412,62 +423,50 @@
         let animationId = null;
         let charts = {};
 
-        // File upload handling
-        const fileUpload = document.getElementById('fileUpload');
-        const fileInput = document.getElementById('fileInput');
-        
-        fileUpload.addEventListener('click', () => fileInput.click());
-        
-        fileUpload.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            fileUpload.classList.add('border-teal-500', 'bg-white/10');
-        });
-        
-        fileUpload.addEventListener('dragleave', () => {
-            fileUpload.classList.remove('border-teal-500', 'bg-white/10');
-        });
-        
-        fileUpload.addEventListener('drop', (e) => {
-            e.preventDefault();
-            fileUpload.classList.remove('border-teal-500', 'bg-white/10');
-            const file = e.dataTransfer.files[0];
-            if (file) loadFile(file);
-        });
-        
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) loadFile(file);
+        // Auto-load on startup
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchVisualizationData();
         });
 
-        function loadFile(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const rawData = JSON.parse(e.target.result);
-                    
-                    // Support both "history" and "frames" field names
-                    let framesArray = rawData.history || rawData.frames;
-                    
-                    if (!framesArray || !Array.isArray(framesArray) || framesArray.length === 0) {
-                        throw new Error('Invalid or empty JSON structure');
-                    }
-                    
-                    deploymentData = {
-                        config: rawData.config || {},
-                        history: framesArray
-                    };
-                    
-                    initializeVisualization();
-                } catch (error) {
-                    alert(`Error loading file: ${error.message}`);
-                    console.error('Full error:', error);
+        async function fetchVisualizationData() {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                // Fetch the JSON file relative to index.html
+                const response = await fetch('./deployment_viz.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
                 }
-            };
-            reader.readAsText(file);
+
+                const rawData = await response.json();
+                
+                // Validate Data Structure
+                let framesArray = rawData.history || rawData.frames;
+                if (!framesArray || !Array.isArray(framesArray) || framesArray.length === 0) {
+                    throw new Error('Invalid JSON structure: missing "history" or "frames" array.');
+                }
+                
+                deploymentData = {
+                    config: rawData.config || {},
+                    history: framesArray
+                };
+                
+                // Success: Hide loading, show content
+                loadingState.style.display = 'none';
+                initializeVisualization();
+
+            } catch (err) {
+                console.error('Failed to load visualization:', err);
+                loadingState.style.display = 'none';
+                errorState.classList.remove('hidden');
+                errorMessage.textContent = err.message + " (Check if deployment_viz.json exists)";
+            }
         }
 
         function initializeVisualization() {
-            document.getElementById('fileUpload').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             
             const timeSlider = document.getElementById('timeSlider');
@@ -476,6 +475,8 @@
             setupCharts();
             setupMetrics();
             setupControls();
+            
+            // Initial Draw
             updateVisualization(0);
         }
 
@@ -557,8 +558,8 @@
             const frame = deploymentData.history[deploymentData.history.length - 1];
             const avgCoherence = deploymentData.history.reduce((sum, h) => sum + (h.coherence || 0), 0) / deploymentData.history.length;
             const avgIntegrity = deploymentData.history.reduce((sum, h) => sum + (h.loop_integrity || 0), 0) / deploymentData.history.length;
-            const totalBreaks = deploymentData.history.reduce((sum, h) => {
-                const connections = h.connections || [];
+            const totalReconnections = deploymentData.history.reduce((sum, h) => {
+                const connections = h.total_reconnections || [];
                 return sum + connections.filter(c => c.broken).length;
             }, 0);
 
@@ -568,7 +569,7 @@
                 { label: 'Avg Integrity', value: (avgIntegrity * 100).toFixed(1) + '%' },
                 { label: 'Total Nodes', value: (frame.nodes || []).length },
                 { label: 'Obstacles', value: (frame.obstacles || []).length },
-                { label: 'Loop Breaks', value: totalBreaks }
+                { label: 'Total Reconnections', value: totalReconnections }
             ];
 
             const grid = document.getElementById('metricsGrid');
@@ -612,7 +613,7 @@
             
             currentFrame++;
             if (currentFrame >= deploymentData.history.length) {
-                currentFrame = 0; // Loop or stop
+                currentFrame = 0; // Loop
             }
             
             updateVisualization(currentFrame);
