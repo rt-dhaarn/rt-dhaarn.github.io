@@ -826,7 +826,7 @@
 
                         try {
                             // Attempt the fetch operation
-                            const response = await fetch("deployment_viz.json");
+                            const response = await fetch('./deployment_viz.json);
                             if (!response.ok) {
                                 // Throw an error if the HTTP status is not 2xx
                                 throw new Error(
