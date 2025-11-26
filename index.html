@@ -426,32 +426,82 @@
         let deploymentData = null;
         let currentFrame = 0;
         let isPlaying = false;
+        let animationId = null;
         let charts = {};
 
-        // Auto-load on startup
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchVisualizationData();
+        // --- File Upload / Data Loading ---
+
+        // File upload handling (Handles drag/drop and input)
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+        
+        fileUpload.addEventListener('click', () => fileInput.click());
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.style.borderColor = '#667eea';
+            fileUpload.style.background = 'rgba(102, 126, 234, 0.1)';
+        });
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            fileUpload.style.background = 'transparent';
+        });
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            fileUpload.style.background = 'transparent';
+            const file = e.dataTransfer.files[0];
+            if (file) loadFile(file);
+        });
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) loadFile(file);
         });
 
-        // --- Data Loading ---
-        async function fetchVisualizationData() {
-            const loadingState = document.getElementById('loadingState');
-            const errorState = document.getElementById('errorState');
-            const errorMessage = document.getElementById('errorMessage');
+        // Function to load data from a manually uploaded file
+        function loadFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const rawData = JSON.parse(e.target.result);
+                    let framesArray = rawData.history || rawData.frames;
+                    
+                    if (!framesArray || !Array.isArray(framesArray) || framesArray.length === 0) {
+                        throw new Error('Invalid JSON structure: missing "history" or "frames" array.');
+                    }
+                    
+                    deploymentData = {
+                        config: rawData.config || {},
+                        history: framesArray
+                    };
+                    
+                    initializeVisualization();
+                } catch (error) {
+                    alert(`Error loading file: ${error.message}\n\nCheck console for details.`);
+                    console.error('Full error:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 💡 NEW: Function to automatically fetch the local deployment_viz.json
+        async function fetchLocalData() {
+            // Do not run if data was already loaded manually
+            if (deploymentData) return; 
 
             try {
-                // IMPORTANT: Requires a file named 'deployment_viz.json' in the same folder
+                // Attempts to load file from the same directory on the server
                 const response = await fetch('./deployment_viz.json');
-                
                 if (!response.ok) {
-                    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+                    // This is the expected path if running on a local machine without a server
+                    console.warn("Could not find deployment_viz.json locally. Waiting for manual upload.");
+                    return;
                 }
-
+                
                 const rawData = await response.json();
                 
                 let framesArray = rawData.history || rawData.frames;
                 if (!framesArray || !Array.isArray(framesArray) || framesArray.length === 0) {
-                    throw new Error('Invalid JSON structure: missing "history" or "frames" array.');
+                     throw new Error('Invalid JSON structure: missing "history" or "frames" array.');
                 }
                 
                 deploymentData = {
@@ -459,31 +509,31 @@
                     history: framesArray
                 };
                 
-                loadingState.style.display = 'none';
+                console.log('Successfully loaded deployment_viz.json automatically.');
                 initializeVisualization();
 
-            } catch (err) {
-                console.error('Failed to load visualization:', err);
-                loadingState.style.display = 'none';
-                errorState.classList.remove('hidden');
-                errorMessage.textContent = err.message + " (Check if deployment_viz.json exists)";
+            } catch (error) {
+                console.error('Auto-load failed. Manual upload required.', error);
+                // Leave the upload box visible
             }
         }
 
         function initializeVisualization() {
+            // Hide the upload box and show the content
+            document.getElementById('fileUpload').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
             
             const timeSlider = document.getElementById('timeSlider');
             timeSlider.max = deploymentData.history.length - 1;
             
             setupCharts();
+            setupMetrics();
             setupControls();
-            
-            // Initial Draw
             updateVisualization(0);
         }
 
-        // --- Chart Setup ---
+        // --- Chart Setup (with adjusted colors for better contrast) ---
+
         function setupCharts() {
             const chartDefaults = {
                 responsive: true,
@@ -494,34 +544,30 @@
                 scales: {
                     x: {
                         grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#9CA3AF' }
+                        ticks: { color: '#888' }
                     },
                     y: {
                         grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#9CA3AF' }
+                        ticks: { color: '#888' }
                     }
-                },
-                elements: { point: { radius: 0 } } // Hide points for clean line graph
+                }
             };
 
-            const labels = deploymentData.history.map((h, i) => h.time !== undefined ? h.time : i);
-            
-            // System Coherence Chart
+            // Coherence Chart
             const coherenceCtx = document.getElementById('coherenceChart').getContext('2d');
             const coherenceData = deploymentData.history.map(h => h.coherence || 0);
             
             charts.coherence = new Chart(coherenceCtx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: deploymentData.history.map((h, i) => h.time !== undefined ? h.time : i),
                     datasets: [{
                         label: 'Coherence',
                         data: coherenceData,
                         borderColor: '#2DD4BF', // Teal-400
                         backgroundColor: 'rgba(45, 212, 191, 0.1)',
                         fill: true,
-                        tension: 0.4,
-                        borderWidth: 2
+                        tension: 0.4
                     }]
                 },
                 options: {
@@ -529,26 +575,25 @@
                     scales: {
                         ...chartDefaults.scales,
                         y: { ...chartDefaults.scales.y, min: 0, max: 1 }
-                    },
+                    }
                 }
             });
 
-            // Loop Integrity Chart
+            // Integrity Chart
             const integrityCtx = document.getElementById('integrityChart').getContext('2d');
             const integrityData = deploymentData.history.map(h => h.loop_integrity || 0);
             
             charts.integrity = new Chart(integrityCtx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: deploymentData.history.map((h, i) => h.time !== undefined ? h.time : i),
                     datasets: [{
                         label: 'Loop Integrity',
                         data: integrityData,
                         borderColor: '#FCD34D', // Amber-300
                         backgroundColor: 'rgba(252, 211, 77, 0.1)',
                         fill: true,
-                        tension: 0.4,
-                        borderWidth: 2
+                        tension: 0.4
                     }]
                 },
                 options: {
@@ -556,12 +601,49 @@
                     scales: {
                         ...chartDefaults.scales,
                         y: { ...chartDefaults.scales.y, min: 0, max: 1 }
-                    },
+                    }
                 }
             });
         }
 
-        // --- Controls Setup ---
+        // --- Metrics Setup ---
+
+        function setupMetrics() {
+            const frame = deploymentData.history[deploymentData.history.length - 1];
+            const avgCoherence = deploymentData.history.reduce((sum, h) => sum + (h.coherence || 0), 0) / deploymentData.history.length;
+            const avgIntegrity = deploymentData.history.reduce((sum, h) => sum + (h.loop_integrity || 0), 0) / deploymentData.history.length;
+            
+            // Assuming connections exist in the frame, otherwise metrics will be 0
+            const totalNodes = (frame.nodes || []).length;
+            const totalObstacles = (deploymentData.config.obstacles || []).length;
+            
+            // This is a rough metric; a more precise one requires checking all frames
+            const totalBreaks = deploymentData.history.reduce((sum, h) => {
+                const connections = h.connections || [];
+                return sum + connections.filter(c => c.broken).length;
+            }, 0);
+
+
+            const metrics = [
+                { label: 'Total Steps', value: deploymentData.history.length },
+                { label: 'Avg Coherence', value: (avgCoherence * 100).toFixed(1) + '%' },
+                { label: 'Avg Integrity', value: (avgIntegrity * 100).toFixed(1) + '%' },
+                { label: 'Total Nodes', value: totalNodes },
+                { label: 'Obstacles', value: totalObstacles },
+                { label: 'Loop Breaks', value: totalBreaks }
+            ];
+
+            const grid = document.getElementById('metricsGrid');
+            grid.innerHTML = metrics.map(m => `
+                <div class="metric-card">
+                    <div class="metric-value">${m.value}</div>
+                    <div class="metric-label">${m.label}</div>
+                </div>
+            `).join('');
+        }
+
+        // --- Controls and Animation ---
+
         function setupControls() {
             const playBtn = document.getElementById('playBtn');
             const resetBtn = document.getElementById('resetBtn');
@@ -586,36 +668,165 @@
             });
         }
 
-        // --- Animation Loop ---
         function animate() {
             if (!isPlaying) return;
             
             const speed = parseInt(document.getElementById('speedSlider').value);
-            // Speed Slider: 1 to 100. Delay: 109ms to 10ms.
-            const delay = 110 - speed; 
+            // Speed Slider: 1 to 100. Delay: 100ms to 0ms (but we use a floor)
+            const delay = 100 - speed;
             
             currentFrame++;
             if (currentFrame >= deploymentData.history.length) {
-                currentFrame = 0; // Loop
+                currentFrame = 0;
             }
             
             updateVisualization(currentFrame);
             
-            setTimeout(() => {
+            animationId = setTimeout(() => {
                 if (isPlaying) animate();
             }, delay);
         }
 
         // --- Main Update Function ---
+
         function updateVisualization(frameIndex) {
             const frame = deploymentData.history[frameIndex];
-            const maxFrames = deploymentData.history.length - 1;
-
-            // 1. Update Timeline Slider & Info
+            
+            // Update timeline
+            const timeValue = frame.time !== undefined ? frame.time.toFixed(2) : frameIndex;
+            const maxTime = deploymentData.history[deploymentData.history.length - 1].time !== undefined 
+                ? deploymentData.history[deploymentData.history.length - 1].time.toFixed(2) 
+                : deploymentData.history.length - 1;
+            
+            document.getElementById('timelineInfo').textContent = 
+                `Timestep: ${timeValue} / ${maxTime}`;
+            
             document.getElementById('timeSlider').value = frameIndex;
-            document.getElementById('timelineInfo').textContent = `Timestep: ${frameIndex} / ${maxFrames} (Time: ${frame.time !== undefined ? frame.time.toFixed(2) : frameIndex})`;
+            
+            // Draw swarm
+            drawSwarm(frame);
+            
+            // Update chart current position indicators
+            updateChartMarkers(frameIndex);
+        }
 
-            // 2. Update Charts with current position indicator
+        // --- Canvas Drawing Logic ---
+        
+        function drawSwarm(frame) {
+            const canvas = document.getElementById('swarmCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // Use 1.0 as the world size reference
+            const size = 1.0; 
+            const scale = Math.min(canvas.width, canvas.height) * 0.9;
+            const offsetX = (canvas.width - scale) / 2;
+            const offsetY = (canvas.height - scale) / 2;
+            
+            // Clear canvas
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw bounds
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(offsetX, offsetY, scale, scale);
+
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                // Vertical lines
+                const x = offsetX + (i / 10) * scale;
+                ctx.beginPath();
+                ctx.moveTo(x, offsetY);
+                ctx.lineTo(x, offsetY + scale);
+                ctx.stroke();
+                
+                // Horizontal lines
+                const y = offsetY + (i / 10) * scale;
+                ctx.beginPath();
+                ctx.moveTo(offsetX, y);
+                ctx.lineTo(offsetX + scale, y);
+                ctx.stroke();
+            }
+            
+            // Draw connections
+            const connections = frame.connections || [];
+            const nodes = frame.nodes || [];
+            
+            connections.forEach(conn => {
+                const nodeA = nodes.find(n => n.id === conn.node_a);
+                const nodeB = nodes.find(n => n.id === conn.node_b);
+                
+                if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
+                    // Note: Y-axis is inverted (0 is top in canvas, 0 is bottom in simulation)
+                    const x1 = offsetX + nodeA.pos[0] * scale / size;
+                    const y1 = offsetY + (size - nodeA.pos[1]) * scale / size;
+                    const x2 = offsetX + nodeB.pos[0] * scale / size;
+                    const y2 = offsetY + (size - nodeB.pos[1]) * scale / size;
+                    
+                    ctx.strokeStyle = conn.broken ? 'rgba(239, 68, 68, 0.6)' : 'rgba(96, 165, 250, 0.6)';
+                    ctx.lineWidth = conn.broken ? 1 : 2;
+                    ctx.setLineDash(conn.broken ? [5, 5] : []);
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            });
+            
+            // Draw obstacles
+            const obstacles = frame.obstacles || [];
+            obstacles.forEach(obs => {
+                if (obs.pos) {
+                    const x = offsetX + obs.pos[0] * scale / size;
+                    const y = offsetY + (size - obs.pos[1]) * scale / size;
+                    const r = (obs.radius || 0.05) * scale / size;
+                    
+                    ctx.fillStyle = obs.is_static ? 'rgba(245, 158, 11, 0.4)' : 'rgba(236, 72, 153, 0.4)';
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = obs.is_static ? '#f59e0b' : '#ec4899';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            });
+            
+            // Draw nodes
+            nodes.forEach(node => {
+                if (node.pos) {
+                    const x = offsetX + node.pos[0] * scale / size;
+                    const y = offsetY + (size - node.pos[1]) * scale / size;
+                    
+                    // Node body
+                    ctx.fillStyle = node.active === false ? '#9CA3AF' : '#4ade80'; // Gray if inactive, green if active
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Node border
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Node ID
+                    ctx.fillStyle = '#e0e0e0';
+                    ctx.font = '10px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(node.id !== undefined ? node.id : '?', x, y - 12);
+                }
+            });
+        }
+
+        // Function to update chart markers using the Annotation Plugin
+        function updateChartMarkers(frameIndex) {
             ['coherence', 'integrity'].forEach(chartKey => {
                 if (charts[chartKey]) {
                     charts[chartKey].options.plugins.annotation = {
@@ -625,7 +836,7 @@
                                 xMin: frameIndex,
                                 xMax: frameIndex,
                                 borderColor: 'rgba(255, 255, 255, 0.8)',
-                                borderWidth: 1,
+                                borderWidth: 2,
                                 borderDash: [6, 6]
                             }
                         }
@@ -633,43 +844,10 @@
                     charts[chartKey].update('none'); 
                 }
             });
-
-            // 3. Draw Swarm Grid
-            drawSwarmGrid(frame);
         }
-
-        // --- Canvas Drawing Logic (Placeholder) ---
-        function drawSwarmGrid(frame) {
-            const canvas = document.getElementById('swarmCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Get dimensions for drawing
-            const width = canvas.width;
-            const height = canvas.height;
-            const size = deploymentData.config.size || 100;
-
-            // Clear the canvas
-            ctx.fillStyle = '#0a0a0a'; 
-            ctx.fillRect(0, 0, width, height);
-
-            // Draw a basic bounding box
-            ctx.strokeStyle = '#374151';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(1, 1, width - 2, height - 2); 
-
-            // Visualization logic for Nodes and Links would go here, using frame.nodes and frame.links
-            (frame.nodes || []).forEach(node => {
-                // Simple normalized position scaling
-                const x = node.position[0] * width / size;
-                const y = node.position[1] * height / size;
-                const color = node.active ? '#10B981' : '#FCD34D';
-
-                ctx.fillStyle = color;
-                ctx.beginPath();
-                ctx.arc(x, y, 4, 0, Math.PI * 2); 
-                ctx.fill();
-            });
-        }
+        
+        // 💡 NEW: Automatically attempt to load local file on page load
+        document.addEventListener('DOMContentLoaded', fetchLocalData);
     </script>
 </body>
 </html>
