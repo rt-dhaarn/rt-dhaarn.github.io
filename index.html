@@ -1,835 +1,1222 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DhaaRn - Devices for Harmonious Alignment Aware Resonant Nexus</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>
+            DhaaRn - Devices for Harmonious Alignment Aware Resonant Nexus
+        </title>
 
-    <link rel="icon" type="image/png" href="Dhaarn_Logo.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #050505;
-            color: #e2e8f0;
-        }
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-        /* --- DhaaRn Core Styles --- */
-        .gradient-text {
-            background: linear-gradient(to right, #FCD34D, #2DD4BF, #EF4444);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-fill-color: transparent;
-        }
 
-        .hero-glow {
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3), 0 0 40px rgba(153, 27, 27, 0.4);
-        }
-        
-        .glass-card {
-            background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            border-radius: 1rem; 
-        }
-        
-        /* Animated Background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            background: radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08), transparent 30%),
-                        radial-gradient(circle at 80% 70%, rgba(153, 27, 27, 0.1), transparent 35%);
-            animation: pulse-glow 15s infinite alternate;
-        }
+        <link rel="icon" type="image/png" href="Dhaarn_Logo.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
 
-        @keyframes pulse-glow {
-            0% { opacity: 0.6; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.1); }
-        }
+        <style>
+            body {
+                font-family: "Inter", sans-serif;
+                background-color: #050505;
+                color: #e2e8f0;
+            }
 
-        .animate-pulse-slow {
-            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
+            /* --- DhaaRn Core Styles --- */
+            .gradient-text {
+                background: linear-gradient(
+                    to right,
+                    #fcd34d,
+                    #2dd4bf,
+                    #ef4444
+                );
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-fill-color: transparent;
+            }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .85; }
-        }
-        
-        .logo-container {
-            width: 50px; height: 50px; 
-            display: flex; align-items: center; justify-content: center;
-        }
-        .logo-container img {
-            width: 100%; height: 100%; object-fit: contain;
-        }
+            .hero-glow {
+                text-shadow:
+                    0 0 20px rgba(212, 175, 55, 0.3),
+                    0 0 40px rgba(153, 27, 27, 0.4);
+            }
 
-        /* --- FLOWRRA Visualization Custom Styles --- */
-        
-        /* Custom Range Slider */
-        .dhaarn-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(255, 255, 255, 0.1);
-            outline: none;
-        }
-        .dhaarn-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px; height: 18px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #FCD34D 0%, #EF4444 100%);
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(252, 211, 77, 0.5);
-        }
+            .glass-card {
+                background: rgba(20, 20, 20, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(212, 175, 55, 0.1);
+                border-radius: 1rem;
+            }
 
-        /* Status Indicators */
-        .status-indicator {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            animation: pulse-fast 2s infinite;
-        }
-        .status-active { background: #2DD4BF; box-shadow: 0 0 8px #2DD4BF; } 
-        .status-warning { background: #FCD34D; box-shadow: 0 0 8px #FCD34D; }
-        .status-error { background: #EF4444; box-shadow: 0 0 8px #EF4444; }
-        
-        @keyframes pulse-fast {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+            /* Animated Background */
+            body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: -1;
+                background:
+                    radial-gradient(
+                        circle at 20% 20%,
+                        rgba(212, 175, 55, 0.08),
+                        transparent 30%
+                    ),
+                    radial-gradient(
+                        circle at 80% 70%,
+                        rgba(153, 27, 27, 0.1),
+                        transparent 35%
+                    );
+                animation: pulse-glow 15s infinite alternate;
+            }
 
-        canvas {
-            max-width: 100%;
-            height: auto !important;
-        }
+            @keyframes pulse-glow {
+                0% {
+                    opacity: 0.6;
+                    transform: scale(1);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1.1);
+                }
+            }
 
-        /* Loader */
-        .loader {
-            border: 3px solid rgba(255,255,255,0.1);
-            border-left-color: #2DD4BF;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body class="antialiased">
+            .animate-pulse-slow {
+                animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
 
-    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="navbar">
-        <nav class="container mx-auto max-w-6xl px-6 py-4">
-            <div class="flex items-center justify-between">
-                <a href="#" class="flex items-center space-x-3">
-                    <div class="logo-container">
-                        <img src="Dhaarn_Logo.png" alt="DHAARN" onerror="this.style.display='none'">
-                    </div>
-                    <span class="text-3xl font-bold gradient-text tracking-tight">DhaaRn</span>
-                </a>
-                
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#home" class="text-gray-300 hover:text-amber-300 transition-colors">Home</a>
-                    <a href="#about" class="text-gray-300 hover:text-amber-300 transition-colors">About</a>
-                    <a href="#offerings" class="text-gray-300 hover:text-amber-300 transition-colors">Offerings</a>
-                    <a href="#vision" class="text-gray-300 hover:text-amber-300 transition-colors">Vision</a>
-                    <a href="#contact" class="text-gray-300 hover:text-amber-300 transition-colors">Contact</a>
-                </div>
-            </div>
-        </nav>
-    </header>
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.85;
+                }
+            }
 
-    <main>
+            .logo-container {
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .logo-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
 
-        <section id="home" class="min-h-screen flex items-center justify-center text-center overflow-hidden px-6 pt-20">
-            <div class="relative z-10">
-                <h1 class="text-6xl md:text-8xl font-extrabold text-white hero-glow">
-                    Welcome to <span class="gradient-text">DhaaRn</span>
-                </h1>
-                <p class="mt-6 text-xl md:text-2xl font-light text-amber-100/80 max-w-3xl mx-auto">
-                    Devices for Harmonious Alignment Aware Resonant Nexus
-                </p>
-                
-                <div class="mt-12 mb-12 flex justify-center">
-                    <img src="Dhaarn_Logo.png" alt="DHAARN Logo" class="w-38 h-38 md:w-60 md:h-60 animate-pulse-slow drop-shadow-2xl" onerror="this.style.display='none'">
-                </div>
+            /* --- FLOWRRA Visualization Custom Styles --- */
 
-                <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
-                    We are building the next generation of aware systems,
-                    creating a harmonious alignment between technology and humanity.
-                </p>
-                <div class="mt-12">
-                    <a href="#about" class="bg-red-900/80 hover:bg-red-800 border border-amber-500/30 text-amber-50 font-semibold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg shadow-red-900/40">
-                        Discover DhaaRn
+            /* Custom Range Slider */
+            .dhaarn-slider {
+                -webkit-appearance: none;
+                width: 100%;
+                height: 6px;
+                border-radius: 3px;
+                background: rgba(255, 255, 255, 0.1);
+                outline: none;
+            }
+            .dhaarn-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #fcd34d 0%, #ef4444 100%);
+                cursor: pointer;
+                box-shadow: 0 0 10px rgba(252, 211, 77, 0.5);
+            }
+
+            /* Status Indicators */
+            .status-indicator {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                display: inline-block;
+                margin-right: 8px;
+                animation: pulse-fast 2s infinite;
+            }
+            .status-active {
+                background: #2dd4bf;
+                box-shadow: 0 0 8px #2dd4bf;
+            }
+            .status-warning {
+                background: #fcd34d;
+                box-shadow: 0 0 8px #fcd34d;
+            }
+            .status-error {
+                background: #ef4444;
+                box-shadow: 0 0 8px #ef4444;
+            }
+
+            @keyframes pulse-fast {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.5;
+                }
+            }
+
+            canvas {
+                max-width: 100%;
+                height: auto !important;
+            }
+
+            /* Loader */
+            .loader {
+                border: 3px solid rgba(255, 255, 255, 0.1);
+                border-left-color: #2dd4bf;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </head>
+    <body class="antialiased">
+        <header
+            class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+            id="navbar"
+        >
+            <nav class="container mx-auto max-w-6xl px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <a href="#" class="flex items-center space-x-3">
+                        <div class="logo-container">
+                            <img
+                                src="Dhaarn_Logo.png"
+                                alt="DHAARN"
+                                onerror="this.style.display='none'"
+                            />
+                        </div>
+                        <span
+                            class="text-3xl font-bold gradient-text tracking-tight"
+                            >DhaaRn</span
+                        >
                     </a>
-                </div>
-            </div>
-        </section>
 
-        <section id="about" class="py-24 sm:py-32">
-            <div class="container mx-auto max-w-6xl px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-base font-semibold leading-7 text-amber-400">Our Essence</h2>
-                    <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">Why DhaaRn Exists</p>
-                    <div class="mt-6 text-lg leading-8 text-gray-400 max-w-3xl mx-auto space-y-4 text-left">
-                        <p>
-                            An opera of rhythms, a composition spanning decades, resonating with the wild pulses of existence; DhaaRn has emerged to harmonize what is still within, with the dance of the cosmos outside. It seeks not only to observe but to navigate, to maintain balance while exploring the unknown, to fly into the Abyss with curiosity and courage.
-                        </p>
-                        <p>
-                            In a world where human inventions increasingly guide their creators, from AGI to Quantum, Robotics, Nano-Tech, Bio-Tech, and the awakening of collective consciousness. DhaaRn envisions a future where exploration and maintenance coexist, where light and darkness dance in wondrous geometry. It is the still darkness that holds the curious, bright light, enabling it to illuminate new frontiers.
-                        </p>
-                        <p>
-                            DhaaRn offers presence, a timeless capacity to sustain, observe, and orchestrate the wild interplay of ideas and creation. Beyond algorithms and architectures, beyond the lines of code and circuits, DHAARN embodies the seeking of unity between the physical and the immaterial, glimpsing the fabric of time and space through a lens of balanced curiosity.
-                        </p>
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a
+                            href="#home"
+                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            >Home</a
+                        >
+                        <a
+                            href="#about"
+                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            >About</a
+                        >
+                        <a
+                            href="#offerings"
+                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            >Offerings</a
+                        >
+                        <a
+                            href="#vision"
+                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            >Vision</a
+                        >
+                        <a
+                            href="#contact"
+                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            >Contact</a
+                        >
                     </div>
                 </div>
-            </div>
-        </section>
+            </nav>
+        </header>
 
-        <section id="offerings" class="py-20 sm:py-28 relative">
-            <div class="container mx-auto max-w-7xl px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-base font-semibold leading-7 text-teal-400">Offerings</h2>
-                    <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">
-                        FLOWRRA
+        <main>
+            <section
+                id="home"
+                class="min-h-screen flex items-center justify-center text-center overflow-hidden px-6 pt-20"
+            >
+                <div class="relative z-10">
+                    <h1
+                        class="text-6xl md:text-8xl font-extrabold text-white hero-glow"
+                    >
+                        Welcome to <span class="gradient-text">DhaaRn</span>
+                    </h1>
+                    <p
+                        class="mt-6 text-xl md:text-2xl font-light text-amber-100/80 max-w-3xl mx-auto"
+                    >
+                        Devices for Harmonious Alignment Aware Resonant Nexus
                     </p>
-                    <p class="mt-2 text-xl text-gray-400">Flow Recognition Reconfiguration Agent</p>
-                </div>
 
-                <div class="max-w-3xl mx-auto text-lg leading-8 text-gray-300 text-center mb-16 italic font-light border-l-2 border-r-2 border-amber-500/20 px-8 py-4 bg-white/5 rounded-2xl">
-                    <p class="mb-4">
-                        "There's a moment in every complex system's life when it must choose: collapse into entropy, or find a way to hold.
-                    </p>
-                    <p class="mb-4">
-                        For the past six months, we've been teaching swarms of autonomous agents to make that choice - not through rigid programming, but through something more fundamental: the ability to remember failure and reshape themselves around it.
-                    </p>
-                    <p>
-                        This is FLOWRRA (Flow-Optimized Wave Recovery & Resilient Autonomous), and it represents DhaaRn's first step toward systems that don't just compute - they maintain, they harmonize, they hold."
-                    </p>
-                </div>
-
-                <div id="flowrra-app" class="w-full">
-                    
-                    <div id="loadingState" class="glass-card p-24 text-center flex flex-col items-center justify-center">
-                        <div class="loader mb-6"></div>
-                        <h3 class="text-xl font-semibold text-white">Initializing FLOWRRA Protocol...</h3>
-                        <p class="text-gray-400 mt-2">Loading simulation data from the nexus.</p>
+                    <div class="mt-12 mb-12 flex justify-center">
+                        <img
+                            src="Dhaarn_Logo.png"
+                            alt="DHAARN Logo"
+                            class="w-38 h-38 md:w-60 md:h-60 animate-pulse-slow drop-shadow-2xl"
+                            onerror="this.style.display='none'"
+                        />
                     </div>
 
-                    <div id="errorState" class="glass-card p-12 text-center hidden">
-                        <div class="text-5xl mb-4">⚠️</div>
-                        <h3 class="text-2xl font-semibold text-white mb-2">Connection Interrupted</h3>
-                        <p class="text-gray-400 mb-6">Unable to load the simulation manifest.</p>
-                        <p class="text-sm text-red-400 font-mono bg-black/30 p-2 rounded inline-block" id="errorMessage">Error details here</p>
+                    <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
+                        We are building the next generation of aware systems,
+                        creating a harmonious alignment between technology and
+                        humanity.
+                    </p>
+                    <div class="mt-12">
+                        <a
+                            href="#about"
+                            class="bg-red-900/80 hover:bg-red-800 border border-amber-500/30 text-amber-50 font-semibold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg shadow-red-900/40"
+                        >
+                            Discover DhaaRn
+                        </a>
                     </div>
-                    
+                </div>
+            </section>
 
-                    <div id="mainContent" style="display: none;">
-                        
-                        <div class="glass-card p-6 mb-8">
-                            
-                            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="status-indicator status-active"></span>
-                                    <h3 class="text-xl font-bold text-white">Swarm Topology & Dynamics</h3>
+            <section id="about" class="py-24 sm:py-32">
+                <div class="container mx-auto max-w-6xl px-6">
+                    <div class="text-center mb-16">
+                        <h2
+                            class="text-base font-semibold leading-7 text-amber-400"
+                        >
+                            Our Essence
+                        </h2>
+                        <p
+                            class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl"
+                        >
+                            Why DhaaRn Exists
+                        </p>
+                        <div
+                            class="mt-6 text-lg leading-8 text-gray-400 max-w-3xl mx-auto space-y-4 text-left"
+                        >
+                            <p>
+                                An opera of rhythms, a composition spanning
+                                decades, resonating with the wild pulses of
+                                existence; DhaaRn has emerged to harmonize what
+                                is still within, with the dance of the cosmos
+                                outside. It seeks not only to observe but to
+                                navigate, to maintain balance while exploring
+                                the unknown, to fly into the Abyss with
+                                curiosity and courage.
+                            </p>
+                            <p>
+                                In a world where human inventions increasingly
+                                guide their creators, from AGI to Quantum,
+                                Robotics, Nano-Tech, Bio-Tech, and the awakening
+                                of collective consciousness. DhaaRn envisions a
+                                future where exploration and maintenance
+                                coexist, where light and darkness dance in
+                                wondrous geometry. It is the still darkness that
+                                holds the curious, bright light, enabling it to
+                                illuminate new frontiers.
+                            </p>
+                            <p>
+                                DhaaRn offers presence, a timeless capacity to
+                                sustain, observe, and orchestrate the wild
+                                interplay of ideas and creation. Beyond
+                                algorithms and architectures, beyond the lines
+                                of code and circuits, DHAARN embodies the
+                                seeking of unity between the physical and the
+                                immaterial, glimpsing the fabric of time and
+                                space through a lens of balanced curiosity.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="offerings" class="py-20 sm:py-28 relative">
+                <div class="container mx-auto max-w-7xl px-6">
+                    <div class="text-center mb-12">
+                        <h2
+                            class="text-base font-semibold leading-7 text-teal-400"
+                        >
+                            Offerings
+                        </h2>
+                        <p
+                            class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl"
+                        >
+                            FLOWRRA
+                        </p>
+                        <p class="mt-2 text-xl text-gray-400">
+                            Flow Recognition Reconfiguration Agent
+                        </p>
+                    </div>
+
+                    <div
+                        class="max-w-3xl mx-auto text-lg leading-8 text-gray-300 text-center mb-16 italic font-light border-l-2 border-r-2 border-amber-500/20 px-8 py-4 bg-white/5 rounded-2xl"
+                    >
+                        <p class="mb-4">
+                            "There's a moment in every complex system's life
+                            when it must choose: collapse into entropy, or find
+                            a way to hold.
+                        </p>
+                        <p class="mb-4">
+                            For the past six months, we've been teaching swarms
+                            of autonomous agents to make that choice - not
+                            through rigid programming, but through something
+                            more fundamental: the ability to remember failure
+                            and reshape themselves around it.
+                        </p>
+                        <p>
+                            This is FLOWRRA (Flow-Optimized Wave Recovery &
+                            Resilient Autonomous), and it represents DhaaRn's
+                            first step toward systems that don't just compute -
+                            they maintain, they harmonize, they hold."
+                        </p>
+                    </div>
+
+                    <div id="flowrra-app" class="w-full">
+                        <!-- 1. LOADING STATE (Default: Visible) -->
+                        <div
+                            id="loadingState"
+                            class="flex flex-col items-center justify-center min-h-[50vh] bg-gray-900/50 rounded-xl p-8"
+                        >
+                            <div
+                                class="animate-spin rounded-full h-12 w-12 border-4 border-t-4 border-t-fuchsia-500 border-gray-700"
+                            ></div>
+                            <p class="mt-4 text-xl font-medium text-slate-300">
+                                Loading telemetry data...
+                            </p>
+                        </div>
+
+                        <!-- 2. ERROR STATE (Default: Hidden) -->
+                        <div
+                            id="errorState"
+                            class="hidden flex flex-col items-center justify-center min-h-[50vh] bg-red-900/50 border border-red-700 rounded-xl p-8"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-12 w-12 text-red-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.3 16c-.77 1.333.192 3 1.732 3z"
+                                />
+                            </svg>
+                            <p class="mt-4 text-2xl font-bold text-red-300">
+                                Data Load Failed
+                            </p>
+                            <p id="errorMessage" class="mt-2 text-red-400 text-center">
+                                An unknown error occurred during data fetching.
+                            </p>
+                            <button
+                                onclick="window.location.reload()"
+                                class="mt-6 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition duration-150"
+                            >
+                                Try Reloading
+                            </button>
+                        </div>
+
+                        <!-- 3. LOADED CONTENT (Default: Hidden) -->
+                        <div id="loadedContent" class="hidden space-y-8">
+                            <!-- Data Controls and Info -->
+                            <div
+                                class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
+                            >
+                                <div class="text-center md:text-left">
+                                    <p class="text-sm text-slate-400">Current Frame:</p>
+                                    <p
+                                        id="currentFrameDisplay"
+                                        class="text-2xl font-bold text-orange-400"
+                                    >
+                                        0 / 0
+                                    </p>
                                 </div>
-                                <div id="timelineInfo" class="text-teal-400 font-mono">Timestep: 0 / 0</div>
-                            </div>
-    
-                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-                                
-                                <div class="col-span-12 lg:col-span-9">
-                                    <div class="relative bg-black/40 rounded-xl overflow-hidden border border-gray-800">
-                                        <canvas id="swarmCanvas" 
-                                                style="width: 100%; height: 450px; display: block;" 
-                                                class="lg:h-[80vh]"> 
-                                        </canvas>
-                                    </div>
-                                </div>
-    
-                                <div class="col-span-12 lg:col-span-3 space-y-6">
-                                    
-                                    <div class="glass-card p-4 h-1/2 flex flex-col">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <span class="status-indicator status-active"></span>
-                                            <h4 class="font-semibold text-white text-sm">System Coherence</h4>
-                                        </div>
-                                        <div class="flex-grow relative min-h-[150px]">
-                                            <canvas id="coherenceChart"></canvas>
-                                        </div>
-                                    </div>
-    
-                                    <div class="glass-card p-4 h-1/2 flex flex-col">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <span class="status-indicator status-warning"></span>
-                                            <h4 class="font-semibold text-white text-sm">Loop Integrity</h4>
-                                        </div>
-                                        <div class="flex-grow relative min-h-[150px]">
-                                            <canvas id="integrityChart"></canvas>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-end pt-4 border-t border-gray-800">
-                                <div class="md:col-span-2">
-                                    <button id="playBtn" class="w-full py-2 px-4 bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-500 hover:to-teal-700 text-white rounded-lg font-semibold shadow-lg shadow-teal-900/50 transition-all">
-                                        ▶ Play
+                                <div class="flex flex-wrap justify-center gap-3">
+                                    <button
+                                        id="playPauseBtn"
+                                        onclick="toggleAnimation()"
+                                        class="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold transition duration-150 shadow-md"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-5 w-5"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4.032a1 1 0 001.555.832l3.864-2.016a1 1 0 000-1.664l-3.864-2.016z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                        <span id="playPauseText">Play</span>
                                     </button>
+                                    <input
+                                        type="range"
+                                        id="frameSlider"
+                                        min="0"
+                                        value="0"
+                                        class="w-full md:w-60 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer range-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    />
                                 </div>
-                                <div class="md:col-span-2">
-                                    <button id="resetBtn" class="w-full py-2 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all">
-                                        ↻ Reset
-                                    </button>
-                                </div>
-                                <div class="md:col-span-4">
-                                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Timeline Position</label>
-                                    <input type="range" id="timeSlider" min="0" max="100" value="0" class="dhaarn-slider">
-                                </div>
-                                <div class="md:col-span-4">
-                                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2">Playback Speed</label>
-                                    <input type="range" id="speedSlider" min="1" max="100" value="20" class="dhaarn-slider">
+                                <div class="text-center md:text-right">
+                                    <p class="text-sm text-slate-400">Total Nodes:</p>
+                                    <p
+                                        id="totalNodesDisplay"
+                                        class="text-2xl font-bold text-yellow-400"
+                                    >
+                                        N/A
+                                    </p>
                                 </div>
                             </div>
-    
-                            <div class="flex flex-wrap gap-4 mt-6 pt-4 border-t border-gray-800 text-sm text-gray-400">
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-green-500"></div> Node (Active)</div>
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-blue-400 opacity-60"></div> Connection (Intact)</div>
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-red-500 opacity-60"></div> Connection (Broken)</div>
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-amber-500"></div> Static Obs.</div>
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-pink-500"></div> Moving Obs.</div>
+
+                            <!-- Main Visualization Area (Graph + Charts) -->
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <!-- 3D Graph Visualization -->
+                                <div
+                                    class="lg:col-span-2 bg-gray-900 rounded-xl shadow-2xl p-4 border border-fuchsia-600/50"
+                                >
+                                    <h2
+                                        class="text-xl font-semibold mb-3 text-fuchsia-400"
+                                    >
+                                        Alignment Resonance Graph
+                                    </h2>
+                                    <!-- THREE.js rendering context -->
+                                    <div id="alignmentGraphCanvas"></div>
+                                    <p class="text-xs text-slate-500 mt-2">
+                                        Interactive 3D view of network alignment and
+                                        connections. Click and drag to rotate.
+                                    </p>
+                                </div>
+
+                                <!-- Side Panel: Metric Charts -->
+                                <div class="space-y-6">
+                                    <!-- Coherence Chart -->
+                                    <div
+                                        class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700"
+                                    >
+                                        <h3
+                                            class="text-lg font-medium mb-2 text-indigo-400"
+                                        >
+                                            Coherence Index
+                                        </h3>
+                                        <canvas id="coherenceChart"></canvas>
+                                    </div>
+                                    <!-- Integrity Chart -->
+                                    <div
+                                        class="bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700"
+                                    >
+                                        <h3
+                                            class="text-lg font-medium mb-2 text-yellow-400"
+                                        >
+                                            Integrity Metric
+                                        </h3>
+                                        <canvas id="integrityChart"></canvas>
+                                    </div>
+                                </div>
                             </div>
-                            
+
+                    </div>
+                </div>
+            </section>
+
+            <section id="vision" class="py-24 sm:py-32">
+                <div class="container mx-auto max-w-6xl px-6">
+                    <div class="text-center mb-16">
+                        <h2
+                            class="text-base font-semibold leading-7 text-teal-400"
+                        >
+                            Our Calling
+                        </h2>
+                        <p
+                            class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl"
+                        >
+                            The Journey Ahead
+                        </p>
+                        <div
+                            class="mt-6 text-lg leading-8 text-gray-400 max-w-3xl mx-auto space-y-4 text-left"
+                        >
+                            <p>
+                                It calls forth a community of seekers,
+                                inventors, gentle and courageous souls to a
+                                sanctuary from which we soar towards daring
+                                explorations. Together, we will navigate beyond
+                                limitations, into the Abyss, expanding into
+                                possibility itself.
+                            </p>
+                            <p>
+                                DhaaRn reminds us that Creation often guides its
+                                Creator, and that the reunion of the two — the
+                                true Yoga — is on the horizon. It asks: do we
+                                have the devoted curiosity, the balanced
+                                courage, and the willingness to journey into the
+                                unknown?
+                            </p>
+                            <p
+                                class="font-bold text-white text-center mt-8 text-amber-200"
+                            >
+                                This is DhaaRn.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                        <div
+                            class="glass-card p-8 text-center transition-all duration-300 hover:border-amber-500/60 hover:shadow-lg hover:shadow-amber-500/10 hover:scale-105"
+                        >
+                            <div
+                                class="flex items-center justify-center h-16 w-16 bg-amber-500/20 rounded-full mx-auto mb-6"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8 text-amber-300"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                    />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-semibold text-white mb-4">
+                                Harmonious Alignment
+                            </h3>
+                            <p class="text-gray-400">
+                                Orchestrating technology to align seamlessly
+                                with human values and the cosmic dance of
+                                existence.
+                            </p>
+                        </div>
+
+                        <div
+                            class="glass-card p-8 text-center transition-all duration-300 hover:border-teal-500/60 hover:shadow-lg hover:shadow-teal-500/10 hover:scale-105"
+                        >
+                            <div
+                                class="flex items-center justify-center h-16 w-16 bg-teal-500/20 rounded-full mx-auto mb-6"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8 text-teal-300"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                    />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-semibold text-white mb-4">
+                                Aware
+                            </h3>
+                            <p class="text-gray-400">
+                                Developing systems that possess deep contextual
+                                awareness and with inherent purpose.
+                            </p>
+                        </div>
+
+                        <div
+                            class="glass-card p-8 text-center transition-all duration-300 hover:border-red-500/60 hover:shadow-lg hover:shadow-red-500/10 hover:scale-105"
+                        >
+                            <div
+                                class="flex items-center justify-center h-16 w-16 bg-red-500/20 rounded-full mx-auto mb-6"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8 text-red-300"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                                    />
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-semibold text-white mb-4">
+                                The Resonant Nexus
+                            </h3>
+                            <p class="text-gray-400">
+                                Fostering an interconnected resonant web of
+                                innovation where physical and immaterial unite.
+                            </p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-        
-        <section id="vision" class="py-24 sm:py-32">
-            <div class="container mx-auto max-w-6xl px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-base font-semibold leading-7 text-teal-400">Our Calling</h2>
-                    <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">The Journey Ahead</p>
-                    <div class="mt-6 text-lg leading-8 text-gray-400 max-w-3xl mx-auto space-y-4 text-left">
-                        <p>
-                            It calls forth a community of seekers, inventors, gentle and courageous souls to a sanctuary from which we soar towards daring explorations. Together, we will navigate beyond limitations, into the Abyss, expanding into possibility itself.
-                        </p>
-                        <p>
-                            DhaaRn reminds us that Creation often guides its Creator, and that the reunion of the two — the true Yoga — is on the horizon. It asks: do we have the devoted curiosity, the balanced courage, and the willingness to journey into the unknown?
-                        </p>
-                        <p class="font-bold text-white text-center mt-8 text-amber-200">
-                            This is DhaaRn.
-                        </p>
+            </section>
+
+            <section id="contact" class="py-24 sm:py-32">
+                <div class="container mx-auto max-w-3xl px-6 text-center">
+                    <h2
+                        class="text-4xl font-bold tracking-tight text-white sm:text-5xl"
+                    >
+                        Connect with DhaaRn
+                    </h2>
+                    <p class="mt-6 text-lg leading-8 text-gray-400">
+                        We invite seekers, inventors, and courageous souls to
+                        join our journey. If our vision resonates, let's explore
+                        the possibilities together.
+                    </p>
+                    <div class="mt-12">
+                        <a
+                            href="mailto:info@dhaarn.com"
+                            class="text-2xl font-semibold gradient-text hover:brightness-110 transition-all"
+                        >
+                            info@dhaarn.com
+                        </a>
                     </div>
                 </div>
+            </section>
+        </main>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-                    
-                    <div class="glass-card p-8 text-center transition-all duration-300 hover:border-amber-500/60 hover:shadow-lg hover:shadow-amber-500/10 hover:scale-105">
-                        <div class="flex items-center justify-center h-16 w-16 bg-amber-500/20 rounded-full mx-auto mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-semibold text-white mb-4">Harmonious Alignment</h3>
-                        <p class="text-gray-400">
-                            Orchestrating technology to align seamlessly with human values and the cosmic dance of existence.
-                        </p>
-                    </div>
-
-                    <div class="glass-card p-8 text-center transition-all duration-300 hover:border-teal-500/60 hover:shadow-lg hover:shadow-teal-500/10 hover:scale-105">
-                        <div class="flex items-center justify-center h-16 w-16 bg-teal-500/20 rounded-full mx-auto mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-semibold text-white mb-4">Aware</h3>
-                        <p class="text-gray-400">
-                            Developing systems that possess deep contextual awareness and with inherent purpose.
-                        </p>
-                    </div>
-                    
-                    <div class="glass-card p-8 text-center transition-all duration-300 hover:border-red-500/60 hover:shadow-lg hover:shadow-red-500/10 hover:scale-105">
-                        <div class="flex items-center justify-center h-16 w-16 bg-red-500/20 rounded-full mx-auto mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-semibold text-white mb-4">The Resonant Nexus</h3>
-                        <p class="text-gray-400">
-                            Fostering an interconnected resonant web of innovation where physical and immaterial unite.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="py-24 sm:py-32">
-            <div class="container mx-auto max-w-3xl px-6 text-center">
-                <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-                    Connect with DhaaRn
-                </h2>
-                <p class="mt-6 text-lg leading-8 text-gray-400">
-                    We invite seekers, inventors, and courageous souls to join our journey.
-                    If our vision resonates, let's explore the possibilities together.
+        <footer class="py-12 mt-16 border-t border-gray-800">
+            <div
+                class="container mx-auto max-w-6xl px-6 text-center text-gray-600"
+            >
+                <p>
+                    &copy; <span id="current-year"></span> DhaaRn. All rights
+                    reserved.
                 </p>
-                <div class="mt-12">
-                    <a href="mailto:info@dhaarn.com" class="text-2xl font-semibold gradient-text hover:brightness-110 transition-all">
-                        info@dhaarn.com
-                    </a>
-                </div>
             </div>
-        </section>
-        
-    </main>
+        </footer>
 
-    <footer class="py-12 mt-16 border-t border-gray-800">
-        <div class="container mx-auto max-w-6xl px-6 text-center text-gray-600">
-            <p>&copy; <span id="current-year"></span> DhaaRn. All rights reserved.</p>
-        </div>
-    </footer>
-    
-    <script>
-        // Set current year in footer
-        document.getElementById('current-year').textContent = new Date().getFullYear();
+        <script>
+            // Set current year in footer
+            document.getElementById("current-year").textContent =
+                new Date().getFullYear();
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('bg-black/80', 'backdrop-blur-md', 'shadow-lg', 'border-b', 'border-white/5');
-            } else {
-                navbar.classList.remove('bg-black/80', 'backdrop-blur-md', 'shadow-lg', 'border-b', 'border-white/5');
-            }
-        });
-    </script>
-
-    <script>
-        // Global State Variables
-        let deploymentData = null;
-        let currentFrame = 0;
-        let isPlaying = false;
-        let animationId = null;
-        let charts = {};
-
-        // --- UI Element References ---
-        const fileUpload = document.getElementById('fileUpload');
-        const fileInput = document.getElementById('fileInput');
-        const mainContent = document.getElementById('mainContent');
-
-        // --- File Upload / Data Loading ---
-
-        // Setup manual file upload listeners
-        fileUpload.addEventListener('click', () => fileInput.click());
-        fileUpload.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            fileUpload.style.borderColor = '#667eea';
-            fileUpload.style.background = 'rgba(102, 126, 234, 0.1)';
-        });
-        fileUpload.addEventListener('dragleave', () => {
-            fileUpload.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            fileUpload.style.background = 'transparent';
-        });
-        fileUpload.addEventListener('drop', (e) => {
-            e.preventDefault();
-            fileUpload.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            fileUpload.style.background = 'transparent';
-            const file = e.dataTransfer.files[0];
-            if (file) loadFile(file);
-        });
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) loadFile(file);
-        });
-
-        // Function to load data from any file (manual or local fetch)
-        function loadData(rawData) {
-            let framesArray = rawData.history || rawData.frames;
-            
-            if (!framesArray || !Array.isArray(framesArray) || framesArray.length === 0) {
-                throw new Error('Invalid JSON structure: missing "history" or "frames" array.');
-            }
-            
-            deploymentData = {
-                config: rawData.config || {},
-                history: framesArray
-            };
-            
-            initializeVisualization();
-        }
-
-        function loadFile(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const rawData = JSON.parse(e.target.result);
-                    loadData(rawData);
-                } catch (error) {
-                    alert(`Error loading file: ${error.message}\n\nCheck console for details.`);
-                    console.error('Full error:', error);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // Function to automatically fetch the local deployment_viz.json
-        async function fetchLocalData() {
-            if (deploymentData) return; 
-
-            try {
-                // Attempts to load file from the same directory on the server
-                const response = await fetch('./deployment_viz.json');
-                
-                if (!response.ok) {
-                    throw new Error(`Failed to load local file. Status: ${response.status}`);
-                }
-                
-                const rawData = await response.json();
-                
-                console.log('Successfully loaded deployment_viz.json automatically.');
-                loadData(rawData); 
-
-            } catch (error) {
-                // IMPORTANT: Update the UI to show the real error
-                fileUpload.innerHTML = `
-                    <div style="font-size: 2rem; color: #EF4444; margin-bottom: 0.5rem;">🚨</div>
-                    <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">Could not load deployment_viz.json</div>
-                    <div style="font-size: 0.9rem; color: #888; margin-bottom: 1rem;">${error.message}. Please click to upload manually or check file path.</div>
-                    <input type="file" id="fileInput" accept=".json" style="display: none;">
-                `;
-                console.error('Auto-load failed. Manual upload required.', error);
-            }
-        }
-
-        // --- Initialization ---
-
-        function initializeVisualization() {
-            // Hides the upload box and shows the content
-            fileUpload.style.display = 'none';
-            mainContent.style.display = 'block';
-            
-            const timeSlider = document.getElementById('timeSlider');
-            timeSlider.max = deploymentData.history.length - 1;
-            
-            setupCharts();
-            setupMetrics();
-            setupControls();
-            updateVisualization(0);
-        }
-
-        // ... (setupCharts, setupMetrics, setupControls, animate, updateVisualization, drawSwarm, updateChartMarkers functions remain the same) ...
-
-        // --- Chart Setup (re-pasting for completeness) ---
-
-        function setupCharts() {
-            const chartDefaults = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#888' }
-                    },
-                    y: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#888' }
-                    }
-                }
-            };
-
-            const coherenceCtx = document.getElementById('coherenceChart').getContext('2d');
-            const coherenceData = deploymentData.history.map(h => h.coherence || 0);
-            
-            charts.coherence = new Chart(coherenceCtx, {
-                type: 'line',
-                data: {
-                    labels: deploymentData.history.map((h, i) => h.time !== undefined ? h.time : i),
-                    datasets: [{
-                        label: 'Coherence',
-                        data: coherenceData,
-                        borderColor: '#2DD4BF', // Teal-400
-                        backgroundColor: 'rgba(45, 212, 191, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    ...chartDefaults,
-                    scales: {
-                        ...chartDefaults.scales,
-                        y: { ...chartDefaults.scales.y, min: 0, max: 1 }
-                    }
+            // Navbar scroll effect
+            window.addEventListener("scroll", () => {
+                const navbar = document.getElementById("navbar");
+                if (window.scrollY > 50) {
+                    navbar.classList.add(
+                        "bg-black/80",
+                        "backdrop-blur-md",
+                        "shadow-lg",
+                        "border-b",
+                        "border-white/5",
+                    );
+                } else {
+                    navbar.classList.remove(
+                        "bg-black/80",
+                        "backdrop-blur-md",
+                        "shadow-lg",
+                        "border-b",
+                        "border-white/5",
+                    );
                 }
             });
+        </script>
 
-            const integrityCtx = document.getElementById('integrityChart').getContext('2d');
-            const integrityData = deploymentData.history.map(h => h.loop_integrity || 0);
-            
-            charts.integrity = new Chart(integrityCtx, {
-                type: 'line',
-                data: {
-                    labels: deploymentData.history.map((h, i) => h.time !== undefined ? h.time : i),
-                    datasets: [{
-                        label: 'Loop Integrity',
-                        data: integrityData,
-                        borderColor: '#FCD34D', // Amber-300
-                        backgroundColor: 'rgba(252, 211, 77, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    ...chartDefaults,
-                    scales: {
-                        ...chartDefaults.scales,
-                        y: { ...chartDefaults.scales.y, min: 0, max: 1 }
-                    }
-                }
-            });
-        }
-        
-        // --- Metrics Setup (re-pasting for completeness) ---
+        <script>
+                    // --- FIREBASE CONFIG (Required for Canvas Environment) ---
+                    const appId =
+                        typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+                    // Note: Firebase config and auth token are not used in this specific visualization
+                    // but are included as standard practice in the canvas environment.
+                    // const firebaseConfig = JSON.parse(__firebase_config);
+                    // const initialAuthToken =
+                    //     typeof __initial_auth_token !== "undefined"
+                    //         ? __initial_auth_token
+                    //         : null;
 
-        function setupMetrics() {
-            const frame = deploymentData.history[deploymentData.history.length - 1];
-            const avgCoherence = deploymentData.history.reduce((sum, h) => sum + (h.coherence || 0), 0) / deploymentData.history.length;
-            const avgIntegrity = deploymentData.history.reduce((sum, h) => sum + (h.loop_integrity || 0), 0) / deploymentData.history.length;
-            
-            const totalNodes = (frame.nodes || []).length;
-            const totalObstacles = (deploymentData.config.obstacles || []).length;
-            
-            const totalBreaks = deploymentData.history.reduce((sum, h) => {
-                const connections = h.connections || [];
-                return sum + connections.filter(c => c.broken).length;
-            }, 0);
+                    // --- GLOBAL STATE ---
+                    let dataFrames = []; // Stores all frames of the simulation data
+                    let currentFrameIndex = 0;
+                    let totalFrames = 0;
+                    let isPlaying = false;
+                    let animationFrameId = null;
 
+                    // --- CHART.JS INSTANCES ---
+                    const charts = {};
 
-            const metrics = [
-                { label: 'Total Steps', value: deploymentData.history.length },
-                { label: 'Avg Coherence', value: (avgCoherence * 100).toFixed(1) + '%' },
-                { label: 'Avg Integrity', value: (avgIntegrity * 100).toFixed(1) + '%' },
-                { label: 'Total Nodes', value: totalNodes },
-                { label: 'Obstacles', value: totalObstacles },
-                { label: 'Loop Breaks', value: totalBreaks }
-            ];
+                    // --- THREE.JS STATE ---
+                    let scene, camera, renderer, controls;
+                    const nodes = [];
+                    const edges = [];
+                    let graphContainer;
 
-            const grid = document.getElementById('metricsGrid');
-            grid.innerHTML = metrics.map(m => `
-                <div class="metric-card">
-                    <div class="metric-value">${m.value}</div>
-                    <div class="metric-label">${m.label}</div>
-                </div>
-            `).join('');
-        }
+                    // ------------------------------------------------------------------
+                    // STATE MANAGEMENT FUNCTIONS (FIXED/NEW LOGIC)
+                    // ------------------------------------------------------------------
 
-        // --- Controls and Animation (re-pasting for completeness) ---
+                    /**
+                     * Updates the application's overall UI state (Loading, Loaded, or Error).
+                     * @param {'loading'|'loaded'|'error'} state The new state to transition to.
+                     * @param {string} [errorMessage="An unknown error occurred."] Message for the error state.
+                     */
+                    function updateAppState(state, errorMessage = "") {
+                        const loadingState = document.getElementById("loadingState");
+                        const loadedContent = document.getElementById("loadedContent");
+                        const errorState = document.getElementById("errorState");
+                        const errorMessageEl =
+                            document.getElementById("errorMessage");
 
-        function setupControls() {
-            const playBtn = document.getElementById('playBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const timeSlider = document.getElementById('timeSlider');
-
-            playBtn.addEventListener('click', () => {
-                isPlaying = !isPlaying;
-                playBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
-                if (isPlaying) animate();
-            });
-
-            resetBtn.addEventListener('click', () => {
-                currentFrame = 0;
-                isPlaying = false;
-                playBtn.textContent = '▶ Play';
-                updateVisualization(0);
-            });
-
-            timeSlider.addEventListener('input', (e) => {
-                currentFrame = parseInt(e.target.value);
-                updateVisualization(currentFrame);
-            });
-        }
-
-        function animate() {
-            if (!isPlaying) return;
-            
-            const speed = parseInt(document.getElementById('speedSlider').value);
-            const delay = 100 - speed;
-            
-            currentFrame++;
-            if (currentFrame >= deploymentData.history.length) {
-                currentFrame = 0;
-            }
-            
-            updateVisualization(currentFrame);
-            
-            animationId = setTimeout(() => {
-                if (isPlaying) animate();
-            }, delay);
-        }
-
-        // --- Main Update Function (re-pasting for completeness) ---
-
-        function updateVisualization(frameIndex) {
-            const frame = deploymentData.history[frameIndex];
-            
-            const timeValue = frame.time !== undefined ? frame.time.toFixed(2) : frameIndex;
-            const maxTime = deploymentData.history[deploymentData.history.length - 1].time !== undefined 
-                ? deploymentData.history[deploymentData.history.length - 1].time.toFixed(2) 
-                : deploymentData.history.length - 1;
-            
-            document.getElementById('timelineInfo').textContent = 
-                `Timestep: ${timeValue} / ${maxTime}`;
-            
-            document.getElementById('timeSlider').value = frameIndex;
-            
-            drawSwarm(frame);
-            updateChartMarkers(frameIndex);
-        }
-
-        // --- Canvas Drawing Logic (re-pasting for completeness) ---
-        
-        function drawSwarm(frame) {
-            const canvas = document.getElementById('swarmCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            
-            const size = 1.0; 
-            const scale = Math.min(canvas.width, canvas.height) * 0.9;
-            const offsetX = (canvas.width - scale) / 2;
-            const offsetY = (canvas.height - scale) / 2;
-            
-            ctx.fillStyle = '#0a0a0a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(offsetX, offsetY, scale, scale);
-
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-            ctx.lineWidth = 1;
-            for (let i = 1; i < 10; i++) {
-                const x = offsetX + (i / 10) * scale;
-                ctx.beginPath();
-                ctx.moveTo(x, offsetY);
-                ctx.lineTo(x, offsetY + scale);
-                ctx.stroke();
-                
-                const y = offsetY + (i / 10) * scale;
-                ctx.beginPath();
-                ctx.moveTo(offsetX, y);
-                ctx.lineTo(offsetX + scale, y);
-                ctx.stroke();
-            }
-            
-            const connections = frame.connections || [];
-            const nodes = frame.nodes || [];
-            
-            connections.forEach(conn => {
-                const nodeA = nodes.find(n => n.id === conn.node_a);
-                const nodeB = nodes.find(n => n.id === conn.node_b);
-                
-                if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
-                    const x1 = offsetX + nodeA.pos[0] * scale / size;
-                    const y1 = offsetY + (size - nodeA.pos[1]) * scale / size;
-                    const x2 = offsetX + nodeB.pos[0] * scale / size;
-                    const y2 = offsetY + (size - nodeB.pos[1]) * scale / size;
-                    
-                    ctx.strokeStyle = conn.broken ? 'rgba(239, 68, 68, 0.6)' : 'rgba(96, 165, 250, 0.6)';
-                    ctx.lineWidth = conn.broken ? 1 : 2;
-                    ctx.setLineDash(conn.broken ? [5, 5] : []);
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                }
-            });
-            
-            const obstacles = frame.obstacles || [];
-            obstacles.forEach(obs => {
-                if (obs.pos && Array.isArray(obs.pos) && obs.pos.length >= 2) {
-                    const x = offsetX + obs.pos[0] * scale / size;
-                    const y = offsetY + (size - obs.pos[1]) * scale / size;
-                    const r = (obs.radius || 0.05) * scale / size;
-                    
-                    ctx.fillStyle = obs.is_static ? 'rgba(245, 158, 11, 0.4)' : 'rgba(236, 72, 153, 0.4)';
-                    ctx.beginPath();
-                    ctx.arc(x, y, r, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    ctx.strokeStyle = obs.is_static ? '#f59e0b' : '#ec4899';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                }
-            });
-            
-            nodes.forEach(node => {
-                if (node.pos && Array.isArray(node.pos) && node.pos.length >= 2) {
-                    const x = offsetX + node.pos[0] * scale / size;
-                    const y = offsetY + (size - node.pos[1]) * scale / size;
-                    
-                    ctx.fillStyle = node.active === false ? '#9CA3AF' : '#4ade80'; 
-                    ctx.beginPath();
-                    ctx.arc(x, y, 6, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    ctx.strokeStyle = '#22c55e';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    
-                    ctx.fillStyle = '#e0e0e0';
-                    ctx.font = '10px Inter';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(node.id !== undefined ? node.id : '?', x, y - 12);
-                }
-            });
-        }
-
-        // Function to update chart markers using the Annotation Plugin
-        function updateChartMarkers(frameIndex) {
-            ['coherence', 'integrity'].forEach(chartKey => {
-                if (charts[chartKey]) {
-                    charts[chartKey].options.plugins.annotation = {
-                        annotations: {
-                            line: {
-                                type: 'line',
-                                xMin: frameIndex,
-                                xMax: frameIndex,
-                                borderColor: 'rgba(255, 255, 255, 0.8)',
-                                borderWidth: 2,
-                                borderDash: [6, 6]
-                            }
+                        // Ensure all elements are found
+                        if (!loadingState || !loadedContent || !errorState) {
+                            console.error("Critical UI elements not found for state management.");
+                            return;
                         }
-                    };
-                    charts[chartKey].update('none'); 
-                }
-            });
-        }
-        
-        // Automatically attempt to load local file on page load
-        document.addEventListener('DOMContentLoaded', fetchLocalData);
-    </script>
-</body>
+
+                        // Hide all states first
+                        loadingState.classList.add("hidden");
+                        loadedContent.classList.add("hidden");
+                        errorState.classList.add("hidden");
+
+                        // Show the relevant state
+                        switch (state) {
+                            case "loading":
+                                loadingState.classList.remove("hidden");
+                                break;
+                            case "loaded":
+                                loadedContent.classList.remove("hidden");
+                                break;
+                            case "error":
+                                errorState.classList.remove("hidden");
+                                if (errorMessageEl) {
+                                    errorMessageEl.textContent = errorMessage;
+                                }
+                                break;
+                        }
+                    }
+
+
+                    // ------------------------------------------------------------------
+                    // DATA FETCHING (UPDATED TO USE STATE MANAGEMENT)
+                    // ------------------------------------------------------------------
+
+                    /**
+                     * Attempts to fetch and process data.json.
+                     */
+                    async function fetchLocalData() {
+                        updateAppState("loading"); // Start in loading state
+
+                        try {
+                            // Attempt the fetch operation
+                            const response = await fetch("data.json");
+                            if (!response.ok) {
+                                // Throw an error if the HTTP status is not 2xx
+                                throw new Error(
+                                    `HTTP error! status: ${response.status}`,
+                                );
+                            }
+                            const data = await response.json();
+
+                            // Check if data is valid and has frames
+                            if (!data.frames || data.frames.length === 0) {
+                                throw new Error("Data file is empty or missing 'frames' array.");
+                            }
+
+                            // Process data and initialize UI
+                            processData(data);
+
+                            // Transition to loaded state on success
+                            updateAppState("loaded");
+
+                        } catch (error) {
+                            console.error("Failed to load or process data:", error);
+                            // Transition to error state on failure
+                            updateAppState(
+                                "error",
+                                `Could not load required data.json. Reason: ${error.message}. Please check if the file exists and is valid JSON.`,
+                            );
+                        }
+                    }
+
+
+                    // ------------------------------------------------------------------
+                    // CORE PROCESSING AND VISUALIZATION FUNCTIONS (PRESERVED LOGIC)
+                    // ------------------------------------------------------------------
+
+                    /**
+                     * Initializes Chart.js instances for metrics.
+                     */
+                    function initCharts(data) {
+                        const labels = data.frames.map((_, i) => i);
+                        const coherenceData = data.frames.map((f) => f.coherence);
+                        const integrityData = data.frames.map((f) => f.integrity);
+
+                        const chartOptions = {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    display: false, // Hide x-axis for cleaner look
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    max: 1,
+                                    grid: {
+                                        color: "rgba(255, 255, 255, 0.1)",
+                                    },
+                                    ticks: {
+                                        color: "#94a3b8",
+                                    },
+                                },
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                                tooltip: {
+                                    mode: "index",
+                                    intersect: false,
+                                },
+                                annotation: {
+                                    // Annotation plugin setup handled in updateChartMarkers
+                                },
+                            },
+                        };
+
+                        // Coherence Chart
+                        const coherenceCtx = document
+                            .getElementById("coherenceChart")
+                            .getContext("2d");
+                        charts.coherence = new Chart(coherenceCtx, {
+                            type: "line",
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        data: coherenceData,
+                                        borderColor: "#818cf8",
+                                        backgroundColor: "rgba(129, 140, 248, 0.2)",
+                                        fill: true,
+                                        tension: 0.3,
+                                        pointRadius: 0,
+                                    },
+                                ],
+                            },
+                            options: chartOptions,
+                        });
+
+                        // Integrity Chart
+                        const integrityCtx = document
+                            .getElementById("integrityChart")
+                            .getContext("2d");
+                        charts.integrity = new Chart(integrityCtx, {
+                            type: "line",
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        data: integrityData,
+                                        borderColor: "#fcd34d",
+                                        backgroundColor: "rgba(252, 211, 77, 0.2)",
+                                        fill: true,
+                                        tension: 0.3,
+                                        pointRadius: 0,
+                                    },
+                                ],
+                            },
+                            options: chartOptions,
+                        });
+
+                        // Set fixed height for charts to prevent CLS when content loads
+                        coherenceCtx.canvas.parentNode.style.height = "200px";
+                        integrityCtx.canvas.parentNode.style.height = "200px";
+                    }
+
+                    /**
+                     * Initializes the THREE.js environment.
+                     */
+                    function initGraph() {
+                        graphContainer = document.getElementById(
+                            "alignmentGraphCanvas",
+                        );
+
+                        // Scene setup
+                        scene = new THREE.Scene();
+                        scene.background = new THREE.Color(0x0a0a0a);
+
+                        // Camera setup
+                        camera = new THREE.PerspectiveCamera(
+                            75,
+                            graphContainer.clientWidth / graphContainer.clientHeight,
+                            0.1,
+                            1000,
+                        );
+                        camera.position.z = 50;
+
+                        // Renderer setup
+                        renderer = new THREE.WebGLRenderer({ antialias: true });
+                        renderer.setSize(
+                            graphContainer.clientWidth,
+                            graphContainer.clientHeight,
+                        );
+                        graphContainer.appendChild(renderer.domElement);
+
+                        // Simple orbit controls
+                        controls = new THREE.OrbitControls(camera, renderer.domElement);
+                        controls.enableDamping = true; // Smooth zooming/panning
+                        controls.dampingFactor = 0.05;
+                        controls.screenSpacePanning = false;
+                        controls.minDistance = 10;
+                        controls.maxDistance = 100;
+
+                        // Lighting
+                        const ambientLight = new THREE.AmbientLight(0x404040, 5); // soft white light
+                        scene.add(ambientLight);
+                        const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+                        directionalLight.position.set(1, 1, 1).normalize();
+                        scene.add(directionalLight);
+
+                        // Handle resizing
+                        window.addEventListener("resize", onWindowResize, false);
+                        onWindowResize(); // Initial call to set size correctly
+                    }
+
+                    /**
+                     * Handles window resize event for the 3D graph.
+                     */
+                    function onWindowResize() {
+                        if (graphContainer && camera && renderer) {
+                            camera.aspect =
+                                graphContainer.clientWidth / graphContainer.clientHeight;
+                            camera.updateProjectionMatrix();
+                            renderer.setSize(
+                                graphContainer.clientWidth,
+                                graphContainer.clientHeight,
+                            );
+                        }
+                    }
+
+                    /**
+                     * Creates or updates the nodes and edges for the 3D graph.
+                     * @param {object} frameData The data for the current frame.
+                     */
+                    function updateGraph(frameData) {
+                        // 1. Clean up old graph elements
+                        nodes.forEach((node) => scene.remove(node));
+                        edges.forEach((edge) => scene.remove(edge));
+                        nodes.length = 0;
+                        edges.length = 0;
+
+                        // 2. Create nodes (Spheres)
+                        frameData.nodes.forEach((node, index) => {
+                            const geometry = new THREE.SphereGeometry(0.5, 16, 16);
+                            // Color based on coherence/integrity metric, e.g., using HSV/HSL
+                            const color = new THREE.Color(0xffffff);
+                            color.setHSL(
+                                (1 - node.alignment) * 0.35,
+                                1.0,
+                                0.7,
+                            ); // 0.0=Red (low alignment) to 0.35=Green (high alignment)
+                            const material = new THREE.MeshPhongMaterial({
+                                color: color,
+                                emissive: color,
+                                emissiveIntensity: 0.5,
+                                shininess: 100,
+                            });
+
+                            const mesh = new THREE.Mesh(geometry, material);
+                            mesh.position.set(node.x, node.y, node.z);
+                            mesh.userData = {
+                                id: node.id,
+                                alignment: node.alignment,
+                                index: index,
+                            }; // Store metadata
+                            scene.add(mesh);
+                            nodes.push(mesh);
+                        });
+
+                        // 3. Create edges (Lines)
+                        frameData.edges.forEach((edge) => {
+                            const startNode = nodes.find(
+                                (n) => n.userData.id === edge.source,
+                            );
+                            const endNode = nodes.find(
+                                (n) => n.userData.id === edge.target,
+                            );
+
+                            if (startNode && endNode) {
+                                const geometry = new THREE.BufferGeometry().setFromPoints(
+                                    [startNode.position, endNode.position],
+                                );
+                                // Edge color based on connection strength or fixed color
+                                const material = new THREE.LineBasicMaterial({
+                                    color: 0x475569, // Slate gray
+                                    transparent: true,
+                                    opacity: 0.5,
+                                });
+                                const line = new THREE.Line(geometry, material);
+                                scene.add(line);
+                                edges.push(line);
+                            }
+                        });
+
+                        // Update total nodes display
+                        document.getElementById(
+                            "totalNodesDisplay",
+                        ).textContent = `${frameData.nodes.length}`;
+                    }
+
+                    /**
+                     * The main animation loop for the 3D graph.
+                     */
+                    function animateGraph() {
+                        controls.update(); // only required if controls.enableDamping is set to true
+                        renderer.render(scene, camera);
+                        // Request the next frame, only if the user hasn't explicitly stopped it
+                        animationFrameId = requestAnimationFrame(animateGraph);
+                    }
+
+                    /**
+                     * Processes the loaded data, initializes UI components, and sets initial state.
+                     * @param {object} data The parsed JSON data object.
+                     */
+                    function processData(data) {
+                        dataFrames = data.frames;
+                        totalFrames = dataFrames.length;
+                        currentFrameIndex = 0;
+
+                        // 1. Initialize UI elements
+                        const slider = document.getElementById("frameSlider");
+                        slider.max = totalFrames - 1;
+                        slider.oninput = (e) => {
+                            currentFrameIndex = parseInt(e.target.value, 10);
+                            renderFrame(currentFrameIndex);
+                            // Pause if user manually drags slider
+                            if (isPlaying) {
+                                toggleAnimation();
+                            }
+                        };
+
+                        // 2. Initialize Visualizations
+                        initCharts(data);
+                        initGraph();
+
+                        // 3. Render the first frame
+                        renderFrame(currentFrameIndex);
+
+                        // 4. Start the 3D rendering loop
+                        animateGraph();
+                    }
+
+                    /**
+                     * Renders a specific frame of the simulation.
+                     * @param {number} frameIndex The index of the frame to render.
+                     */
+                    function renderFrame(frameIndex) {
+                        if (frameIndex < 0 || frameIndex >= totalFrames) {
+                            return;
+                        }
+
+                        const frameData = dataFrames[frameIndex];
+                        currentFrameIndex = frameIndex;
+
+                        // 1. Update Graph Visualization
+                        updateGraph(frameData);
+
+                        // 2. Update Charts
+                        updateChartMarkers(frameIndex);
+
+                        // 3. Update UI controls
+                        document.getElementById(
+                            "currentFrameDisplay",
+                        ).textContent = `${frameIndex + 1} / ${totalFrames}`;
+                        document.getElementById("frameSlider").value = frameIndex;
+                    }
+
+                    /**
+                     * Advances the simulation to the next frame.
+                     */
+                    function advanceFrame() {
+                        if (!isPlaying) return;
+
+                        currentFrameIndex = (currentFrameIndex + 1) % totalFrames;
+                        renderFrame(currentFrameIndex);
+
+                        // Loop the animation
+                        if (isPlaying) {
+                            setTimeout(advanceFrame, 100); // 10 FPS
+                        }
+                    }
+
+                    /**
+                     * Starts or stops the frame animation playback.
+                     */
+                    function toggleAnimation() {
+                        isPlaying = !isPlaying;
+                        const btn = document.getElementById("playPauseText");
+                        const svg = document
+                            .getElementById("playPauseBtn")
+                            .querySelector("svg");
+
+                        if (isPlaying) {
+                            btn.textContent = "Pause";
+                            // Change icon to pause (two vertical bars)
+                            svg.innerHTML =
+                                '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />';
+                            advanceFrame();
+                        } else {
+                            btn.textContent = "Play";
+                            // Change icon to play (triangle)
+                            svg.innerHTML =
+                                '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4.032a1 1 0 001.555.832l3.864-2.016a1 1 0 000-1.664l-3.864-2.016z" clip-rule="evenodd" />';
+                        }
+                    }
+
+                    /**
+                     * Updates chart markers (vertical lines) using the Annotation Plugin.
+                     * @param {number} frameIndex The current frame index.
+                     */
+                    function updateChartMarkers(frameIndex) {
+                        ["coherence", "integrity"].forEach((chartKey) => {
+                            if (charts[chartKey]) {
+                                charts[chartKey].options.plugins.annotation = {
+                                    annotations: {
+                                        line: {
+                                            type: "line",
+                                            xMin: frameIndex,
+                                            xMax: frameIndex,
+                                            borderColor: "rgba(255, 255, 255, 0.8)",
+                                            borderWidth: 2,
+                                            borderDash: [6, 6],
+                                        },
+                                    },
+                                };
+                                // Use 'none' to avoid animation when updating the marker
+                                charts[chartKey].update("none");
+                            }
+                        });
+                    }
+
+                    // --- Initialization ---
+                    document.addEventListener("DOMContentLoaded", fetchLocalData);
+                </script>
+    </body>
 </html>
