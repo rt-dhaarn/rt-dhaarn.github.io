@@ -819,14 +819,14 @@
                     // ------------------------------------------------------------------
 
                     /**
-                     * Attempts to fetch and process data.json.
+                     * Attempts to fetch and process deployment_viz.json.
                      */
                     async function fetchLocalData() {
                         updateAppState("loading"); // Start in loading state
 
                         try {
                             // Attempt the fetch operation
-                            const response = await fetch("data.json");
+                            const response = await fetch("deployment_viz.json");
                             if (!response.ok) {
                                 // Throw an error if the HTTP status is not 2xx
                                 throw new Error(
@@ -851,7 +851,7 @@
                             // Transition to error state on failure
                             updateAppState(
                                 "error",
-                                `Could not load required data.json. Reason: ${error.message}. Please check if the file exists and is valid JSON.`,
+                                `Could not load required deployment_viz.json. Reason: ${error.message}. Please check if the file exists and is valid JSON.`,
                             );
                         }
                     }
