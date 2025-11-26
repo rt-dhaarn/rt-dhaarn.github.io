@@ -236,6 +236,7 @@
                         <p class="text-gray-400 mb-6">Unable to load the simulation manifest.</p>
                         <p class="text-sm text-red-400 font-mono bg-black/30 p-2 rounded inline-block" id="errorMessage">Error details here</p>
                     </div>
+                    
 
                     <div id="mainContent" style="display: none;">
                         
@@ -429,12 +430,14 @@
         let animationId = null;
         let charts = {};
 
-        // --- File Upload / Data Loading ---
-
-        // File upload handling (Handles drag/drop and input)
+        // --- UI Element References ---
         const fileUpload = document.getElementById('fileUpload');
         const fileInput = document.getElementById('fileInput');
-        
+        const mainContent = document.getElementById('mainContent');
+
+        // --- File Upload / Data Loading ---
+
+        // Setup manual file upload listeners
         fileUpload.addEventListener('click', () => fileInput.click());
         fileUpload.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -457,24 +460,28 @@
             if (file) loadFile(file);
         });
 
-        // Function to load data from a manually uploaded file
+        // Function to load data from any file (manual or local fetch)
+        function loadData(rawData) {
+            let framesArray = rawData.history || rawData.frames;
+            
+            if (!framesArray || !Array.isArray(framesArray) || framesArray.length === 0) {
+                throw new Error('Invalid JSON structure: missing "history" or "frames" array.');
+            }
+            
+            deploymentData = {
+                config: rawData.config || {},
+                history: framesArray
+            };
+            
+            initializeVisualization();
+        }
+
         function loadFile(file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const rawData = JSON.parse(e.target.result);
-                    let framesArray = rawData.history || rawData.frames;
-                    
-                    if (!framesArray || !Array.isArray(framesArray) || framesArray.length === 0) {
-                        throw new Error('Invalid JSON structure: missing "history" or "frames" array.');
-                    }
-                    
-                    deploymentData = {
-                        config: rawData.config || {},
-                        history: framesArray
-                    };
-                    
-                    initializeVisualization();
+                    loadData(rawData);
                 } catch (error) {
                     alert(`Error loading file: ${error.message}\n\nCheck console for details.`);
                     console.error('Full error:', error);
@@ -483,45 +490,41 @@
             reader.readAsText(file);
         }
 
-        // 💡 NEW: Function to automatically fetch the local deployment_viz.json
+        // Function to automatically fetch the local deployment_viz.json
         async function fetchLocalData() {
-            // Do not run if data was already loaded manually
             if (deploymentData) return; 
 
             try {
                 // Attempts to load file from the same directory on the server
                 const response = await fetch('./deployment_viz.json');
+                
                 if (!response.ok) {
-                    // This is the expected path if running on a local machine without a server
-                    console.warn("Could not find deployment_viz.json locally. Waiting for manual upload.");
-                    return;
+                    throw new Error(`Failed to load local file. Status: ${response.status}`);
                 }
                 
                 const rawData = await response.json();
                 
-                let framesArray = rawData.history || rawData.frames;
-                if (!framesArray || !Array.isArray(framesArray) || framesArray.length === 0) {
-                     throw new Error('Invalid JSON structure: missing "history" or "frames" array.');
-                }
-                
-                deploymentData = {
-                    config: rawData.config || {},
-                    history: framesArray
-                };
-                
                 console.log('Successfully loaded deployment_viz.json automatically.');
-                initializeVisualization();
+                loadData(rawData); 
 
             } catch (error) {
+                // IMPORTANT: Update the UI to show the real error
+                fileUpload.innerHTML = `
+                    <div style="font-size: 2rem; color: #EF4444; margin-bottom: 0.5rem;">🚨</div>
+                    <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">Could not load deployment_viz.json</div>
+                    <div style="font-size: 0.9rem; color: #888; margin-bottom: 1rem;">${error.message}. Please click to upload manually or check file path.</div>
+                    <input type="file" id="fileInput" accept=".json" style="display: none;">
+                `;
                 console.error('Auto-load failed. Manual upload required.', error);
-                // Leave the upload box visible
             }
         }
 
+        // --- Initialization ---
+
         function initializeVisualization() {
-            // Hide the upload box and show the content
-            document.getElementById('fileUpload').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
+            // Hides the upload box and shows the content
+            fileUpload.style.display = 'none';
+            mainContent.style.display = 'block';
             
             const timeSlider = document.getElementById('timeSlider');
             timeSlider.max = deploymentData.history.length - 1;
@@ -532,7 +535,9 @@
             updateVisualization(0);
         }
 
-        // --- Chart Setup (with adjusted colors for better contrast) ---
+        // ... (setupCharts, setupMetrics, setupControls, animate, updateVisualization, drawSwarm, updateChartMarkers functions remain the same) ...
+
+        // --- Chart Setup (re-pasting for completeness) ---
 
         function setupCharts() {
             const chartDefaults = {
@@ -553,7 +558,6 @@
                 }
             };
 
-            // Coherence Chart
             const coherenceCtx = document.getElementById('coherenceChart').getContext('2d');
             const coherenceData = deploymentData.history.map(h => h.coherence || 0);
             
@@ -579,7 +583,6 @@
                 }
             });
 
-            // Integrity Chart
             const integrityCtx = document.getElementById('integrityChart').getContext('2d');
             const integrityData = deploymentData.history.map(h => h.loop_integrity || 0);
             
@@ -605,19 +608,17 @@
                 }
             });
         }
-
-        // --- Metrics Setup ---
+        
+        // --- Metrics Setup (re-pasting for completeness) ---
 
         function setupMetrics() {
             const frame = deploymentData.history[deploymentData.history.length - 1];
             const avgCoherence = deploymentData.history.reduce((sum, h) => sum + (h.coherence || 0), 0) / deploymentData.history.length;
             const avgIntegrity = deploymentData.history.reduce((sum, h) => sum + (h.loop_integrity || 0), 0) / deploymentData.history.length;
             
-            // Assuming connections exist in the frame, otherwise metrics will be 0
             const totalNodes = (frame.nodes || []).length;
             const totalObstacles = (deploymentData.config.obstacles || []).length;
             
-            // This is a rough metric; a more precise one requires checking all frames
             const totalBreaks = deploymentData.history.reduce((sum, h) => {
                 const connections = h.connections || [];
                 return sum + connections.filter(c => c.broken).length;
@@ -642,7 +643,7 @@
             `).join('');
         }
 
-        // --- Controls and Animation ---
+        // --- Controls and Animation (re-pasting for completeness) ---
 
         function setupControls() {
             const playBtn = document.getElementById('playBtn');
@@ -672,7 +673,6 @@
             if (!isPlaying) return;
             
             const speed = parseInt(document.getElementById('speedSlider').value);
-            // Speed Slider: 1 to 100. Delay: 100ms to 0ms (but we use a floor)
             const delay = 100 - speed;
             
             currentFrame++;
@@ -687,12 +687,11 @@
             }, delay);
         }
 
-        // --- Main Update Function ---
+        // --- Main Update Function (re-pasting for completeness) ---
 
         function updateVisualization(frameIndex) {
             const frame = deploymentData.history[frameIndex];
             
-            // Update timeline
             const timeValue = frame.time !== undefined ? frame.time.toFixed(2) : frameIndex;
             const maxTime = deploymentData.history[deploymentData.history.length - 1].time !== undefined 
                 ? deploymentData.history[deploymentData.history.length - 1].time.toFixed(2) 
@@ -703,50 +702,40 @@
             
             document.getElementById('timeSlider').value = frameIndex;
             
-            // Draw swarm
             drawSwarm(frame);
-            
-            // Update chart current position indicators
             updateChartMarkers(frameIndex);
         }
 
-        // --- Canvas Drawing Logic ---
+        // --- Canvas Drawing Logic (re-pasting for completeness) ---
         
         function drawSwarm(frame) {
             const canvas = document.getElementById('swarmCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Set canvas size
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
             
-            // Use 1.0 as the world size reference
             const size = 1.0; 
             const scale = Math.min(canvas.width, canvas.height) * 0.9;
             const offsetX = (canvas.width - scale) / 2;
             const offsetY = (canvas.height - scale) / 2;
             
-            // Clear canvas
             ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw bounds
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
             ctx.lineWidth = 1;
             ctx.strokeRect(offsetX, offsetY, scale, scale);
 
-            // Draw grid lines
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
             ctx.lineWidth = 1;
-            for (let i = 0; i <= 10; i++) {
-                // Vertical lines
+            for (let i = 1; i < 10; i++) {
                 const x = offsetX + (i / 10) * scale;
                 ctx.beginPath();
                 ctx.moveTo(x, offsetY);
                 ctx.lineTo(x, offsetY + scale);
                 ctx.stroke();
                 
-                // Horizontal lines
                 const y = offsetY + (i / 10) * scale;
                 ctx.beginPath();
                 ctx.moveTo(offsetX, y);
@@ -754,7 +743,6 @@
                 ctx.stroke();
             }
             
-            // Draw connections
             const connections = frame.connections || [];
             const nodes = frame.nodes || [];
             
@@ -763,7 +751,6 @@
                 const nodeB = nodes.find(n => n.id === conn.node_b);
                 
                 if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
-                    // Note: Y-axis is inverted (0 is top in canvas, 0 is bottom in simulation)
                     const x1 = offsetX + nodeA.pos[0] * scale / size;
                     const y1 = offsetY + (size - nodeA.pos[1]) * scale / size;
                     const x2 = offsetX + nodeB.pos[0] * scale / size;
@@ -780,10 +767,9 @@
                 }
             });
             
-            // Draw obstacles
             const obstacles = frame.obstacles || [];
             obstacles.forEach(obs => {
-                if (obs.pos) {
+                if (obs.pos && Array.isArray(obs.pos) && obs.pos.length >= 2) {
                     const x = offsetX + obs.pos[0] * scale / size;
                     const y = offsetY + (size - obs.pos[1]) * scale / size;
                     const r = (obs.radius || 0.05) * scale / size;
@@ -799,24 +785,20 @@
                 }
             });
             
-            // Draw nodes
             nodes.forEach(node => {
-                if (node.pos) {
+                if (node.pos && Array.isArray(node.pos) && node.pos.length >= 2) {
                     const x = offsetX + node.pos[0] * scale / size;
                     const y = offsetY + (size - node.pos[1]) * scale / size;
                     
-                    // Node body
-                    ctx.fillStyle = node.active === false ? '#9CA3AF' : '#4ade80'; // Gray if inactive, green if active
+                    ctx.fillStyle = node.active === false ? '#9CA3AF' : '#4ade80'; 
                     ctx.beginPath();
                     ctx.arc(x, y, 6, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Node border
                     ctx.strokeStyle = '#22c55e';
                     ctx.lineWidth = 2;
                     ctx.stroke();
                     
-                    // Node ID
                     ctx.fillStyle = '#e0e0e0';
                     ctx.font = '10px Inter';
                     ctx.textAlign = 'center';
@@ -846,7 +828,7 @@
             });
         }
         
-        // 💡 NEW: Automatically attempt to load local file on page load
+        // Automatically attempt to load local file on page load
         document.addEventListener('DOMContentLoaded', fetchLocalData);
     </script>
 </body>
