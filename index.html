@@ -224,7 +224,7 @@
                 <div id="flowrra-app" class="w-full">
                     
                     <div id="loadingState" class="glass-card p-24 text-center flex flex-col items-center justify-center">
-                        <div class="loader mb-6"></div>
+                        <div class="loader mb-8"></div>
                         <h3 class="text-xl font-semibold text-white">Initializing FLOWRRA Protocol...</h3>
                         <p class="text-gray-400 mt-2">Loading simulation data from the nexus.</p>
                     </div>
@@ -558,18 +558,12 @@
             const frame = deploymentData.history[deploymentData.history.length - 1];
             const avgCoherence = deploymentData.history.reduce((sum, h) => sum + (h.coherence || 0), 0) / deploymentData.history.length;
             const avgIntegrity = deploymentData.history.reduce((sum, h) => sum + (h.loop_integrity || 0), 0) / deploymentData.history.length;
-            const totalReconnections = deploymentData.history.reduce((sum, h) => {
-                const connections = h.total_reconnections || [];
-                return sum + connections.filter(c => c.broken).length;
-            }, 0);
 
             const metrics = [
                 { label: 'Total Steps', value: deploymentData.history.length },
                 { label: 'Avg Coherence', value: (avgCoherence * 100).toFixed(1) + '%' },
                 { label: 'Avg Integrity', value: (avgIntegrity * 100).toFixed(1) + '%' },
                 { label: 'Total Nodes', value: (frame.nodes || []).length },
-                { label: 'Obstacles', value: (frame.obstacles || []).length },
-                { label: 'Total Reconnections', value: totalReconnections }
             ];
 
             const grid = document.getElementById('metricsGrid');
