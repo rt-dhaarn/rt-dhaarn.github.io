@@ -682,9 +682,9 @@
 
             // Draw Partition Boundaries
             if (frame.holons) {
-                ctx.strokeStyle = "rgba(156, 163, 175, 0.3)";
+                ctx.strokeStyle = "rgba(156, 163, 175, 0.4)";
                 ctx.lineWidth = 2;
-                ctx.setLineDash([5, 5]);
+                ctx.setLineDash([8, 4]);
 
                 frame.holons.forEach(holon => {
                     const bounds = holon.bounds;
@@ -699,42 +699,64 @@
                 ctx.setLineDash([]);
             }
 
-            // Draw Connections (Loop Links)
-            const connections = frame.connections || [];
             const nodes = frame.nodes || [];
+            const connections = frame.connections || [];
 
+            // Create node lookup map
+            const nodeMap = new Map();
+            nodes.forEach(node => {
+                nodeMap.set(node.id, node);
+            });
+
+            // FIXED: Draw connections filtered by holon
+            // Group connections by the holon of their nodes
             connections.forEach(conn => {
-                const nodeA = nodes.find(n => n.id === conn.node_a);
-                const nodeB = nodes.find(n => n.id === conn.node_b);
+                const nodeA = nodeMap.get(conn.node_a);
+                const nodeB = nodeMap.get(conn.node_b);
 
                 if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
-                    const x1 = offsetX + nodeA.pos[0] * scale;
-                    const y1 = offsetY + (1 - nodeA.pos[1]) * scale;
-                    const x2 = offsetX + nodeB.pos[0] * scale;
-                    const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
+                    // Only draw if both nodes belong to same holon
+                    if (nodeA.holon_id === nodeB.holon_id) {
+                        const x1 = offsetX + nodeA.pos[0] * scale;
+                        const y1 = offsetY + (1 - nodeA.pos[1]) * scale;
+                        const x2 = offsetX + nodeB.pos[0] * scale;
+                        const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
 
-                    ctx.strokeStyle = conn.broken ? "rgba(239, 68, 68, 0.6)" : "rgba(74, 222, 128, 0.4)";
-                    ctx.lineWidth = conn.broken ? 1 : 1.5;
-                    ctx.setLineDash(conn.broken ? [5, 5] : []);
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
+                        // Color code by holon
+                        const holonColor = HOLON_COLORS[nodeA.holon_id % HOLON_COLORS.length];
+                        
+                        ctx.strokeStyle = conn.broken 
+                            ? "rgba(239, 68, 68, 0.7)" 
+                            : holonColor.replace(')', ', 0.5)').replace('rgb', 'rgba');
+                        
+                        ctx.lineWidth = conn.broken ? 1.5 : 2;
+                        ctx.setLineDash(conn.broken ? [5, 5] : []);
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
                 }
             });
 
-            // Draw Obstacles
-            (frame.obstacles || []).forEach(obs => {
-                if (obs.pos) {
-                    const x = offsetX + obs.pos[0] * scale;
-                    const y = offsetY + (1 - obs.pos[1]) * scale;
-                    const r = (obs.radius || 0.02) * scale;
+            // FIXED: Draw Obstacles with proper size from config
+            const obstacles = deploymentData.config?.obstacles || [];
+            
+            obstacles.forEach(obs => {
+                // obs format: [x, y, radius]
+                if (Array.isArray(obs) && obs.length >= 3) {
+                    const x = offsetX + obs[0] * scale;
+                    const y = offsetY + (1 - obs[1]) * scale;
+                    const r = obs[2] * scale; // Use radius from config
 
-                    ctx.fillStyle = "rgba(245, 158, 11, 0.4)";
+                    // Draw filled circle
+                    ctx.fillStyle = "rgba(245, 158, 11, 0.5)";
                     ctx.beginPath();
                     ctx.arc(x, y, r, 0, Math.PI * 2);
                     ctx.fill();
+                    
+                    // Draw border
                     ctx.strokeStyle = "#f59e0b";
                     ctx.lineWidth = 2;
                     ctx.stroke();
@@ -752,19 +774,20 @@
                     // Node circle
                     ctx.fillStyle = color;
                     ctx.beginPath();
-                    ctx.arc(x, y, 5, 0, Math.PI * 2);
+                    ctx.arc(x, y, 6, 0, Math.PI * 2);
                     ctx.fill();
 
-                    // Node border
+                    // Node border (brighter)
                     ctx.strokeStyle = color;
                     ctx.lineWidth = 2;
                     ctx.stroke();
 
                     // Node ID
                     ctx.fillStyle = "#ffffff";
-                    ctx.font = "9px Inter";
+                    ctx.font = "bold 10px Inter";
                     ctx.textAlign = "center";
-                    ctx.fillText(node.id !== undefined ? node.id : "?", x, y - 10);
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(node.id, x, y - 12);
                 }
             });
         }
