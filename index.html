@@ -443,7 +443,7 @@
     <script>
         // UPDATED FLOWRRA VISUALIZATION SCRIPT
           // Replace the entire <script> section that starts with "let deploymentData = null;"
-          // This version works with trajectory_500_steps.json format
+          // This version works with trajectory_1000_steps.json format
           
           let deploymentData = null;
           let currentFrame = 0;
@@ -463,7 +463,7 @@
           
               try {
                   // CHANGE THIS LINE to your new filename
-                  const response = await fetch("./trajectory_500_steps.json");
+                  const response = await fetch("./trajectory_1000_steps.json");
           
                   if (!response.ok) {
                       throw new Error(
