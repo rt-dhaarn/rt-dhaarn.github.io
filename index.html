@@ -441,407 +441,380 @@
     </script>
 
     <script>
-        // UPDATED FLOWRRA VISUALIZATION SCRIPT
-          // Replace the entire <script> section that starts with "let deploymentData = null;"
-          // This version works with trajectory_1000_steps.json format
-          
-          let deploymentData = null;
-          let currentFrame = 0;
-          let isPlaying = false;
-          let animationId = null;
-          let charts = {};
-          
-          // Auto-load on startup
-          document.addEventListener("DOMContentLoaded", () => {
-              fetchVisualizationData();
-          });
-          
-          async function fetchVisualizationData() {
-              const loadingState = document.getElementById("loadingState");
-              const errorState = document.getElementById("errorState");
-              const errorMessage = document.getElementById("errorMessage");
-          
-              try {
-                  // CHANGE THIS LINE to your new filename
-                  const response = await fetch("./trajectory_1000_steps.json");
-          
-                  if (!response.ok) {
-                      throw new Error(
-                          `HTTP Error: ${response.status} ${response.statusText}`,
-                      );
-                  }
-          
-                  const rawData = await response.json();
-          
-                  // NEW: Handle trajectory_500_steps.json structure
-                  if (!rawData.trajectory || !Array.isArray(rawData.trajectory) || rawData.trajectory.length === 0) {
-                      throw new Error('Invalid JSON structure: missing "trajectory" array.');
-                  }
-          
-                  // Transform data to expected format
-                  deploymentData = {
-                      config: rawData.config || {},
-                      metadata: rawData.metadata || {},
-                      // Use trajectory array directly as history
-                      history: rawData.trajectory.map(snapshot => ({
-                          time: snapshot.time,
-                          nodes: snapshot.nodes,
-                          connections: snapshot.connections || [],
-                          holons: snapshot.holons || [],
-                          // Extract coherence/integrity if available, otherwise use defaults
-                          coherence: snapshot.coherence || 0.8,
-                          loop_integrity: snapshot.loop_integrity || 0.9,
-                          obstacles: snapshot.obstacles || []
-                      }))
-                  };
-          
-                  console.log(`[FLOWRRA] Loaded ${deploymentData.history.length} trajectory snapshots`);
-          
-                  // Success: Hide loading, show content
-                  loadingState.style.display = "none";
-                  initializeVisualization();
-              } catch (err) {
-                  console.error("Failed to load visualization:", err);
-                  loadingState.style.display = "none";
-                  errorState.classList.remove("hidden");
-                  errorMessage.textContent =
-                      err.message + " (Check if trajectory_500_steps.json exists)";
-              }
-          }
-          
-          function initializeVisualization() {
-              document.getElementById("mainContent").style.display = "block";
-          
-              const timeSlider = document.getElementById("timeSlider");
-              timeSlider.max = deploymentData.history.length - 1;
-          
-              setupCharts();
-              setupMetrics();
-              setupControls();
-          
-              // Initial Draw
-              updateVisualization(0);
-          }
-          
-          function setupCharts() {
-              const chartDefaults = {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                      legend: { display: false },
-                  },
-                  scales: {
-                      x: {
-                          grid: { color: "rgba(255, 255, 255, 0.05)" },
-                          ticks: { color: "#9CA3AF" },
-                      },
-                      y: {
-                          grid: { color: "rgba(255, 255, 255, 0.05)" },
-                          ticks: { color: "#9CA3AF" },
-                      },
-                  },
-              };
-          
-              // Coherence Chart
-              const coherenceCtx = document
-                  .getElementById("coherenceChart")
-                  .getContext("2d");
-              const coherenceData = deploymentData.history.map(
-                  (h) => h.coherence || 0.8,
-              );
-          
-              charts.coherence = new Chart(coherenceCtx, {
-                  type: "line",
-                  data: {
-                      labels: deploymentData.history.map((h) => h.time),
-                      datasets: [
-                          {
-                              label: "Coherence",
-                              data: coherenceData,
-                              borderColor: "#2DD4BF",
-                              backgroundColor: "rgba(45, 212, 191, 0.1)",
-                              fill: true,
-                              tension: 0.4,
-                              borderWidth: 2,
-                          },
-                      ],
-                  },
-                  options: {
-                      ...chartDefaults,
-                      scales: {
-                          ...chartDefaults.scales,
-                          y: { ...chartDefaults.scales.y, min: 0, max: 1 },
-                      },
-                  },
-              });
-          
-              // Integrity Chart
-              const integrityCtx = document
-                  .getElementById("integrityChart")
-                  .getContext("2d");
-              const integrityData = deploymentData.history.map(
-                  (h) => h.loop_integrity || 0.9,
-              );
-          
-              charts.integrity = new Chart(integrityCtx, {
-                  type: "line",
-                  data: {
-                      labels: deploymentData.history.map((h) => h.time),
-                      datasets: [
-                          {
-                              label: "Loop Integrity",
-                              data: integrityData,
-                              borderColor: "#FCD34D",
-                              backgroundColor: "rgba(252, 211, 77, 0.1)",
-                              fill: true,
-                              tension: 0.4,
-                              borderWidth: 2,
-                          },
-                      ],
-                  },
-                  options: {
-                      ...chartDefaults,
-                      scales: {
-                          ...chartDefaults.scales,
-                          y: { ...chartDefaults.scales.y, min: 0, max: 1 },
-                      },
-                  },
-              });
-          }
-          
-          function setupMetrics() {
-              const frame = deploymentData.history[deploymentData.history.length - 1];
-              const avgCoherence =
-                  deploymentData.history.reduce(
-                      (sum, h) => sum + (h.coherence || 0.8),
-                      0,
-                  ) / deploymentData.history.length;
-              const avgIntegrity =
-                  deploymentData.history.reduce(
-                      (sum, h) => sum + (h.loop_integrity || 0.9),
-                      0,
-                  ) / deploymentData.history.length;
-          
-              const metrics = [
-                  {
-                      label: "Total Steps",
-                      value: deploymentData.history.length,
-                  },
-                  {
-                      label: "Avg Coherence",
-                      value: (avgCoherence * 100).toFixed(1) + "%",
-                  },
-                  {
-                      label: "Avg Integrity",
-                      value: (avgIntegrity * 100).toFixed(1) + "%",
-                  },
-                  { label: "Total Nodes", value: (frame.nodes || []).length },
-                  {
-                      label: "Holons",
-                      value: deploymentData.metadata.num_holons || (frame.holons || []).length,
-                  },
-              ];
-          
-              const grid = document.getElementById("metricsGrid");
-              grid.innerHTML = metrics
-                  .map(
-                      (m) => `
-                  <div class="bg-black/20 p-4 rounded-lg border border-gray-700">
-                      <div class="text-xl font-bold gradient-text">${m.value}</div>
-                      <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">${m.label}</div>
-                  </div>
-              `,
-                  )
-                  .join("");
-          }
-          
-          function setupControls() {
-              const playBtn = document.getElementById("playBtn");
-              const resetBtn = document.getElementById("resetBtn");
-              const timeSlider = document.getElementById("timeSlider");
-          
-              playBtn.addEventListener("click", () => {
-                  isPlaying = !isPlaying;
-                  playBtn.textContent = isPlaying ? "⏸ Pause" : "▶ Play";
-                  if (isPlaying) animate();
-              });
-          
-              resetBtn.addEventListener("click", () => {
-                  currentFrame = 0;
-                  isPlaying = false;
-                  playBtn.textContent = "▶ Play";
-                  updateVisualization(0);
-              });
-          
-              timeSlider.addEventListener("input", (e) => {
-                  currentFrame = parseInt(e.target.value);
-                  updateVisualization(currentFrame);
-              });
-          }
-          
-          function animate() {
-              if (!isPlaying) return;
-          
-              const speed = parseInt(
-                  document.getElementById("speedSlider").value,
-              );
-              const delay = 100 - speed;
-          
-              currentFrame++;
-              if (currentFrame >= deploymentData.history.length) {
-                  currentFrame = 0; // Loop
-              }
-          
-              updateVisualization(currentFrame);
-          
-              setTimeout(() => {
-                  if (isPlaying) animate();
-              }, delay);
-          }
-          
-          function updateVisualization(frameIndex) {
-              if (!deploymentData) return;
-              const frame = deploymentData.history[frameIndex];
-          
-              const timeValue = frame.time;
-              const maxTime = deploymentData.history[deploymentData.history.length - 1].time;
-          
-              document.getElementById("timelineInfo").textContent =
-                  `Timestep: ${timeValue} / ${maxTime}`;
-              document.getElementById("timeSlider").value = frameIndex;
-          
-              drawSwarm(frame);
-          }
-          
-          function drawSwarm(frame) {
-              const canvas = document.getElementById("swarmCanvas");
-              const ctx = canvas.getContext("2d");
-          
-              // Set canvas resolution to match display size
-              canvas.width = canvas.offsetWidth;
-              canvas.height = canvas.offsetHeight;
-          
-              const scale = Math.min(canvas.width, canvas.height) * 0.9;
-              const offsetX = (canvas.width - scale) / 2;
-              const offsetY = (canvas.height - scale) / 2;
-          
-              // Clear
-              ctx.fillStyle = "#0a0a0a";
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-          
-              // Grid
-              ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
-              ctx.lineWidth = 1;
-              for (let i = 0; i <= 10; i++) {
-                  const pos = offsetX + (i / 10) * scale;
-                  ctx.beginPath();
-                  ctx.moveTo(pos, offsetY);
-                  ctx.lineTo(pos, offsetY + scale);
-                  ctx.stroke();
-                  ctx.beginPath();
-                  ctx.moveTo(offsetX, offsetY + (i / 10) * scale);
-                  ctx.lineTo(offsetX + scale, offsetY + (i / 10) * scale);
-                  ctx.stroke();
-              }
-          
-              // NEW: Draw holon boundaries if available
-              (frame.holons || []).forEach((holon, idx) => {
-                  const bounds = holon.bounds;
-                  if (bounds) {
-                      const x1 = offsetX + bounds.x_min * scale;
-                      const y1 = offsetY + (1 - bounds.y_max) * scale;
-                      const w = (bounds.x_max - bounds.x_min) * scale;
-                      const h = (bounds.y_max - bounds.y_min) * scale;
-          
-                      // Holon boundary color based on ID
-                      const colors = ['#2DD4BF', '#FCD34D', '#EF4444', '#8B5CF6'];
-                      ctx.strokeStyle = colors[idx % colors.length] + '40';
-                      ctx.lineWidth = 2;
-                      ctx.setLineDash([5, 5]);
-                      ctx.strokeRect(x1, y1, w, h);
-                      ctx.setLineDash([]);
-          
-                      // Holon label
-                      ctx.fillStyle = colors[idx % colors.length];
-                      ctx.font = "12px Inter";
-                      ctx.fillText(`H${holon.holon_id}`, x1 + 5, y1 + 15);
-                  }
-              });
-          
-              // Connections
-              const connections = frame.connections || [];
-              const nodes = frame.nodes || [];
-          
-              connections.forEach((conn) => {
-                  const nodeA = nodes.find((n) => n.id === conn.node_a);
-                  const nodeB = nodes.find((n) => n.id === conn.node_b);
-          
-                  if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
-                      const x1 = offsetX + nodeA.pos[0] * scale;
-                      const y1 = offsetY + (1 - nodeA.pos[1]) * scale;
-                      const x2 = offsetX + nodeB.pos[0] * scale;
-                      const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
-          
-                      ctx.strokeStyle = conn.broken
-                          ? "rgba(239, 68, 68, 0.6)"
-                          : "rgba(96, 165, 250, 0.6)";
-                      ctx.lineWidth = conn.broken ? 1 : 2;
-                      ctx.setLineDash(conn.broken ? [5, 5] : []);
-                      ctx.beginPath();
-                      ctx.moveTo(x1, y1);
-                      ctx.lineTo(x2, y2);
-                      ctx.stroke();
-                      ctx.setLineDash([]);
-                  }
-              });
-          
-              // Obstacles
-              (frame.obstacles || []).forEach((obs) => {
-                  if (obs.pos) {
-                      const x = offsetX + obs.pos[0] * scale;
-                      const y = offsetY + (1 - obs.pos[1]) * scale;
-                      const r = (obs.radius || 0.05) * scale;
-          
-                      ctx.fillStyle = obs.is_static
-                          ? "rgba(245, 158, 11, 0.4)"
-                          : "rgba(236, 72, 153, 0.4)";
-                      ctx.beginPath();
-                      ctx.arc(x, y, r, 0, Math.PI * 2);
-                      ctx.fill();
-                      ctx.strokeStyle = obs.is_static ? "#f59e0b" : "#ec4899";
-                      ctx.lineWidth = 2;
-                      ctx.stroke();
-                  }
-              });
-          
-              // Nodes (colored by holon)
-              const holonColors = ['#2DD4BF', '#FCD34D', '#EF4444', '#8B5CF6'];
-              
-              nodes.forEach((node) => {
-                  if (node.pos) {
-                      const x = offsetX + node.pos[0] * scale;
-                      const y = offsetY + (1 - node.pos[1]) * scale;
-          
-                      // Color by holon_id if available
-                      const color = holonColors[node.holon_id % holonColors.length];
-                      
-                      ctx.fillStyle = color;
-                      ctx.beginPath();
-                      ctx.arc(x, y, 6, 0, Math.PI * 2);
-                      ctx.fill();
-          
-                      ctx.strokeStyle = "#ffffff";
-                      ctx.lineWidth = 1.5;
-                      ctx.stroke();
-          
-                      // ID (optional - comment out if too cluttered)
-                      // ctx.fillStyle = "#ffffff";
-                      // ctx.font = "9px Inter";
-                      // ctx.textAlign = "center";
-                      // ctx.fillText(node.id, x, y - 10);
-                  }
-              });
-          }
+        
+        let deploymentData = null;
+        let currentFrame = 0;
+        let isPlaying = false;
+        let animationId = null;
+        let charts = {};
+
+        // Auto-load on startup
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchVisualizationData();
+        });
+
+        async function fetchVisualizationData() {
+            const loadingState = document.getElementById("loadingState");
+            const errorState = document.getElementById("errorState");
+            const errorMessage = document.getElementById("errorMessage");
+
+            try {
+                // Fetch the JSON file relative to index.html
+                const response = await fetch("./deployment_viz.json");
+
+                if (!response.ok) {
+                    throw new Error(
+                        `HTTP Error: ${response.status} ${response.statusText}`,
+                    );
+                }
+
+                const rawData = await response.json();
+
+                // Validate Data Structure
+                let framesArray = rawData.history || rawData.frames;
+                if (
+                    !framesArray ||
+                    !Array.isArray(framesArray) ||
+                    framesArray.length === 0
+                ) {
+                    throw new Error(
+                        'Invalid JSON structure: missing "history" or "frames" array.',
+                    );
+                }
+
+                deploymentData = {
+                    config: rawData.config || {},
+                    history: framesArray,
+                };
+
+                // Success: Hide loading, show content
+                loadingState.style.display = "none";
+                initializeVisualization();
+            } catch (err) {
+                console.error("Failed to load visualization:", err);
+                loadingState.style.display = "none";
+                errorState.classList.remove("hidden");
+                errorMessage.textContent =
+                    err.message + " (Check if deployment_viz.json exists)";
+            }
+        }
+
+        function initializeVisualization() {
+            document.getElementById("mainContent").style.display = "block";
+
+            const timeSlider = document.getElementById("timeSlider");
+            timeSlider.max = deploymentData.history.length - 1;
+
+            setupCharts();
+            setupMetrics();
+            setupControls();
+
+            // Initial Draw
+            updateVisualization(0);
+        }
+
+        function setupCharts() {
+            const chartDefaults = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                },
+                scales: {
+                    x: {
+                        grid: { color: "rgba(255, 255, 255, 0.05)" },
+                        ticks: { color: "#9CA3AF" },
+                    },
+                    y: {
+                        grid: { color: "rgba(255, 255, 255, 0.05)" },
+                        ticks: { color: "#9CA3AF" },
+                    },
+                },
+            };
+
+            // Coherence Chart
+            const coherenceCtx = document
+                .getElementById("coherenceChart")
+                .getContext("2d");
+            const coherenceData = deploymentData.history.map(
+                (h) => h.coherence || 0,
+            );
+
+            charts.coherence = new Chart(coherenceCtx, {
+                type: "line",
+                data: {
+                    labels: deploymentData.history.map((h, i) =>
+                        h.time !== undefined ? h.time : i,
+                    ),
+                    datasets: [
+                        {
+                            label: "Coherence",
+                            data: coherenceData,
+                            borderColor: "#2DD4BF", // Teal-400
+                            backgroundColor: "rgba(45, 212, 191, 0.1)",
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 2,
+                        },
+                    ],
+                },
+                options: {
+                    ...chartDefaults,
+                    scales: {
+                        ...chartDefaults.scales,
+                        y: { ...chartDefaults.scales.y, min: 0, max: 1 },
+                    },
+                },
+            });
+
+            // Integrity Chart
+            const integrityCtx = document
+                .getElementById("integrityChart")
+                .getContext("2d");
+            const integrityData = deploymentData.history.map(
+                (h) => h.loop_integrity || 0,
+            );
+
+            charts.integrity = new Chart(integrityCtx, {
+                type: "line",
+                data: {
+                    labels: deploymentData.history.map((h, i) =>
+                        h.time !== undefined ? h.time : i,
+                    ),
+                    datasets: [
+                        {
+                            label: "Loop Integrity",
+                            data: integrityData,
+                            borderColor: "#FCD34D", // Amber-300
+                            backgroundColor: "rgba(252, 211, 77, 0.1)",
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 2,
+                        },
+                    ],
+                },
+                options: {
+                    ...chartDefaults,
+                    scales: {
+                        ...chartDefaults.scales,
+                        y: { ...chartDefaults.scales.y, min: 0, max: 1 },
+                    },
+                },
+            });
+        }
+
+        function setupMetrics() {
+            const frame =
+                deploymentData.history[deploymentData.history.length - 1];
+            const avgCoherence =
+                deploymentData.history.reduce(
+                    (sum, h) => sum + (h.coherence || 0),
+                    0,
+                ) / deploymentData.history.length;
+            const avgIntegrity =
+                deploymentData.history.reduce(
+                    (sum, h) => sum + (h.loop_integrity || 0),
+                    0,
+                ) / deploymentData.history.length;
+
+            const metrics = [
+                {
+                    label: "Total Steps",
+                    value: deploymentData.history.length,
+                },
+                {
+                    label: "Avg Coherence",
+                    value: (avgCoherence * 100).toFixed(1) + "%",
+                },
+                {
+                    label: "Avg Integrity",
+                    value: (avgIntegrity * 100).toFixed(1) + "%",
+                },
+                { label: "Total Nodes", value: (frame.nodes || []).length },
+                {
+                    label: "Obstacles",
+                    value: (frame.obstacles || []).length,
+                },
+            ];
+
+            const grid = document.getElementById("metricsGrid");
+            grid.innerHTML = metrics
+                .map(
+                    (m) => `
+            <div class="bg-black/20 p-4 rounded-lg border border-gray-700">
+                <div class="text-xl font-bold gradient-text">${m.value}</div>
+                <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">${m.label}</div>
+            </div>
+        `,
+                )
+                .join("");
+        }
+
+        function setupControls() {
+            const playBtn = document.getElementById("playBtn");
+            const resetBtn = document.getElementById("resetBtn");
+            const timeSlider = document.getElementById("timeSlider");
+
+            playBtn.addEventListener("click", () => {
+                isPlaying = !isPlaying;
+                playBtn.textContent = isPlaying ? "⏸ Pause" : "▶ Play";
+                if (isPlaying) animate();
+            });
+
+            resetBtn.addEventListener("click", () => {
+                currentFrame = 0;
+                isPlaying = false;
+                playBtn.textContent = "▶ Play";
+                updateVisualization(0);
+            });
+
+            timeSlider.addEventListener("input", (e) => {
+                currentFrame = parseInt(e.target.value);
+                updateVisualization(currentFrame);
+            });
+        }
+
+        function animate() {
+            if (!isPlaying) return;
+
+            const speed = parseInt(
+                document.getElementById("speedSlider").value,
+            );
+            const delay = 100 - speed;
+
+            currentFrame++;
+            if (currentFrame >= deploymentData.history.length) {
+                currentFrame = 0; // Loop
+            }
+
+            updateVisualization(currentFrame);
+
+            setTimeout(() => {
+                if (isPlaying) animate();
+            }, delay);
+        }
+
+        function updateVisualization(frameIndex) {
+            if (!deploymentData) return;
+            const frame = deploymentData.history[frameIndex];
+
+            const timeValue =
+                frame.time !== undefined ? frame.time : frameIndex;
+            const maxTime =
+                deploymentData.history[deploymentData.history.length - 1]
+                    .time || deploymentData.history.length - 1;
+
+            document.getElementById("timelineInfo").textContent =
+                `Timestep: ${timeValue} / ${maxTime}`;
+            document.getElementById("timeSlider").value = frameIndex;
+
+            drawSwarm(frame);
+        }
+
+        function drawSwarm(frame) {
+            const canvas = document.getElementById("swarmCanvas");
+            const ctx = canvas.getContext("2d");
+
+            // Set canvas resolution match display size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            const scale = Math.min(canvas.width, canvas.height) * 0.9;
+            const offsetX = (canvas.width - scale) / 2;
+            const offsetY = (canvas.height - scale) / 2;
+
+            // Clear
+            ctx.fillStyle = "#0a0a0a";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grid
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                const pos = offsetX + (i / 10) * scale;
+                ctx.beginPath();
+                ctx.moveTo(pos, offsetY);
+                ctx.lineTo(pos, offsetY + scale);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(offsetX, offsetY + (i / 10) * scale);
+                ctx.lineTo(offsetX + scale, offsetY + (i / 10) * scale);
+                ctx.stroke();
+            }
+
+            // Connections
+            const connections = frame.connections || [];
+            const nodes = frame.nodes || [];
+
+            connections.forEach((conn) => {
+                const nodeA = nodes.find((n) => n.id === conn.node_a);
+                const nodeB = nodes.find((n) => n.id === conn.node_b);
+
+                if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
+                    const x1 = offsetX + nodeA.pos[0] * scale;
+                    const y1 = offsetY + (1 - nodeA.pos[1]) * scale;
+                    const x2 = offsetX + nodeB.pos[0] * scale;
+                    const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
+
+                    ctx.strokeStyle = conn.broken
+                        ? "rgba(239, 68, 68, 0.6)"
+                        : "rgba(96, 165, 250, 0.6)";
+                    ctx.lineWidth = conn.broken ? 1 : 2;
+                    ctx.setLineDash(conn.broken ? [5, 5] : []);
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            });
+
+            // Obstacles
+            (frame.obstacles || []).forEach((obs) => {
+                if (obs.pos) {
+                    const x = offsetX + obs.pos[0] * scale;
+                    const y = offsetY + (1 - obs.pos[1]) * scale;
+                    const r = (obs.radius || 0.05) * scale;
+
+                    ctx.fillStyle = obs.is_static
+                        ? "rgba(245, 158, 11, 0.4)"
+                        : "rgba(236, 72, 153, 0.4)";
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = obs.is_static ? "#f59e0b" : "#ec4899";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            });
+
+            // Nodes
+            nodes.forEach((node) => {
+                if (node.pos) {
+                    const x = offsetX + node.pos[0] * scale;
+                    const y = offsetY + (1 - node.pos[1]) * scale;
+
+                    ctx.fillStyle = "#2DD4BF"; // Teal
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.strokeStyle = "#14B8A6";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // ID
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "10px Inter";
+                    ctx.textAlign = "center";
+                    ctx.fillText(
+                        node.id !== undefined ? node.id : "?",
+                        x,
+                        y - 12,
+                    );
+                }
+            });
+        }
     </script>
 </body>
 </html>
