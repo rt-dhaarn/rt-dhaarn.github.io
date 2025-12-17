@@ -708,35 +708,52 @@
                 nodeMap.set(node.id, node);
             });
 
-            // FIXED: Draw connections filtered by holon
-            // Group connections by the holon of their nodes
+            // DEBUG: Log connection data for first frame
+            if (currentFrame === 0) {
+                console.log('Total connections:', connections.length);
+                console.log('Total nodes:', nodes.length);
+                console.log('Sample connection:', connections[0]);
+                
+                // Count connections per holon
+                const holonConnCounts = {};
+                connections.forEach(conn => {
+                    const nodeA = nodeMap.get(conn.node_a);
+                    if (nodeA) {
+                        holonConnCounts[nodeA.holon_id] = (holonConnCounts[nodeA.holon_id] || 0) + 1;
+                    }
+                });
+                console.log('Connections per holon:', holonConnCounts);
+            }
+
+            // FIXED: Draw ALL connections, color-coded by holon
             connections.forEach(conn => {
                 const nodeA = nodeMap.get(conn.node_a);
                 const nodeB = nodeMap.get(conn.node_b);
 
                 if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
-                    // Only draw if both nodes belong to same holon
-                    if (nodeA.holon_id === nodeB.holon_id) {
-                        const x1 = offsetX + nodeA.pos[0] * scale;
-                        const y1 = offsetY + (1 - nodeA.pos[1]) * scale;
-                        const x2 = offsetX + nodeB.pos[0] * scale;
-                        const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
+                    const x1 = offsetX + nodeA.pos[0] * scale;
+                    const y1 = offsetY + (1 - nodeA.pos[1]) * scale;
+                    const x2 = offsetX + nodeB.pos[0] * scale;
+                    const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
 
-                        // Color code by holon
-                        const holonColor = HOLON_COLORS[nodeA.holon_id % HOLON_COLORS.length];
-                        
-                        ctx.strokeStyle = conn.broken 
-                            ? "rgba(239, 68, 68, 0.7)" 
-                            : holonColor.replace(')', ', 0.5)').replace('rgb', 'rgba');
-                        
-                        ctx.lineWidth = conn.broken ? 1.5 : 2;
-                        ctx.setLineDash(conn.broken ? [5, 5] : []);
-                        ctx.beginPath();
-                        ctx.moveTo(x1, y1);
-                        ctx.lineTo(x2, y2);
-                        ctx.stroke();
-                        ctx.setLineDash([]);
-                    }
+                    // Color code by holon of nodeA
+                    const holonColor = HOLON_COLORS[nodeA.holon_id % HOLON_COLORS.length];
+                    
+                    // Make opacity depend on whether nodes are in same holon
+                    const sameholon = nodeA.holon_id === nodeB.holon_id;
+                    const opacity = sameholon ? '0.6' : '0.3'; // Dim cross-holon connections
+                    
+                    ctx.strokeStyle = conn.broken 
+                        ? "rgba(239, 68, 68, 0.7)" 
+                        : holonColor.replace(')', `, ${opacity})`).replace('rgb', 'rgba');
+                    
+                    ctx.lineWidth = conn.broken ? 1.5 : (sameholon ? 2.5 : 1);
+                    ctx.setLineDash(conn.broken ? [5, 5] : []);
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
                 }
             });
 
