@@ -259,12 +259,15 @@
                                             <canvas id="swarmCanvas" style="width: 100%; height: 65vh; min-height: 550px; display: block; object-fit: contain;"></canvas>
                                         </div>
                         
-                                        <div class="flex flex-wrap gap-4 mt-4 pt-2 text-sm text-gray-400">
-                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-green-500"></div> Node (Active)</div>
-                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-blue-400 opacity-60"></div> Link (Intact)</div>
-                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-red-500 opacity-60"></div> Link (Broken)</div>
-                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-amber-500"></div> Static</div>
-                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-pink-500"></div> Moving</div>
+                                        <div class="flex flex-wrap gap-4 mt-4 pt-2 text-sm text-gray-400 border-t border-gray-700">
+                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-cyan-400"></div> Holon 0</div>
+                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-blue-400"></div> Holon 1</div>
+                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-purple-400"></div> Holon 2</div>
+                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-pink-400"></div> Holon 3</div>
+                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-green-400 opacity-60"></div> Loop Link</div>
+                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-red-500 opacity-60"></div> Broken Link</div>
+                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-amber-500"></div> Obstacle</div>
+                                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded border-2 border-gray-500"></div> Partition</div>
                                         </div>
                                     </div>
                         
@@ -445,10 +448,16 @@
         let deploymentData = null;
         let currentFrame = 0;
         let isPlaying = false;
-        let animationId = null;
         let charts = {};
 
-        // Auto-load on startup
+        // Holon color scheme
+        const HOLON_COLORS = [
+            '#22D3EE', // Cyan-400 - Holon 0
+            '#60A5FA', // Blue-400 - Holon 1
+            '#A78BFA', // Purple-400 - Holon 2
+            '#F472B6', // Pink-400 - Holon 3
+        ];
+
         document.addEventListener("DOMContentLoaded", () => {
             fetchVisualizationData();
         });
@@ -459,43 +468,33 @@
             const errorMessage = document.getElementById("errorMessage");
 
             try {
-                // Fetch the JSON file relative to index.html
-                const response = await fetch("./deployment_viz.json");
+                // Try to load trajectory_1000_steps.json
+                const response = await fetch("./trajectory_1000_steps.json");
 
                 if (!response.ok) {
-                    throw new Error(
-                        `HTTP Error: ${response.status} ${response.statusText}`,
-                    );
+                    throw new Error(`HTTP Error: ${response.status} - Make sure trajectory_1000_steps.json exists`);
                 }
 
                 const rawData = await response.json();
 
-                // Validate Data Structure
-                let framesArray = rawData.history || rawData.frames;
-                if (
-                    !framesArray ||
-                    !Array.isArray(framesArray) ||
-                    framesArray.length === 0
-                ) {
-                    throw new Error(
-                        'Invalid JSON structure: missing "history" or "frames" array.',
-                    );
+                // Validate structure
+                if (!rawData.trajectory || !Array.isArray(rawData.trajectory)) {
+                    throw new Error('Invalid JSON: missing "trajectory" array');
                 }
 
                 deploymentData = {
                     config: rawData.config || {},
-                    history: framesArray,
+                    metadata: rawData.metadata || {},
+                    trajectory: rawData.trajectory,
                 };
 
-                // Success: Hide loading, show content
                 loadingState.style.display = "none";
                 initializeVisualization();
             } catch (err) {
                 console.error("Failed to load visualization:", err);
                 loadingState.style.display = "none";
                 errorState.classList.remove("hidden");
-                errorMessage.textContent =
-                    err.message + " (Check if deployment_viz.json exists)";
+                errorMessage.textContent = err.message;
             }
         }
 
@@ -503,13 +502,12 @@
             document.getElementById("mainContent").style.display = "block";
 
             const timeSlider = document.getElementById("timeSlider");
-            timeSlider.max = deploymentData.history.length - 1;
+            timeSlider.max = deploymentData.trajectory.length - 1;
 
             setupCharts();
             setupMetrics();
             setupControls();
 
-            // Initial Draw
             updateVisualization(0);
         }
 
@@ -517,9 +515,7 @@
             const chartDefaults = {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                },
+                plugins: { legend: { display: false } },
                 scales: {
                     x: {
                         grid: { color: "rgba(255, 255, 255, 0.05)" },
@@ -528,126 +524,75 @@
                     y: {
                         grid: { color: "rgba(255, 255, 255, 0.05)" },
                         ticks: { color: "#9CA3AF" },
+                        min: 0,
+                        max: 1,
                     },
                 },
             };
 
             // Coherence Chart
-            const coherenceCtx = document
-                .getElementById("coherenceChart")
-                .getContext("2d");
-            const coherenceData = deploymentData.history.map(
-                (h) => h.coherence || 0,
-            );
+            const coherenceCtx = document.getElementById("coherenceChart").getContext("2d");
+            const coherenceData = deploymentData.trajectory.map(f => f.coherence || 0);
 
             charts.coherence = new Chart(coherenceCtx, {
                 type: "line",
                 data: {
-                    labels: deploymentData.history.map((h, i) =>
-                        h.time !== undefined ? h.time : i,
-                    ),
-                    datasets: [
-                        {
-                            label: "Coherence",
-                            data: coherenceData,
-                            borderColor: "#2DD4BF", // Teal-400
-                            backgroundColor: "rgba(45, 212, 191, 0.1)",
-                            fill: true,
-                            tension: 0.4,
-                            borderWidth: 2,
-                        },
-                    ],
+                    labels: deploymentData.trajectory.map((f, i) => f.time !== undefined ? f.time : i),
+                    datasets: [{
+                        label: "Coherence",
+                        data: coherenceData,
+                        borderColor: "#2DD4BF",
+                        backgroundColor: "rgba(45, 212, 191, 0.1)",
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                    }],
                 },
-                options: {
-                    ...chartDefaults,
-                    scales: {
-                        ...chartDefaults.scales,
-                        y: { ...chartDefaults.scales.y, min: 0, max: 1 },
-                    },
-                },
+                options: chartDefaults,
             });
 
             // Integrity Chart
-            const integrityCtx = document
-                .getElementById("integrityChart")
-                .getContext("2d");
-            const integrityData = deploymentData.history.map(
-                (h) => h.loop_integrity || 0,
-            );
+            const integrityCtx = document.getElementById("integrityChart").getContext("2d");
+            const integrityData = deploymentData.trajectory.map(f => f.loop_integrity || 0);
 
             charts.integrity = new Chart(integrityCtx, {
                 type: "line",
                 data: {
-                    labels: deploymentData.history.map((h, i) =>
-                        h.time !== undefined ? h.time : i,
-                    ),
-                    datasets: [
-                        {
-                            label: "Loop Integrity",
-                            data: integrityData,
-                            borderColor: "#FCD34D", // Amber-300
-                            backgroundColor: "rgba(252, 211, 77, 0.1)",
-                            fill: true,
-                            tension: 0.4,
-                            borderWidth: 2,
-                        },
-                    ],
+                    labels: deploymentData.trajectory.map((f, i) => f.time !== undefined ? f.time : i),
+                    datasets: [{
+                        label: "Loop Integrity",
+                        data: integrityData,
+                        borderColor: "#FCD34D",
+                        backgroundColor: "rgba(252, 211, 77, 0.1)",
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                    }],
                 },
-                options: {
-                    ...chartDefaults,
-                    scales: {
-                        ...chartDefaults.scales,
-                        y: { ...chartDefaults.scales.y, min: 0, max: 1 },
-                    },
-                },
+                options: chartDefaults,
             });
         }
 
         function setupMetrics() {
-            const frame =
-                deploymentData.history[deploymentData.history.length - 1];
-            const avgCoherence =
-                deploymentData.history.reduce(
-                    (sum, h) => sum + (h.coherence || 0),
-                    0,
-                ) / deploymentData.history.length;
-            const avgIntegrity =
-                deploymentData.history.reduce(
-                    (sum, h) => sum + (h.loop_integrity || 0),
-                    0,
-                ) / deploymentData.history.length;
+            const lastFrame = deploymentData.trajectory[deploymentData.trajectory.length - 1];
+            const avgCoherence = deploymentData.trajectory.reduce((sum, f) => sum + (f.coherence || 0), 0) / deploymentData.trajectory.length;
+            const avgIntegrity = deploymentData.trajectory.reduce((sum, f) => sum + (f.loop_integrity || 0), 0) / deploymentData.trajectory.length;
 
             const metrics = [
-                {
-                    label: "Total Steps",
-                    value: deploymentData.history.length,
-                },
-                {
-                    label: "Avg Coherence",
-                    value: (avgCoherence * 100).toFixed(1) + "%",
-                },
-                {
-                    label: "Avg Integrity",
-                    value: (avgIntegrity * 100).toFixed(1) + "%",
-                },
-                { label: "Total Nodes", value: (frame.nodes || []).length },
-                {
-                    label: "Obstacles",
-                    value: (frame.obstacles || []).length,
-                },
+                { label: "Total Steps", value: deploymentData.trajectory.length },
+                { label: "Avg Coherence", value: (avgCoherence * 100).toFixed(1) + "%" },
+                { label: "Avg Integrity", value: (avgIntegrity * 100).toFixed(1) + "%" },
+                { label: "Total Nodes", value: (lastFrame.nodes || []).length },
+                { label: "Holons", value: new Set((lastFrame.nodes || []).map(n => n.holon_id)).size },
             ];
 
             const grid = document.getElementById("metricsGrid");
-            grid.innerHTML = metrics
-                .map(
-                    (m) => `
-            <div class="bg-black/20 p-4 rounded-lg border border-gray-700">
-                <div class="text-xl font-bold gradient-text">${m.value}</div>
-                <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">${m.label}</div>
-            </div>
-        `,
-                )
-                .join("");
+            grid.innerHTML = metrics.map(m => `
+                <div class="bg-black/20 p-4 rounded-lg border border-gray-700">
+                    <div class="text-xl font-bold gradient-text">${m.value}</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">${m.label}</div>
+                </div>
+            `).join("");
         }
 
         function setupControls() {
@@ -677,14 +622,12 @@
         function animate() {
             if (!isPlaying) return;
 
-            const speed = parseInt(
-                document.getElementById("speedSlider").value,
-            );
+            const speed = parseInt(document.getElementById("speedSlider").value);
             const delay = 100 - speed;
 
             currentFrame++;
-            if (currentFrame >= deploymentData.history.length) {
-                currentFrame = 0; // Loop
+            if (currentFrame >= deploymentData.trajectory.length) {
+                currentFrame = 0;
             }
 
             updateVisualization(currentFrame);
@@ -696,16 +639,12 @@
 
         function updateVisualization(frameIndex) {
             if (!deploymentData) return;
-            const frame = deploymentData.history[frameIndex];
+            const frame = deploymentData.trajectory[frameIndex];
 
-            const timeValue =
-                frame.time !== undefined ? frame.time : frameIndex;
-            const maxTime =
-                deploymentData.history[deploymentData.history.length - 1]
-                    .time || deploymentData.history.length - 1;
+            const timeValue = frame.time !== undefined ? frame.time : frameIndex;
+            const maxTime = deploymentData.trajectory[deploymentData.trajectory.length - 1].time || deploymentData.trajectory.length - 1;
 
-            document.getElementById("timelineInfo").textContent =
-                `Timestep: ${timeValue} / ${maxTime}`;
+            document.getElementById("timelineInfo").textContent = `Timestep: ${timeValue} / ${maxTime}`;
             document.getElementById("timeSlider").value = frameIndex;
 
             drawSwarm(frame);
@@ -715,7 +654,6 @@
             const canvas = document.getElementById("swarmCanvas");
             const ctx = canvas.getContext("2d");
 
-            // Set canvas resolution match display size
             canvas.width = canvas.offsetWidth;
             canvas.height = canvas.offsetHeight;
 
@@ -742,13 +680,32 @@
                 ctx.stroke();
             }
 
-            // Connections
+            // Draw Partition Boundaries
+            if (frame.holons) {
+                ctx.strokeStyle = "rgba(156, 163, 175, 0.3)";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+
+                frame.holons.forEach(holon => {
+                    const bounds = holon.bounds;
+                    const x1 = offsetX + bounds.x_min * scale;
+                    const x2 = offsetX + bounds.x_max * scale;
+                    const y1 = offsetY + (1 - bounds.y_min) * scale;
+                    const y2 = offsetY + (1 - bounds.y_max) * scale;
+
+                    ctx.strokeRect(x1, y2, x2 - x1, y1 - y2);
+                });
+
+                ctx.setLineDash([]);
+            }
+
+            // Draw Connections (Loop Links)
             const connections = frame.connections || [];
             const nodes = frame.nodes || [];
 
-            connections.forEach((conn) => {
-                const nodeA = nodes.find((n) => n.id === conn.node_a);
-                const nodeB = nodes.find((n) => n.id === conn.node_b);
+            connections.forEach(conn => {
+                const nodeA = nodes.find(n => n.id === conn.node_a);
+                const nodeB = nodes.find(n => n.id === conn.node_b);
 
                 if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
                     const x1 = offsetX + nodeA.pos[0] * scale;
@@ -756,10 +713,8 @@
                     const x2 = offsetX + nodeB.pos[0] * scale;
                     const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
 
-                    ctx.strokeStyle = conn.broken
-                        ? "rgba(239, 68, 68, 0.6)"
-                        : "rgba(96, 165, 250, 0.6)";
-                    ctx.lineWidth = conn.broken ? 1 : 2;
+                    ctx.strokeStyle = conn.broken ? "rgba(239, 68, 68, 0.6)" : "rgba(74, 222, 128, 0.4)";
+                    ctx.lineWidth = conn.broken ? 1 : 1.5;
                     ctx.setLineDash(conn.broken ? [5, 5] : []);
                     ctx.beginPath();
                     ctx.moveTo(x1, y1);
@@ -769,49 +724,47 @@
                 }
             });
 
-            // Obstacles
-            (frame.obstacles || []).forEach((obs) => {
+            // Draw Obstacles
+            (frame.obstacles || []).forEach(obs => {
                 if (obs.pos) {
                     const x = offsetX + obs.pos[0] * scale;
                     const y = offsetY + (1 - obs.pos[1]) * scale;
-                    const r = (obs.radius || 0.05) * scale;
+                    const r = (obs.radius || 0.02) * scale;
 
-                    ctx.fillStyle = obs.is_static
-                        ? "rgba(245, 158, 11, 0.4)"
-                        : "rgba(236, 72, 153, 0.4)";
+                    ctx.fillStyle = "rgba(245, 158, 11, 0.4)";
                     ctx.beginPath();
                     ctx.arc(x, y, r, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.strokeStyle = obs.is_static ? "#f59e0b" : "#ec4899";
+                    ctx.strokeStyle = "#f59e0b";
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
             });
 
-            // Nodes
-            nodes.forEach((node) => {
+            // Draw Nodes (color-coded by holon)
+            nodes.forEach(node => {
                 if (node.pos) {
                     const x = offsetX + node.pos[0] * scale;
                     const y = offsetY + (1 - node.pos[1]) * scale;
+                    const holonId = node.holon_id !== undefined ? node.holon_id : 0;
+                    const color = HOLON_COLORS[holonId % HOLON_COLORS.length];
 
-                    ctx.fillStyle = "#2DD4BF"; // Teal
+                    // Node circle
+                    ctx.fillStyle = color;
                     ctx.beginPath();
-                    ctx.arc(x, y, 6, 0, Math.PI * 2);
+                    ctx.arc(x, y, 5, 0, Math.PI * 2);
                     ctx.fill();
 
-                    ctx.strokeStyle = "#14B8A6";
+                    // Node border
+                    ctx.strokeStyle = color;
                     ctx.lineWidth = 2;
                     ctx.stroke();
 
-                    // ID
+                    // Node ID
                     ctx.fillStyle = "#ffffff";
-                    ctx.font = "10px Inter";
+                    ctx.font = "9px Inter";
                     ctx.textAlign = "center";
-                    ctx.fillText(
-                        node.id !== undefined ? node.id : "?",
-                        x,
-                        y - 12,
-                    );
+                    ctx.fillText(node.id !== undefined ? node.id : "?", x, y - 10);
                 }
             });
         }
