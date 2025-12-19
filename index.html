@@ -458,23 +458,47 @@
                                         </div>
 
                                         <div
-                                            class="flex flex-wrap gap-4 mt-4 pt-2 text-sm text-gray-400"
+                                            class="flex flex-wrap gap-4 mt-4 pt-2 text-sm text-gray-400 border-t border-gray-700"
                                         >
                                             <div
                                                 class="flex items-center gap-2"
                                             >
                                                 <div
-                                                    class="w-3 h-3 rounded bg-green-500"
+                                                    class="w-3 h-3 rounded bg-cyan-400"
                                                 ></div>
-                                                Node (Active)
+                                                Holon 0
                                             </div>
                                             <div
                                                 class="flex items-center gap-2"
                                             >
                                                 <div
-                                                    class="w-3 h-3 rounded bg-blue-400 opacity-60"
+                                                    class="w-3 h-3 rounded bg-blue-400"
                                                 ></div>
-                                                Link (Intact)
+                                                Holon 1
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-2"
+                                            >
+                                                <div
+                                                    class="w-3 h-3 rounded bg-purple-400"
+                                                ></div>
+                                                Holon 2
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-2"
+                                            >
+                                                <div
+                                                    class="w-3 h-3 rounded bg-pink-400"
+                                                ></div>
+                                                Holon 3
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-2"
+                                            >
+                                                <div
+                                                    class="w-3 h-3 rounded bg-green-400 opacity-60"
+                                                ></div>
+                                                Loop Link
                                             </div>
                                             <div
                                                 class="flex items-center gap-2"
@@ -482,7 +506,7 @@
                                                 <div
                                                     class="w-3 h-3 rounded bg-red-500 opacity-60"
                                                 ></div>
-                                                Link (Broken)
+                                                Broken Link
                                             </div>
                                             <div
                                                 class="flex items-center gap-2"
@@ -490,15 +514,15 @@
                                                 <div
                                                     class="w-3 h-3 rounded bg-amber-500"
                                                 ></div>
-                                                Static
+                                                Obstacle
                                             </div>
                                             <div
                                                 class="flex items-center gap-2"
                                             >
                                                 <div
-                                                    class="w-3 h-3 rounded bg-pink-500"
+                                                    class="w-3 h-3 rounded border-2 border-gray-500"
                                                 ></div>
-                                                Moving
+                                                Partition
                                             </div>
                                         </div>
                                     </div>
@@ -827,10 +851,16 @@
             let deploymentData = null;
             let currentFrame = 0;
             let isPlaying = false;
-            let animationId = null;
             let charts = {};
 
-            // Auto-load on startup
+            // Holon color scheme
+            const HOLON_COLORS = [
+                "#22D3EE", // Cyan-400 - Holon 0
+                "#60A5FA", // Blue-400 - Holon 1
+                "#A78BFA", // Purple-400 - Holon 2
+                "#F472B6", // Pink-400 - Holon 3
+            ];
+
             document.addEventListener("DOMContentLoaded", () => {
                 fetchVisualizationData();
             });
@@ -841,43 +871,40 @@
                 const errorMessage = document.getElementById("errorMessage");
 
                 try {
-                    // Fetch the JSON file relative to index.html
-                    const response = await fetch("./deployment_viz.json");
+                    // Try to load trajectory_500_steps.json
+                    const response = await fetch("./trajectory_500_steps.json");
 
                     if (!response.ok) {
                         throw new Error(
-                            `HTTP Error: ${response.status} ${response.statusText}`,
+                            `HTTP Error: ${response.status} - Make sure trajectory_500_steps.json exists`,
                         );
                     }
 
                     const rawData = await response.json();
 
-                    // Validate Data Structure
-                    let framesArray = rawData.history || rawData.frames;
+                    // Validate structure
                     if (
-                        !framesArray ||
-                        !Array.isArray(framesArray) ||
-                        framesArray.length === 0
+                        !rawData.trajectory ||
+                        !Array.isArray(rawData.trajectory)
                     ) {
                         throw new Error(
-                            'Invalid JSON structure: missing "history" or "frames" array.',
+                            'Invalid JSON: missing "trajectory" array',
                         );
                     }
 
                     deploymentData = {
                         config: rawData.config || {},
-                        history: framesArray,
+                        metadata: rawData.metadata || {},
+                        trajectory: rawData.trajectory,
                     };
 
-                    // Success: Hide loading, show content
                     loadingState.style.display = "none";
                     initializeVisualization();
                 } catch (err) {
                     console.error("Failed to load visualization:", err);
                     loadingState.style.display = "none";
                     errorState.classList.remove("hidden");
-                    errorMessage.textContent =
-                        err.message + " (Check if deployment_viz.json exists)";
+                    errorMessage.textContent = err.message;
                 }
             }
 
@@ -885,13 +912,12 @@
                 document.getElementById("mainContent").style.display = "block";
 
                 const timeSlider = document.getElementById("timeSlider");
-                timeSlider.max = deploymentData.history.length - 1;
+                timeSlider.max = deploymentData.trajectory.length - 1;
 
                 setupCharts();
                 setupMetrics();
                 setupControls();
 
-                // Initial Draw
                 updateVisualization(0);
             }
 
@@ -899,9 +925,7 @@
                 const chartDefaults = {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         x: {
                             grid: { color: "rgba(255, 255, 255, 0.05)" },
@@ -910,6 +934,8 @@
                         y: {
                             grid: { color: "rgba(255, 255, 255, 0.05)" },
                             ticks: { color: "#9CA3AF" },
+                            min: 0,
+                            max: 1,
                         },
                     },
                 };
@@ -918,21 +944,21 @@
                 const coherenceCtx = document
                     .getElementById("coherenceChart")
                     .getContext("2d");
-                const coherenceData = deploymentData.history.map(
-                    (h) => h.coherence || 0,
+                const coherenceData = deploymentData.trajectory.map(
+                    (f) => f.coherence || 0,
                 );
 
                 charts.coherence = new Chart(coherenceCtx, {
                     type: "line",
                     data: {
-                        labels: deploymentData.history.map((h, i) =>
-                            h.time !== undefined ? h.time : i,
+                        labels: deploymentData.trajectory.map((f, i) =>
+                            f.time !== undefined ? f.time : i,
                         ),
                         datasets: [
                             {
                                 label: "Coherence",
                                 data: coherenceData,
-                                borderColor: "#2DD4BF", // Teal-400
+                                borderColor: "#2DD4BF",
                                 backgroundColor: "rgba(45, 212, 191, 0.1)",
                                 fill: true,
                                 tension: 0.4,
@@ -940,34 +966,28 @@
                             },
                         ],
                     },
-                    options: {
-                        ...chartDefaults,
-                        scales: {
-                            ...chartDefaults.scales,
-                            y: { ...chartDefaults.scales.y, min: 0, max: 1 },
-                        },
-                    },
+                    options: chartDefaults,
                 });
 
                 // Integrity Chart
                 const integrityCtx = document
                     .getElementById("integrityChart")
                     .getContext("2d");
-                const integrityData = deploymentData.history.map(
-                    (h) => h.loop_integrity || 0,
+                const integrityData = deploymentData.trajectory.map(
+                    (f) => f.loop_integrity || 0,
                 );
 
                 charts.integrity = new Chart(integrityCtx, {
                     type: "line",
                     data: {
-                        labels: deploymentData.history.map((h, i) =>
-                            h.time !== undefined ? h.time : i,
+                        labels: deploymentData.trajectory.map((f, i) =>
+                            f.time !== undefined ? f.time : i,
                         ),
                         datasets: [
                             {
                                 label: "Loop Integrity",
                                 data: integrityData,
-                                borderColor: "#FCD34D", // Amber-300
+                                borderColor: "#FCD34D",
                                 backgroundColor: "rgba(252, 211, 77, 0.1)",
                                 fill: true,
                                 tension: 0.4,
@@ -975,34 +995,30 @@
                             },
                         ],
                     },
-                    options: {
-                        ...chartDefaults,
-                        scales: {
-                            ...chartDefaults.scales,
-                            y: { ...chartDefaults.scales.y, min: 0, max: 1 },
-                        },
-                    },
+                    options: chartDefaults,
                 });
             }
 
             function setupMetrics() {
-                const frame =
-                    deploymentData.history[deploymentData.history.length - 1];
+                const lastFrame =
+                    deploymentData.trajectory[
+                        deploymentData.trajectory.length - 1
+                    ];
                 const avgCoherence =
-                    deploymentData.history.reduce(
-                        (sum, h) => sum + (h.coherence || 0),
+                    deploymentData.trajectory.reduce(
+                        (sum, f) => sum + (f.coherence || 0),
                         0,
-                    ) / deploymentData.history.length;
+                    ) / deploymentData.trajectory.length;
                 const avgIntegrity =
-                    deploymentData.history.reduce(
-                        (sum, h) => sum + (h.loop_integrity || 0),
+                    deploymentData.trajectory.reduce(
+                        (sum, f) => sum + (f.loop_integrity || 0),
                         0,
-                    ) / deploymentData.history.length;
+                    ) / deploymentData.trajectory.length;
 
                 const metrics = [
                     {
                         label: "Total Steps",
-                        value: deploymentData.history.length,
+                        value: deploymentData.trajectory.length,
                     },
                     {
                         label: "Avg Coherence",
@@ -1012,10 +1028,15 @@
                         label: "Avg Integrity",
                         value: (avgIntegrity * 100).toFixed(1) + "%",
                     },
-                    { label: "Total Nodes", value: (frame.nodes || []).length },
                     {
-                        label: "Obstacles",
-                        value: (frame.obstacles || []).length,
+                        label: "Total Nodes",
+                        value: (lastFrame.nodes || []).length,
+                    },
+                    {
+                        label: "Holons",
+                        value: new Set(
+                            (lastFrame.nodes || []).map((n) => n.holon_id),
+                        ).size,
                     },
                 ];
 
@@ -1023,11 +1044,11 @@
                 grid.innerHTML = metrics
                     .map(
                         (m) => `
-                <div class="bg-black/20 p-4 rounded-lg border border-gray-700">
-                    <div class="text-xl font-bold gradient-text">${m.value}</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">${m.label}</div>
-                </div>
-            `,
+               <div class="bg-black/20 p-4 rounded-lg border border-gray-700">
+                   <div class="text-xl font-bold gradient-text">${m.value}</div>
+                   <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">${m.label}</div>
+               </div>
+           `,
                     )
                     .join("");
             }
@@ -1065,8 +1086,8 @@
                 const delay = 100 - speed;
 
                 currentFrame++;
-                if (currentFrame >= deploymentData.history.length) {
-                    currentFrame = 0; // Loop
+                if (currentFrame >= deploymentData.trajectory.length) {
+                    currentFrame = 0;
                 }
 
                 updateVisualization(currentFrame);
@@ -1078,13 +1099,14 @@
 
             function updateVisualization(frameIndex) {
                 if (!deploymentData) return;
-                const frame = deploymentData.history[frameIndex];
+                const frame = deploymentData.trajectory[frameIndex];
 
                 const timeValue =
                     frame.time !== undefined ? frame.time : frameIndex;
                 const maxTime =
-                    deploymentData.history[deploymentData.history.length - 1]
-                        .time || deploymentData.history.length - 1;
+                    deploymentData.trajectory[
+                        deploymentData.trajectory.length - 1
+                    ].time || deploymentData.trajectory.length - 1;
 
                 document.getElementById("timelineInfo").textContent =
                     `Timestep: ${timeValue} / ${maxTime}`;
@@ -1097,7 +1119,6 @@
                 const canvas = document.getElementById("swarmCanvas");
                 const ctx = canvas.getContext("2d");
 
-                // Set canvas resolution match display size
                 canvas.width = canvas.offsetWidth;
                 canvas.height = canvas.offsetHeight;
 
@@ -1124,24 +1145,107 @@
                     ctx.stroke();
                 }
 
-                // Connections
-                const connections = frame.connections || [];
-                const nodes = frame.nodes || [];
+                // Draw Partition Boundaries
+                if (frame.holons) {
+                    ctx.strokeStyle = "rgba(156, 163, 175, 0.4)";
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([8, 4]);
 
+                    frame.holons.forEach((holon) => {
+                        const bounds = holon.bounds;
+                        const x1 = offsetX + bounds.x_min * scale;
+                        const x2 = offsetX + bounds.x_max * scale;
+                        const y1 = offsetY + (1 - bounds.y_min) * scale;
+                        const y2 = offsetY + (1 - bounds.y_max) * scale;
+
+                        ctx.strokeRect(x1, y2, x2 - x1, y1 - y2);
+                    });
+
+                    ctx.setLineDash([]);
+                }
+
+                const nodes = frame.nodes || [];
+                const connections = frame.connections || [];
+
+                // Create node lookup map
+                const nodeMap = new Map();
+                nodes.forEach((node) => {
+                    nodeMap.set(node.id, node);
+                });
+
+                // FIXED: Draw connections filtered by holon
+                // Group connections by the holon of their nodes
+                // DEBUG: Log connection data for first frame
+                if (currentFrame === 0) {
+                    console.log("Total connections:", connections.length);
+                    console.log("Total nodes:", nodes.length);
+                    console.log("Sample connection:", connections[0]);
+
+                    // Count connections per holon
+                    const holonConnCounts = {};
+                    connections.forEach((conn) => {
+                        const nodeA = nodeMap.get(conn.node_a);
+                        if (nodeA) {
+                            holonConnCounts[nodeA.holon_id] =
+                                (holonConnCounts[nodeA.holon_id] || 0) + 1;
+                        }
+                    });
+                    console.log("Connections per holon:", holonConnCounts);
+                }
+
+                // FIXED: Draw ALL connections, color-coded by holon
                 connections.forEach((conn) => {
-                    const nodeA = nodes.find((n) => n.id === conn.node_a);
-                    const nodeB = nodes.find((n) => n.id === conn.node_b);
+                    const nodeA = nodeMap.get(conn.node_a);
+                    const nodeB = nodeMap.get(conn.node_b);
 
                     if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
+                        // Only draw if both nodes belong to same holon
+                        if (nodeA.holon_id === nodeB.holon_id) {
+                            const x1 = offsetX + nodeA.pos[0] * scale;
+                            const y1 = offsetY + (1 - nodeA.pos[1]) * scale;
+                            const x2 = offsetX + nodeB.pos[0] * scale;
+                            const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
+
+                            // Color code by holon
+                            const holonColor =
+                                HOLON_COLORS[
+                                    nodeA.holon_id % HOLON_COLORS.length
+                                ];
+
+                            ctx.strokeStyle = conn.broken
+                                ? "rgba(239, 68, 68, 0.7)"
+                                : holonColor
+                                      .replace(")", ", 0.5)")
+                                      .replace("rgb", "rgba");
+
+                            ctx.lineWidth = conn.broken ? 1.5 : 2;
+                            ctx.setLineDash(conn.broken ? [5, 5] : []);
+                            ctx.beginPath();
+                            ctx.moveTo(x1, y1);
+                            ctx.lineTo(x2, y2);
+                            ctx.stroke();
+                            ctx.setLineDash([]);
+                        }
                         const x1 = offsetX + nodeA.pos[0] * scale;
                         const y1 = offsetY + (1 - nodeA.pos[1]) * scale;
                         const x2 = offsetX + nodeB.pos[0] * scale;
                         const y2 = offsetY + (1 - nodeB.pos[1]) * scale;
 
+                        // Color code by holon of nodeA
+                        const holonColor =
+                            HOLON_COLORS[nodeA.holon_id % HOLON_COLORS.length];
+
+                        // Make opacity depend on whether nodes are in same holon
+                        const sameholon = nodeA.holon_id === nodeB.holon_id;
+                        const opacity = sameholon ? "0.6" : "0.3"; // Dim cross-holon connections
+
                         ctx.strokeStyle = conn.broken
-                            ? "rgba(239, 68, 68, 0.6)"
-                            : "rgba(96, 165, 250, 0.6)";
-                        ctx.lineWidth = conn.broken ? 1 : 2;
+                            ? "rgba(239, 68, 68, 0.7)"
+                            : holonColor
+                                  .replace(")", `, ${opacity})`)
+                                  .replace("rgb", "rgba");
+
+                        ctx.lineWidth = conn.broken ? 1.5 : sameholon ? 2.5 : 1;
                         ctx.setLineDash(conn.broken ? [5, 5] : []);
                         ctx.beginPath();
                         ctx.moveTo(x1, y1);
@@ -1151,49 +1255,56 @@
                     }
                 });
 
-                // Obstacles
-                (frame.obstacles || []).forEach((obs) => {
-                    if (obs.pos) {
-                        const x = offsetX + obs.pos[0] * scale;
-                        const y = offsetY + (1 - obs.pos[1]) * scale;
-                        const r = (obs.radius || 0.05) * scale;
+                // FIXED: Draw Obstacles with proper size from config
+                const obstacles = deploymentData.config?.obstacles || [];
 
-                        ctx.fillStyle = obs.is_static
-                            ? "rgba(245, 158, 11, 0.4)"
-                            : "rgba(236, 72, 153, 0.4)";
+                obstacles.forEach((obs) => {
+                    // obs format: [x, y, radius]
+                    if (Array.isArray(obs) && obs.length >= 3) {
+                        const x = offsetX + obs[0] * scale;
+                        const y = offsetY + (1 - obs[1]) * scale;
+                        const r = obs[2] * scale; // Use radius from config
+
+                        // Draw filled circle
+                        ctx.fillStyle = "rgba(245, 158, 11, 0.5)";
                         ctx.beginPath();
                         ctx.arc(x, y, r, 0, Math.PI * 2);
                         ctx.fill();
-                        ctx.strokeStyle = obs.is_static ? "#f59e0b" : "#ec4899";
+
+                        // Draw border
+                        ctx.strokeStyle = "#f59e0b";
                         ctx.lineWidth = 2;
                         ctx.stroke();
                     }
                 });
 
-                // Nodes
+                // Draw Nodes (color-coded by holon)
                 nodes.forEach((node) => {
                     if (node.pos) {
                         const x = offsetX + node.pos[0] * scale;
                         const y = offsetY + (1 - node.pos[1]) * scale;
+                        const holonId =
+                            node.holon_id !== undefined ? node.holon_id : 0;
+                        const color =
+                            HOLON_COLORS[holonId % HOLON_COLORS.length];
 
-                        ctx.fillStyle = "#2DD4BF"; // Teal
+                        // Node circle
+                        ctx.fillStyle = color;
                         ctx.beginPath();
                         ctx.arc(x, y, 6, 0, Math.PI * 2);
                         ctx.fill();
 
-                        ctx.strokeStyle = "#14B8A6";
+                        // Node border (brighter)
+                        ctx.strokeStyle = color;
                         ctx.lineWidth = 2;
                         ctx.stroke();
 
-                        // ID
+                        // Node ID
                         ctx.fillStyle = "#ffffff";
-                        ctx.font = "10px Inter";
+                        ctx.font = "bold 10px Inter";
                         ctx.textAlign = "center";
-                        ctx.fillText(
-                            node.id !== undefined ? node.id : "?",
-                            x,
-                            y - 12,
-                        );
+                        ctx.textBaseline = "middle";
+                        ctx.fillText(node.id, x, y - 12);
                     }
                 });
             }
