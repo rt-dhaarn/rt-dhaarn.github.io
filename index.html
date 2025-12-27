@@ -892,12 +892,12 @@
                 const errorMessage = document.getElementById("errorMessage");
 
                 try {
-                    // Try to load trajectory_1500_steps.json
-                    const response = await fetch("./trajectory_1500_steps.json");
+                    // Try to load trajectory_2500_steps.json
+                    const response = await fetch("./trajectory_2500_steps.json");
 
                     if (!response.ok) {
                         throw new Error(
-                            `HTTP Error: ${response.status} - Make sure trajectory_1500_steps.json exists`,
+                            `HTTP Error: ${response.status} - Make sure trajectory_2500_steps.json exists`,
                         );
                     }
 
