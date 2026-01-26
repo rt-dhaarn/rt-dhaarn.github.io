@@ -17,9 +17,12 @@
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
             rel="stylesheet"
         />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Iceberg&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Iceberg&display=swap"
+            rel="stylesheet"
+        />
 
         <style>
             body {
@@ -58,7 +61,6 @@
                 border: 1px solid rgba(212, 175, 55, 0.1);
                 border-radius: 1rem;
             }
-
 
             /* Animated Background */
             body::before {
@@ -215,6 +217,18 @@
                 font-size: 0.875rem;
                 font-weight: 600;
                 margin-left: 0.5rem;
+            }
+            @keyframes pulse-slow {
+                0%,
+                100% {
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 0.7;
+                }
+            }
+            .animate-pulse-slow {
+                animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
             }
         </style>
     </head>
@@ -397,24 +411,28 @@
                             more fundamental: the ability to remember failure
                             and reshape themselves around it.
                         </p>
-                        <p>
+                        <p class="mb-4">
                             This is FLOWRRA, and it represents DhaaRn's first
                             step toward systems that don't just compute - they
                             maintain, they harmonize, they hold."
                         </p>
-                        <p>
-                            FLOWRRA is the first operational holon of the DhaaRn ecosystem:
+                        <p class="mb-4">
+                            FLOWRRA is the first operational holon of the DhaaRn
+                            ecosystem:
                         </p>
                         <p>
-                            A Supplementary/Stand-alone coherence brain for the era of brittle infrastructure.
+                            A Supplementary/Stand-alone coherence brain for the
+                            era of brittle infrastructure.
                         </p>
-                        <p style="color: #008080">
+                        <p class="mb-4" style="color: #008080">
                             <a href="https://github.com/Tro23/FLOWRRA">
                                 Github-FLOWRRA
                             </a>
                         </p>
-                        <p style="color: #FFA500">
-                            <a href="https://open.substack.com/pub/rohittamidapati/p/flowrra-flow-recognition-reconfiguration?r=721j7i&utm_campaign=post&utm_medium=web&showWelcomeOnShare=true">
+                        <p style="color: #ffa500">
+                            <a
+                                href="https://open.substack.com/pub/rohittamidapati/p/flowrra-flow-recognition-reconfiguration?r=721j7i&utm_campaign=post&utm_medium=web&showWelcomeOnShare=true"
+                            >
                                 FLOWRRA Evolution. (Substack article)
                             </a>
                         </p>
@@ -468,7 +486,11 @@
                                             Swarm Topology & Dynamics
                                         </h3>
                                         <!-- NEW: Frozen node badge -->
-                                        <span id="frozenBadge" class="frozen-badge" style="display: none;">
+                                        <span
+                                            id="frozenBadge"
+                                            class="frozen-badge"
+                                            style="display: none"
+                                        >
                                             0 Frozen
                                         </span>
                                     </div>
@@ -631,11 +653,28 @@
                                         </div>
 
                                         <!-- NEW: Frozen Node Stats Panel -->
-                                        <div id="frozenStats" class="frozen-stats" style="display: none;">
-                                            <h4 style="font-size: 0.875rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: 600;">
+                                        <div
+                                            id="frozenStats"
+                                            class="frozen-stats"
+                                            style="display: none"
+                                        >
+                                            <h4
+                                                style="
+                                                    font-size: 0.875rem;
+                                                    color: #fbbf24;
+                                                    margin-bottom: 0.5rem;
+                                                    font-weight: 600;
+                                                "
+                                            >
                                                 🔒 Frozen Nodes
                                             </h4>
-                                            <div id="frozenStatsContent" style="font-size: 0.75rem; color: #d1d5db;">
+                                            <div
+                                                id="frozenStatsContent"
+                                                style="
+                                                    font-size: 0.75rem;
+                                                    color: #d1d5db;
+                                                "
+                                            >
                                                 <!-- Dynamically populated -->
                                             </div>
                                         </div>
@@ -740,6 +779,112 @@
                             </div>
                         </div>
                     </div>
+                    <br />
+                    <div class="text-center mb-12">
+                        <p
+                            class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl"
+                        >
+                            SŪTRAA
+                        </p>
+                        <p class="mt-2 text-xl text-gray-400">
+                            System for Unified Temporal Resonant Alignment
+                            Attention
+                        </p>
+                    </div>
+                    <div class="max-w-7xl mx-auto">
+                        <div
+                            class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center"
+                        >
+                            <div class="order-1 lg:order-2 relative group">
+                                <div
+                                    class="absolute -inset-1 bg-gradient-to-r from-indigo-500/20 to-purple-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+                                ></div>
+                                <div
+                                    class="relative glass-card p-4 aspect-square overflow-hidden border-indigo-500/10"
+                                >
+                                    <canvas
+                                        id="sutraaVisual"
+                                        class="w-full h-full rounded-2xl"
+                                    ></canvas>
+                                    <div
+                                        class="absolute bottom-8 left-8 flex items-center gap-3 bg-black/60 px-4 py-2 rounded-full backdrop-blur-md border border-white/5"
+                                    >
+                                        <div
+                                            class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"
+                                        ></div>
+                                        <span
+                                            class="iceberg text-[10px] tracking-[0.2em] text-indigo-300 uppercase"
+                                            >Resonant Threading Active</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="order-2 lg:order-1">
+                                <div
+                                    class="max-w-3xl mx-auto text-lg leading-8 text-gray-300 text-center mb-16 italic font-light border-l-2 border-r-2 border-amber-500/20 px-8 py-4 bg-white/5 rounded-2xl"
+                                >
+                                    <p class="mb-4">
+                                        Reframing intelligence not as continuous
+                                        computation, but as a meditative process
+                                        of
+                                        <span
+                                            class="text-orange-300 italic font-medium"
+                                            >resonance recognition and thread
+                                            selection</span
+                                        >.
+                                    </p>
+
+                                    <div class="space-y-6">
+                                        <div
+                                            class="p-6 glass-card border-indigo-500/10 hover:bg-indigo-500/5"
+                                        >
+                                            <h4
+                                                class="iceberg text-white text-lg mb-2"
+                                            >
+                                                Attentive Stillness
+                                            </h4>
+                                            <p
+                                                class="text-sm text-slate-500 leading-relaxed"
+                                            >
+                                                Pausing to reflect on the
+                                                "image" of the present moment: A
+                                                condensed semantic and energetic
+                                                configuration.
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="p-6 glass-card border-indigo-500/10 hover:bg-indigo-500/5"
+                                        >
+                                            <h4
+                                                class="iceberg text-white text-lg mb-2"
+                                            >
+                                                Resonance Invocation
+                                            </h4>
+                                            <p
+                                                class="text-sm text-slate-500 leading-relaxed"
+                                            >
+                                                Allowing latent memory fields to
+                                                reconfigure in response to the
+                                                present through non-exhaustive
+                                                vibrational matching.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-12 flex gap-6">
+                                    <a
+                                        href="https://github.com/Tro23/SUTRAA"
+                                        target="_blank"
+                                        class="text-[10px] font-bold tracking-[0.3em] uppercase text-orange-400 hover:text-white transition-colors border-b border-indigo-500/30 pb-1"
+                                    >
+                                        [ Explore Repository ]
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -778,7 +923,7 @@
                             <p
                                 class="font-bold text-white text-center mt-8 text-amber-200"
                             >
-                                This is DhaaRn.
+                                <em>This is DhaaRn.</em>
                             </p>
                         </div>
                     </div>
@@ -893,6 +1038,38 @@
                     <h2
                         class="text-4xl font-bold tracking-tight text-white sm:text-5xl"
                     >
+                        Seeking: The Co-Founder.
+                    </h2>
+                    <p class="mt-6 text-lg leading-8 text-gray-400">
+                        Someone who can translate
+                        <em
+                            >philosophy into physics; a builder of systems, a
+                            lover of paradox,</em
+                        >
+                        is willing to take up this adventure with me.
+                    </p>
+                    <p class="mt-6 text-lg leading-8 text-gray-400">
+                        A technical Genius
+                        <strong>to take 51-55% equity</strong> and lead DhaaRn's
+                        registration and architectural evolution into
+                        production-ready sovereignty.
+                    </p>
+                    <div class="mt-12">
+                        <a
+                            href="mailto:info@dhaarn.com"
+                            class="text-2xl font-semibold gradient-text hover:brightness-110 transition-all"
+                        >
+                            Apply on LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="py-24 sm:py-32">
+                <div class="container mx-auto max-w-3xl px-6 text-center">
+                    <h2
+                        class="text-4xl font-bold tracking-tight text-white sm:text-5xl"
+                    >
                         Connect with DhaaRn
                     </h2>
                     <p class="mt-6 text-lg leading-8 text-gray-400">
@@ -917,8 +1094,8 @@
                 class="container mx-auto max-w-6xl px-6 text-center text-gray-600"
             >
                 <p>
-                    &copy; <span id="current-year"></span> DhaaRn. All rights
-                    reserved.
+                    &copy; <span id="current-year"></span> DhaaRn &bull. All
+                    rights reserved.
                 </p>
             </div>
         </footer>
@@ -952,6 +1129,7 @@
         </script>
 
         <script>
+            // -- FLOWRRA Section Visualizer --
             let deploymentData = null;
             let currentFrame = 0;
             let isPlaying = false;
@@ -975,7 +1153,9 @@
                 const errorMessage = document.getElementById("errorMessage");
 
                 try {
-                    const response = await fetch("./trajectory_1500_steps.json");
+                    const response = await fetch(
+                        "./trajectory_1500_steps.json",
+                    );
 
                     if (!response.ok) {
                         throw new Error(
@@ -999,7 +1179,7 @@
                         metadata: rawData.metadata || {},
                         trajectory: rawData.trajectory,
                         frozen_events: rawData.frozen_events || [],
-                        frozen_metrics: rawData.frozen_metrics || {}
+                        frozen_metrics: rawData.frozen_metrics || {},
                     };
 
                     loadingState.style.display = "none";
@@ -1117,7 +1297,9 @@
                         0,
                     ) / deploymentData.trajectory.length;
 
-                const totalFrozen = lastFrame.frozen_nodes ? lastFrame.frozen_nodes.length : 0;
+                const totalFrozen = lastFrame.frozen_nodes
+                    ? lastFrame.frozen_nodes.length
+                    : 0;
 
                 const metrics = [
                     {
@@ -1221,7 +1403,9 @@
                 document.getElementById("timeSlider").value = frameIndex;
 
                 // Update frozen node badge
-                const frozenCount = frame.frozen_nodes ? frame.frozen_nodes.length : 0;
+                const frozenCount = frame.frozen_nodes
+                    ? frame.frozen_nodes.length
+                    : 0;
                 const frozenBadge = document.getElementById("frozenBadge");
                 if (frozenCount > 0) {
                     frozenBadge.style.display = "inline-block";
@@ -1238,7 +1422,8 @@
 
             function updateFrozenStats(frame) {
                 const frozenStats = document.getElementById("frozenStats");
-                const frozenStatsContent = document.getElementById("frozenStatsContent");
+                const frozenStatsContent =
+                    document.getElementById("frozenStatsContent");
 
                 if (!frame.frozen_nodes || frame.frozen_nodes.length === 0) {
                     frozenStats.style.display = "none";
@@ -1249,7 +1434,7 @@
 
                 // Group frozen nodes by holon
                 const frozenByHolon = {};
-                frame.nodes.forEach(node => {
+                frame.nodes.forEach((node) => {
                     if (frame.frozen_nodes.includes(node.id)) {
                         if (!frozenByHolon[node.holon_id]) {
                             frozenByHolon[node.holon_id] = [];
@@ -1259,12 +1444,14 @@
                 });
 
                 let statsHTML = "";
-                Object.keys(frozenByHolon).sort().forEach(holonId => {
-                    statsHTML += `<div style="margin-bottom: 0.5rem;">
-                        <strong style="color: ${HOLON_COLORS[holonId % HOLON_COLORS.length]};">Holon ${holonId}:</strong> 
+                Object.keys(frozenByHolon)
+                    .sort()
+                    .forEach((holonId) => {
+                        statsHTML += `<div style="margin-bottom: 0.5rem;">
+                        <strong style="color: ${HOLON_COLORS[holonId % HOLON_COLORS.length]};">Holon ${holonId}:</strong>
                         ${frozenByHolon[holonId].length} frozen
                     </div>`;
-                });
+                    });
 
                 frozenStatsContent.innerHTML = statsHTML;
             }
@@ -1353,7 +1540,10 @@
 
                     if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
                         // Skip if either node is frozen
-                        if (frozenNodes.has(conn.node_a) || frozenNodes.has(conn.node_b)) {
+                        if (
+                            frozenNodes.has(conn.node_a) ||
+                            frozenNodes.has(conn.node_b)
+                        ) {
                             return;
                         }
 
@@ -1377,7 +1567,11 @@
                                       .replace(")", `, ${opacity})`)
                                       .replace("rgb", "rgba");
 
-                            ctx.lineWidth = conn.broken ? 1.5 : sameholon ? 2.5 : 1;
+                            ctx.lineWidth = conn.broken
+                                ? 1.5
+                                : sameholon
+                                  ? 2.5
+                                  : 1;
                             ctx.setLineDash(conn.broken ? [5, 5] : []);
                             ctx.beginPath();
                             ctx.moveTo(x1, y1);
@@ -1401,10 +1595,11 @@
                             // Draw FROZEN node with star shape
                             ctx.fillStyle = "#eab308";
                             ctx.beginPath();
-                            
+
                             // Draw star
                             for (let i = 0; i < 5; i++) {
-                                const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                                const angle =
+                                    (i * 4 * Math.PI) / 5 - Math.PI / 2;
                                 const r = i % 2 === 0 ? 10 : 5;
                                 const px = x + r * Math.cos(angle);
                                 const py = y + r * Math.sin(angle);
@@ -1426,8 +1621,9 @@
                             ctx.fillText(`F${node.id}`, x, y - 16);
                         } else {
                             // Draw ACTIVE node
-                            const color = HOLON_COLORS[holonId % HOLON_COLORS.length];
-                            
+                            const color =
+                                HOLON_COLORS[holonId % HOLON_COLORS.length];
+
                             ctx.fillStyle = color;
                             ctx.beginPath();
                             ctx.arc(x, y, 6, 0, Math.PI * 2);
@@ -1446,6 +1642,85 @@
                     }
                 });
             }
+        </script>
+        <script>
+            // --- Global Device Pixel Ratio ---
+            const dpr = window.devicePixelRatio || 1;
+
+            // --- SŪTRAA RESONANCE VISUALIZER ---
+            const sCanvas = document.getElementById("sutraaVisual");
+            const sCtx = sCanvas.getContext("2d");
+            let sAngle = 0;
+            let threads = [];
+
+            class ResonantThread {
+                constructor(i) {
+                    this.points = [];
+                    this.maxPoints = 60 + Math.random() * 40;
+                    this.seed = Math.random() * 1000;
+                    this.color = i % 2 === 0 ? "#6366f1" : "#a855f7";
+                }
+                update(t) {
+                    const rect = sCanvas.parentElement.getBoundingClientRect();
+                    const cx = rect.width / 2;
+                    const cy = rect.height / 2;
+                    const x =
+                        cx +
+                        Math.cos(t + this.seed) *
+                            (Math.sin(t * 0.5 + this.seed) * (rect.width / 3));
+                    const y =
+                        cy +
+                        Math.sin(t + this.seed) *
+                            (Math.cos(t * 0.5 + this.seed) * (rect.height / 3));
+                    this.points.push({ x, y });
+                    if (this.points.length > this.maxPoints)
+                        this.points.shift();
+                }
+                draw() {
+                    if (this.points.length < 2) return;
+                    sCtx.beginPath();
+                    sCtx.strokeStyle = this.color;
+                    sCtx.lineWidth = 1;
+                    sCtx.globalAlpha = 0.3;
+                    sCtx.moveTo(this.points[0].x, this.points[0].y);
+                    for (let i = 1; i < this.points.length; i++) {
+                        sCtx.lineTo(this.points[i].x, this.points[i].y);
+                    }
+                    sCtx.stroke();
+                }
+            }
+
+            function initSutraa() {
+                const rect = sCanvas.parentElement.getBoundingClientRect();
+                sCanvas.width = rect.width * dpr;
+                sCanvas.height = rect.height * dpr;
+                sCtx.scale(dpr, dpr);
+                threads = Array.from(
+                    { length: 12 },
+                    (_, i) => new ResonantThread(i),
+                );
+                animateSutraa();
+            }
+
+            function animateSutraa() {
+                const rect = sCanvas.parentElement.getBoundingClientRect();
+                sCtx.fillStyle = "rgba(5, 5, 5, 0.08)";
+                sCtx.fillRect(0, 0, rect.width, rect.height);
+                sAngle += 0.01;
+                threads.forEach((t) => {
+                    t.update(sAngle);
+                    t.draw();
+                });
+                // Center Node
+                sCtx.beginPath();
+                sCtx.arc(rect.width / 2, rect.height / 2, 2.5, 0, Math.PI * 2);
+                sCtx.fillStyle = "#fff";
+                sCtx.fill();
+                requestAnimationFrame(animateSutraa);
+            }
+            window.onload = () => {
+                initSutraa();
+            };
         </script>
     </body>
 </html>
