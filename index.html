@@ -914,7 +914,60 @@
                                 <span class="text-amber-400 font-mono text-sm">01.</span> Where Jams Come From
                             </h3>
                             <p class="text-sm text-slate-300 leading-relaxed mb-4">
-                                Each FLOWRRA fleet reads a local <strong class="text-white">density field</strong> in a Gibbs frame, $P \propto \exp(-E/T)$, with the floor's throughput pressure (orders left against time left) acting as temperature $T$. A shared GNN scores moves and a rule ladder resolves conflicts.
+                                Each FLOWRRA fleet reads a local <strong class="text-white">density field</strong> in a Gibbs frame, <span class="font-mono text-teal-300 bg-teal-950/50 px-1.5 py-0.5 rounded border border-teal-500/20"><i>P</i> &prop; exp(&minus;<i>E</i> / <i>T</i>)</span>, with the floor's throughput pressure (orders left against time left) acting as temperature <i class="font-serif text-amber-300">T</i>. A shared GNN scores moves and a rule ladder resolves conflicts.
+                            </p>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                <strong class="text-amber-300">The Gap:</strong> In a tight jam, deciding fleet-by-fleet causes agents to yield and advance in turn repeatedly. FLOWRRA's founding design calls for a <strong class="text-white">joint collapse</strong>: sampling a consistent multi-agent plan from an Energy-Based Model using Extropic's <code class="text-teal-300 font-mono">thrml</code> library ahead of sampling hardware.
+                            </p>
+                        </div>
+
+                        <!-- Card 2: The EBM Model -->
+                        <div class="glass-card p-6 border-t-2 border-t-teal-400/60">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                                <span class="text-teal-400 font-mono text-sm">02.</span> Categorical EBM Formulation
+                            </h3>
+                            <ul class="text-sm text-slate-300 space-y-2.5 leading-relaxed">
+                                <li>
+                                    <strong class="text-white">Boundaries:</strong> Jams are conflicting clusters within 3 hops (plus standing congestion zones). Outside fleets, people, and debris stay clamped to recorded positions.
+                                </li>
+                                <li>
+                                    <strong class="text-white">Variables:</strong> One categorical variable per fleet per tick restricted to its <span class="text-teal-300">spacetime light cone</span> (reachable cells that still reach the exit in time, plus <code class="font-mono text-xs">"out"</code>).
+                                </li>
+                                <li>
+                                    <strong class="text-white">Pairwise Energies:</strong> Move at most 1 hop/tick; no shared cells; no edge/cell swaps; cost of <span class="font-mono text-teal-300">1</span> per tick not yet out.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Card 3: The Sampler & Check -->
+                        <div class="glass-card p-6 border-t-2 border-t-amber-400/60">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                                <span class="text-amber-400 font-mono text-sm">03.</span> Block Gibbs Annealing
+                            </h3>
+                            <ul class="text-sm text-slate-300 space-y-2.5 leading-relaxed">
+                                <li>
+                                    <strong class="text-white">Architecture:</strong> <code class="text-teal-300 font-mono text-xs">CategoricalEBMFactor</code> &amp; <code class="text-teal-300 font-mono text-xs">CategoricalGibbsConditional</code> partitioned into even-tick and odd-tick blocks.
+                                </li>
+                                <li>
+                                    <strong class="text-white">Schedule:</strong> 32 parallel chains annealing from <span class="font-mono text-amber-300">&beta; = 0.1 &rarr; 10</span>. Half initialize from shortest paths; half relax rules with finite penalties while hot to escape tight spots.
+                                </li>
+                                <li>
+                                    <strong class="text-white">Verification:</strong> Graded against exact <span class="font-mono text-teal-300">A<sup>*</sup></span> search on jams up to 4 fleets.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Offline Study & Live Simulator Rung Results -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-14 items-start">
+                        <!-- Offline Study (5 cols) -->
+                        <div class="lg:col-span-5 tech-box rounded-xl p-6">
+                            <div class="flex items-center justify-between border-b border-teal-500/30 pb-3 mb-4">
+                                <h4 class="text-teal-300 font-mono text-sm uppercase">Offline Study (Kiva 46&times;33, 60 Fleets)</h4>
+                                <span class="text-xs font-mono bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded">98 / 99 Solved</span>
+                            </div>
+                            <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                                Across 103 recorded jams and congestion windows, <code class="text-teal-300 font-mono">thrml</code> found a legal plan in <strong class="text-white">98 of the 99</strong> solvable instances and matched the <strong class="text-amber-300">exact optimal cost in 90 of 95</strong> jams (&le; 4 fleets). Back-and-forth steps driven <em>away</em> from exits dropped from <strong class="text-rose-400">538 hops</strong> (recorded) to <strong class="text-teal-300">35 hops</strong> (sampled).
                             </p>
                             <p class="text-sm text-slate-400 leading-relaxed">
                                 <strong class="text-amber-300">The Gap:</strong> In a tight jam, deciding fleet-by-fleet causes agents to yield and advance in turn repeatedly. FLOWRRA's founding design calls for a <strong class="text-white">joint collapse</strong>: sampling a consistent multi-agent plan from an Energy-Based Model using Extropic's <code class="text-teal-300 font-mono">thrml</code> library ahead of sampling hardware.
@@ -1032,7 +1085,7 @@
                                                 <th class="py-2 px-3 text-right">Rung Off</th>
                                                 <th class="py-2 px-3 text-right">Rung On</th>
                                                 <th class="py-2 px-3 text-right">Days Better</th>
-                                                <th class="py-2 px-3 text-right">Wilcoxon $p$</th>
+                                                <th class="py-2 px-3 text-right">Wilcoxon <i>p</i></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-slate-300 divide-y divide-slate-800/80">
@@ -1053,7 +1106,7 @@
                             <!-- Decision Time & Thermodynamic Hardware Case -->
                             <div class="tech-box rounded-xl p-6">
                                 <h4 class="text-teal-300 font-mono text-sm uppercase border-b border-teal-500/30 pb-2 mb-3">
-                                    Decision Latency: Where Sampling Hardware Comes In
+                                    Decision Latency: Where Sampling Hardware will Come In
                                 </h4>
                                 <p class="text-xs text-slate-300 mb-3 leading-relaxed">
                                     A physical AGV step is half a hop (~0.5 s real-time budget). A 7-fleet window spans <strong>112 coupled categorical variables</strong> with up to 90 choices each:
@@ -1079,7 +1132,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Jam Trajectory Figures (Recorded Zigzag vs Sampled Collapse + Space for Second Trajectory Map) -->
                     <div class="space-y-8">
 
