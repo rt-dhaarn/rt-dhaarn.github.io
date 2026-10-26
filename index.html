@@ -312,6 +312,9 @@
                     <p class="mt-4 text-center text-xl md:text-3xl font-light text-white-200/90 max-w-3xl mx-auto">
                         The Voyagers' Sanctuary
                     </p>
+                    <p class="mt-4 text-center text-base md:text-lg text-slate-300 max-w-2xl mx-auto">
+                        A decentralised, learning orchestrator for robot fleets, tested in simulation against central planners, with open-source code.
+                    </p>
 
                     <div class="mt-6 mb-6 flex justify-center">
                         <img src="DhaaRn.png" alt="DHAARN Logo" class="w-48 h-48 md:w-64 md:h-64 drop-shadow-2xl" onerror="this.style.display='none'" />
@@ -701,12 +704,12 @@
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                             <!-- Text Content -->
                             <div class="lg:col-span-5">
-                                <h3 class="text-3xl font-bold mb-6 text-white">Physics Over Hallucination</h3>
+                                <h3 class="text-3xl font-bold mb-6 text-white">Physics First</h3>
                                 <p class="text-slate-400 mb-6 leading-relaxed">
-                                    Traditional centralized MAPF planners hallucinate efficiency. They generate theoretically perfect throughput by assuming robots can drive nose-to-tail with zero physical gap.
+                                    Standard MAPF benchmarks use a point model: two fleets may not share a cell or swap places, and nothing more. Results under it assume robots can drive nose-to-tail with no physical gap.
                                 </p>
                                 <p class="text-slate-300 mb-8 leading-relaxed font-medium">
-                                    FLOWRRA injects actual hardware constraints: enforcing a strict <span class="text-teal-300 font-mono bg-teal-950/60 px-1.5 py-0.5 rounded border border-teal-500/30">1.5 hop boundary (~0.75m)</span> for head-on meetings and a <span class="text-teal-300 font-mono bg-teal-950/60 px-1.5 py-0.5 rounded border border-teal-500/30">1.25 hop boundary</span> when following. When forced to obey real-world physics, traditional planners collapse, dropping from 535 goals to 170.
+                                    FLOWRRA injects actual hardware constraints: enforcing a strict <span class="text-teal-300 font-mono bg-teal-950/60 px-1.5 py-0.5 rounded border border-teal-500/30">1.75-hop warning bubble</span> for fleets meeting head-on and a <span class="text-teal-300 font-mono bg-teal-950/60 px-1.5 py-0.5 rounded border border-teal-500/30">1.25-hop bubble</span> when following, with a 1-hop minimum gap. Inside that boundary, PIBT's throughput fell from 535 to 170 goals in one lifelong Kiva test (32 fleets, one seed).
                                     <br><br><span class="text-amber-300 font-bold text-xl">FLOWRRA thrives here.</span>
                                 </p>
 
@@ -722,14 +725,14 @@
                                         <i class="fa-solid fa-bolt text-amber-400 mt-1"></i>
                                         <div>
                                             <strong class="text-white text-base">87.6% Delivery Rate</strong>
-                                            <p class="text-slate-400 mt-1">under extreme stress (up to 10 massive failures per shift + dynamic human obstacles).</p>
+                                            <p class="text-slate-400 mt-1">with failures and people (about 11.5 hardware failures a day, plus people walking onto the floor).</p>
                                         </div>
                                     </li>
                                     <li class="flex items-start gap-4 p-4 tech-box rounded-lg">
                                         <i class="fa-solid fa-gauge-high text-teal-400 mt-1"></i>
                                         <div>
                                             <strong class="text-white text-base">450 Orders / Hour</strong>
-                                            <p class="text-slate-400 mt-1">sustained hardware throughput on Kiva-style benchmarks.</p>
+                                            <p class="text-slate-400 mt-1">in simulation on the Kiva-style map.</p>
                                         </div>
                                     </li>
                                 </ul>
@@ -760,7 +763,7 @@
                                                     <tr><td class="py-2 px-3">ladder6</td><td class="py-2 px-3 text-right">94.21</td><td class="py-2 px-3 text-right">148.91</td><td class="py-2 px-3 text-right">123.17</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">1204.14</td></tr>
                                                     <tr><td class="py-2 px-3">RULES</td><td class="py-2 px-3 text-right">95.46</td><td class="py-2 px-3 text-right">125.66</td><td class="py-2 px-3 text-right">102.22</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">584.22</td></tr>
                                                     <tr><td class="py-2 px-3">PIBT</td><td class="py-2 px-3 text-right text-amber-300">98.38</td><td class="py-2 px-3 text-right">86.18</td><td class="py-2 px-3 text-right">76.16</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">0</td></tr>
-                                                    <tr><td class="py-2 px-3">RHCR-PP</td><td class="py-2 px-3 text-right text-rose-400">86.28</td><td class="py-2 px-3 text-right">165.14</td><td class="py-2 px-3 text-right">11.58</td><td class="py-2 px-3 text-right">11.07</td><td class="py-2 px-3 text-right">52.37</td></tr>
+                                                    <tr><td class="py-2 px-3">RHCR-PP</td><td class="py-2 px-3 text-right">94.8</td><td class="py-2 px-3 text-right">103</td><td class="py-2 px-3 text-right">73.83</td><td class="py-2 px-3 text-right">&le;0.016</td><td class="py-2 px-3 text-right">1,975</td></tr>
                                                     <tr><td class="py-2 px-3">RHCR-PIBT</td><td class="py-2 px-3 text-right text-rose-400">75.15</td><td class="py-2 px-3 text-right">209.89</td><td class="py-2 px-3 text-right">63.47</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">5870.43</td></tr>
                                                 </tbody>
                                             </table>
@@ -786,7 +789,7 @@
                                                     <tr class="bg-teal-500/10 border-l-2 border-teal-400"><td class="py-2 px-3 font-bold text-white">ladder4</td><td class="py-2 px-3 text-right text-teal-300 font-bold">87.63</td><td class="py-2 px-3 text-right">192.33</td><td class="py-2 px-3 text-right">11.53</td><td class="py-2 px-3 text-right">11.34</td><td class="py-2 px-3 text-right">77.41</td></tr>
                                                     <tr><td class="py-2 px-3">ladder6</td><td class="py-2 px-3 text-right">82.14</td><td class="py-2 px-3 text-right">234.37</td><td class="py-2 px-3 text-right">11.72</td><td class="py-2 px-3 text-right">10.30</td><td class="py-2 px-3 text-right">74.73</td></tr>
                                                     <tr><td class="py-2 px-3">RULES</td><td class="py-2 px-3 text-right">87.48</td><td class="py-2 px-3 text-right">190.67</td><td class="py-2 px-3 text-right">11.51</td><td class="py-2 px-3 text-right">11.26</td><td class="py-2 px-3 text-right">84.02</td></tr>
-                                                    <tr><td class="py-2 px-3">PIBT</td><td class="py-2 px-3 text-right text-amber-300">87.48</td><td class="py-2 px-3 text-right">190.67</td><td class="py-2 px-3 text-right">11.51</td><td class="py-2 px-3 text-right">11.26</td><td class="py-2 px-3 text-right">84.02</td></tr>
+                                                    <tr><td class="py-2 px-3">PIBT</td><td class="py-2 px-3 text-right text-rose-400">79.2</td><td class="py-2 px-3 text-right">188</td><td class="py-2 px-3 text-right">11.51</td><td class="py-2 px-3 text-right">7.8</td><td class="py-2 px-3 text-right">47.2</td></tr>
                                                     <tr><td class="py-2 px-3">RHCR-PP</td><td class="py-2 px-3 text-right text-rose-400">86.28</td><td class="py-2 px-3 text-right">165.14</td><td class="py-2 px-3 text-right">11.58</td><td class="py-2 px-3 text-right">11.07</td><td class="py-2 px-3 text-right">52.37</td></tr>
                                                     <tr><td class="py-2 px-3">RHCR-PIBT</td><td class="py-2 px-3 text-right text-rose-400">74.57</td><td class="py-2 px-3 text-right">270.10</td><td class="py-2 px-3 text-right">11.70</td><td class="py-2 px-3 text-right">10.30</td><td class="py-2 px-3 text-right">79.41</td></tr>
                                                 </tbody>
@@ -855,6 +858,9 @@
                             </div>
                         </div>
 
+                        <p class="text-center text-xs text-slate-400 font-mono mb-6 mt-2">
+                            All results are from simulation. Code, per-day results and the build log are open source under AGPL-3.0.
+                        </p>
                         <div class="flex flex-wrap justify-center gap-4 not-italic text-sm font-mono">
                             <a href="https://github.com/Tro23/FLOWRRA/tree/main/FLOWRRA_Warehouse#readme" target="_blank" class="text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-950/30 px-4 py-2 rounded-lg transition-colors">
                                 <i class="fa-brands fa-github mr-2"></i>GitHub - FLOWRRA Warehouse
@@ -902,7 +908,7 @@
                             Thermodynamic Jam Collapse
                         </p>
                         <p class="mt-4 text-lg text-slate-300 max-w-3xl mx-auto font-light">
-                            Holding conflicting fleet trajectories in superposition and collapsing them into a single coherent joint plan via block Gibbs sampling on discrete energy-based models.
+                            Holding conflicting fleet trajectories in superposition and collapsing them into a single coherent joint plan via block Gibbs sampling on discrete energy-based models. &ldquo;Superposition&rdquo; and &ldquo;collapse&rdquo; are the design&rsquo;s metaphors; the mechanism is sampling a joint plan from an energy-based model.
                         </p>
                     </div>
 
@@ -967,7 +973,7 @@
                                 <span class="text-xs font-mono bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded">98 / 99 Solved</span>
                             </div>
                             <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-                                Across 103 recorded jams and congestion windows, <code class="text-teal-300 font-mono">thrml</code> found a legal plan in <strong class="text-white">98 of the 99</strong> solvable instances and matched the <strong class="text-amber-300">exact optimal cost in 90 of 95</strong> jams ($\le 4$ fleets). Back-and-forth steps driven <em>away</em> from exits dropped from <strong class="text-rose-400">538 hops</strong> (recorded) to <strong class="text-teal-300">35 hops</strong> (sampled).
+                                Across 103 recorded jams and congestion windows, <code class="text-teal-300 font-mono">thrml</code> found a legal plan in <strong class="text-white">98 of the 99</strong> solvable instances and matched the <strong class="text-amber-300">exact optimal cost in 90 of 95</strong> jams (&le; 4 fleets). Back-and-forth steps driven <em>away</em> from exits dropped from <strong class="text-rose-400">538 hops</strong> (recorded) to <strong class="text-teal-300">35 hops</strong> (sampled).
                             </p>
 
                             <div class="overflow-x-auto mb-5">
@@ -1018,10 +1024,10 @@
                             <div class="tech-box rounded-xl p-6">
                                 <div class="flex items-center justify-between border-b border-amber-500/30 pb-3 mb-4">
                                     <h4 class="text-amber-400 font-mono text-sm uppercase">Live Simulator: The Collapse Rung</h4>
-                                    <span class="text-xs font-mono bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">8-Hop Lockstep Horizon</span>
+                                    <span class="text-xs font-mono bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">8-Hop Rolling Horizon</span>
                                 </div>
                                 <p class="text-xs text-slate-300 mb-4 leading-relaxed">
-                                    When conflicting fleets stay clustered for 2 steps, they receive a joint 8-hop plan (exact search for 2–4 fleets; <code class="text-teal-300 font-mono">thrml</code> for 5–8 fleets) optimizing total hops-to-goal. Tested on Kiva (60 fleets, 200-order book, failures &amp; humans active):
+                                    When conflicting fleets stay clustered for 2 steps, they receive a joint 8-hop plan (exact search for 2–4 fleets; <code class="text-teal-300 font-mono">thrml</code> for 5–8 fleets) optimizing total hops-to-goal. A plan is remade whenever a new fleet enters a path warning with one of its members, so each plan is used for about its first two steps. Tested on Kiva (60 fleets, 200-order book, failures &amp; humans active):
                                 </p>
 
                                 <div class="overflow-x-auto mb-4">
@@ -1032,21 +1038,25 @@
                                                 <th class="py-2 px-3 text-right">Rung Off</th>
                                                 <th class="py-2 px-3 text-right">Rung On</th>
                                                 <th class="py-2 px-3 text-right">Days Better</th>
-                                                <th class="py-2 px-3 text-right">Wilcoxon $p$</th>
+                                                <th class="py-2 px-3 text-right">Wilcoxon <i>p</i></th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-slate-300 divide-y divide-slate-800/80">
-                                            <tr class="bg-teal-500/10"><td class="py-2 px-3 font-semibold text-white">Mean lead time / order (steps)</td><td class="py-2 px-3 text-right">229</td><td class="py-2 px-3 text-right text-teal-300 font-bold">136 (&minus;41%)</td><td class="py-2 px-3 text-right">8 of 8</td><td class="py-2 px-3 text-right text-amber-300">0.008 (firm)</td></tr>
-                                            <tr class="bg-teal-500/5"><td class="py-2 px-3 font-semibold text-white">Safety-guard stops</td><td class="py-2 px-3 text-right">5,976</td><td class="py-2 px-3 text-right text-teal-300 font-bold">3,162 (&minus;47%)</td><td class="py-2 px-3 text-right">7 of 8</td><td class="py-2 px-3 text-right text-amber-300">0.016 (firm)</td></tr>
-                                            <tr><td class="py-2 px-3">Near-miss steps with people</td><td class="py-2 px-3 text-right">247</td><td class="py-2 px-3 text-right text-teal-300">146 (&minus;41%)</td><td class="py-2 px-3 text-right">7 of 8</td><td class="py-2 px-3 text-right">0.055</td></tr>
-                                            <tr><td class="py-2 px-3">Orders delivered (of 200)</td><td class="py-2 px-3 text-right">188.1</td><td class="py-2 px-3 text-right">190.9</td><td class="py-2 px-3 text-right">6 of 8</td><td class="py-2 px-3 text-right">0.195</td></tr>
+                                            <tr class="bg-teal-500/10"><td class="py-2 px-3 font-semibold text-white">Mean lead time / order (steps)</td><td class="py-2 px-3 text-right">229</td><td class="py-2 px-3 text-right text-teal-300 font-bold">132 (&minus;42%)</td><td class="py-2 px-3 text-right">8 of 8</td><td class="py-2 px-3 text-right text-amber-300">0.008 (firm)</td></tr>
+                                            <tr class="bg-teal-500/5"><td class="py-2 px-3 font-semibold text-white">Safety-guard stops</td><td class="py-2 px-3 text-right">5,976</td><td class="py-2 px-3 text-right text-teal-300 font-bold">2,561 (&minus;57%)</td><td class="py-2 px-3 text-right">8 of 8</td><td class="py-2 px-3 text-right text-amber-300">0.008 (firm)</td></tr>
+                                            <tr><td class="py-2 px-3">Orders delivered (of 200)</td><td class="py-2 px-3 text-right">188.1</td><td class="py-2 px-3 text-right text-teal-300">191.5</td><td class="py-2 px-3 text-right">7 of 8</td><td class="py-2 px-3 text-right text-amber-300">0.016 (firm)</td></tr>
+                                            <tr><td class="py-2 px-3">Distance driven, all fleets</td><td class="py-2 px-3 text-right">13,530</td><td class="py-2 px-3 text-right text-teal-300">12,458 (&minus;8%)</td><td class="py-2 px-3 text-right">7 of 8</td><td class="py-2 px-3 text-right text-amber-300">0.016 (firm)</td></tr>
+                                            <tr><td class="py-2 px-3">Near-miss steps with people</td><td class="py-2 px-3 text-right">247</td><td class="py-2 px-3 text-right">310</td><td class="py-2 px-3 text-right">5 of 8</td><td class="py-2 px-3 text-right">0.64 (mixed)</td></tr>
                                             <tr><td class="py-2 px-3">Collisions</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right text-teal-300">0</td><td class="py-2 px-3 text-right">&mdash;</td><td class="py-2 px-3 text-right">&mdash;</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
 
                                 <div class="p-3 rounded-lg bg-amber-950/30 border border-amber-500/30 text-xs text-slate-300 leading-relaxed">
-                                    <strong class="text-amber-300">4-Day Test Adding <code class="font-mono">thrml</code> (Clusters 5–8):</strong> Lead time dropped <strong>46%</strong>, distance driven dropped <strong>18%</strong>, and last-resort recovery fired half as often across all 4 days. Near-misses with humans rose on 2 of 4 days because large-cluster plans hold fleets stationary while pedestrians walk up to them (currently being refined).
+                                    <strong class="text-amber-300">8-Day Test Adding <code class="font-mono">thrml</code> (Clusters 5&ndash;8):</strong> Lead time down <strong>43%</strong> (229 &rarr; 130), distance driven down <strong>14%</strong>, safety-guard stops down <strong>58%</strong>, and orders delivered 191.4 against 188.1, all firm over 8 days. Near misses with people were lower (&minus;54%, <i>p</i> = 0.078; &minus;24% in a second run of the same days), but not firmly. Exact search stops at 1 s of wall-clock time, so two runs of the same day can part ways.
+                                </div>
+                                <div class="mt-3 p-3 rounded-lg bg-teal-950/30 border border-teal-500/30 text-xs text-slate-300 leading-relaxed">
+                                    <strong class="text-teal-300">What sampling adds:</strong> where exact search cannot settle a jam, the alternative is to hold the fleets still. Against that, sampled plans delivered about <strong>2 more orders a day</strong> (191.6 vs 189.8, <i>p</i> = 0.016) and cut lead time by about <strong>22%</strong> (130 vs 168 steps, <i>p</i> = 0.039). Against leaving large jams to FLOWRRA&rsquo;s existing rules, sampling was level on deliveries and lead time; its job is the jams exact search cannot solve.
                                 </div>
                             </div>
 
@@ -1061,21 +1071,24 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
                                     <div class="p-3 rounded bg-[#030914] border border-slate-800">
                                         <span class="text-slate-400 block">Exact search (2–4 fleets)</span>
-                                        <strong class="text-teal-300 text-sm">9 ms median</strong>
+                                        <strong class="text-teal-300 text-sm">2 / 22 / 262 ms median (2 / 3 / 4 fleets)</strong>
                                     </div>
                                     <div class="p-3 rounded bg-[#030914] border border-slate-800">
                                         <span class="text-slate-400 block">thrml (Laptop GPU)</span>
                                         <strong class="text-amber-300 text-sm">0.33 s sampling</strong>
                                     </div>
                                     <div class="p-3 rounded bg-[#030914] border border-slate-800">
-                                        <span class="text-slate-400 block">thrml (1 AWS CPU Core)</span>
-                                        <strong class="text-rose-400 text-sm">15.5 s (10.5s compile + 5.7s sample)</strong>
+                                        <span class="text-slate-400 block">thrml (1 CPU core, AWS ml.g5.4xlarge)</span>
+                                        <strong class="text-rose-400 text-sm">4.2 s (5 fleets) to 12.1 s (8 fleets) median</strong>
                                     </div>
                                     <div class="p-3 rounded bg-[#030914] border border-slate-800">
-                                        <span class="text-slate-400 block">thrml (Pre-compiled per size, 2 cores)</span>
-                                        <strong class="text-teal-300 text-sm">2.2 s (3-fleet) / 32 s (7-fleet)</strong>
+                                        <span class="text-slate-400 block">thrml compile (once per fleet count)</span>
+                                        <strong class="text-teal-300 text-sm">~8.6 s the first time, ~4 ms after</strong>
                                     </div>
                                 </div>
+                                <p class="text-xs text-slate-300 mt-3 leading-relaxed">
+                                    Sampling finds a plan for about 70% of 5&ndash;8 fleet jams on the CPU. Estimated break-even is <strong class="text-amber-300">roughly 0.3&ndash;0.5 s per decision</strong>: if a cluster stood still while <code class="text-teal-300 font-mono">thrml</code> decided, its fleets would wait about 9,000&ndash;11,000 fleet-seconds a day (a fifth to a quarter of all fleet time), against about 400&ndash;800 hops saved beyond exact search. That is an estimate, not a test; the simulator freezes time while the rung decides.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -1112,7 +1125,7 @@
                                     <div class="hidden flex-col items-center justify-center p-8 text-center text-slate-400 font-mono text-xs">
                                         <i class="fa-solid fa-route text-teal-400/50 text-3xl mb-3"></i>
                                         <span class="text-teal-300 font-semibold mb-1">Second Trajectory Map Slot</span>
-                                        <span class="text-slate-500">Drop <code class="text-amber-300">jam_figure_small.png"</code> (or update <code class="text-teal-300">src</code>) to display side-by-side</span>
+                                        <span class="text-slate-500">Drop <code class="text-amber-300">jam_figure_small.png</code> (or update <code class="text-teal-300">src</code>) to display side-by-side</span>
                                     </div>
                                 </div>
                             </div>
@@ -1294,7 +1307,7 @@
                     </h2>
                     <div class="glass-card p-10 md:p-16">
                         <p class="text-lg leading-8 text-slate-300 mb-8">
-                            DhaaRn operates as a sovereign architectural partner. We do not seek standard software vendor relationships; we propose paid integration pilots to deploy FLOWRRA's decentralised orchestration directly onto proprietary hardware ecosystems.
+                            DhaaRn works as an architectural partner rather than a software vendor. We are open to collaborations and integration pilots that run FLOWRRA's decentralised orchestration on your hardware and sampling platforms.
                         </p>
                         <p class="text-lg leading-8 text-slate-300 mb-12">
                             We provide the mathematics and the decentralised architecture. You provide the physical substrate.
