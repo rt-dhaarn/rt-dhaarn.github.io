@@ -9,6 +9,7 @@
 
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
         <link rel="icon" type="image/png" href="Dhaarn_Logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,8 +18,6 @@
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
             rel="stylesheet"
         />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Iceberg&display=swap"
             rel="stylesheet"
@@ -27,42 +26,75 @@
         <style>
             body {
                 font-family: "Inter", sans-serif;
-                background-color: #050505;
+                background-color: #030914; /* Deep dark rich blue */
                 color: #e2e8f0;
+            }
+
+            .iceberg {
+                font-family: "Iceberg", sans-serif;
             }
 
             /* --- DhaaRn Core Styles --- */
             .gradient-text {
                 background: linear-gradient(
-                    to right,
-                    #fcd34d,
-                    #2dd4bf,
-                    #ef4444
+                    110deg,
+                    #7a0016 0%,   /* Deep Crimson */
+                    #c90016 25%,  /* Rich Red */
+                    #d4af37 55%,  /* Metallic Gold */
+                    #fef08a 75%,  /* Gold Highlight */
+                    #b8860b 100%  /* Dark Gold */
                 );
                 font-family: "Iceberg", sans-serif;
                 font-weight: 400;
-                font-style: normal;
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
                 text-fill-color: transparent;
+                filter: drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.6));
             }
 
             .hero-glow {
-                text-shadow:
-                    0 0 20px rgba(212, 175, 55, 0.3),
-                    0 0 40px rgba(153, 27, 27, 0.4);
+                text-shadow: 0 0 30px rgba(212, 175, 55, 0.35), 0 0 50px rgba(20, 184, 166, 0.3);
             }
 
             .glass-card {
-                background: rgba(20, 20, 20, 0.6);
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
-                border: 1px solid rgba(212, 175, 55, 0.1);
+                background: rgba(7, 16, 34, 0.65);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1px solid rgba(212, 175, 55, 0.15);
+                box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(45, 212, 191, 0.03);
                 border-radius: 1rem;
             }
 
-            /* Animated Background */
+            .tech-box {
+                background: rgba(6, 15, 32, 0.75);
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(45, 212, 191, 0.2);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            }
+
+            .fading-bg-section {
+                position: relative;
+                background-image: linear-gradient(to bottom, rgba(3, 9, 20, 1), rgba(3, 9, 20, 0.2) 15%, rgba(3, 9, 20, 0.2) 85%, rgba(3, 9, 20, 1)),
+                                  url('/home/rohitt/Pictures/Background_Tile.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+                mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+            }
+
+            .content-glass-wrap {
+                background: rgba(7, 16, 34, 0.78);
+                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(2px);
+                border: 1px solid rgba(212, 175, 55, 0.22);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(20, 184, 166, 0.07);
+                border-radius: 1.5rem;
+                padding: 3rem 2.5rem;
+            }
+
+            /* Animated Deep Blue Background with Gold & Teal Hints */
             body::before {
                 content: "";
                 position: fixed;
@@ -73,46 +105,37 @@
                 z-index: -1;
                 background:
                     radial-gradient(
-                        circle at 20% 20%,
-                        rgba(212, 175, 55, 0.08),
-                        transparent 30%
+                        circle at 18% 22%,
+                        rgba(212, 175, 55, 0.09),
+                        transparent 38%
                     ),
                     radial-gradient(
-                        circle at 80% 70%,
-                        rgba(153, 27, 27, 0.1),
-                        transparent 35%
+                        circle at 82% 28%,
+                        rgba(20, 184, 166, 0.10),
+                        transparent 42%
+                    ),
+                    radial-gradient(
+                        circle at 50% 80%,
+                        rgba(15, 35, 75, 0.35),
+                        transparent 55%
                     );
                 animation: pulse-glow 15s infinite alternate;
             }
 
             @keyframes pulse-glow {
                 0% {
-                    opacity: 0.6;
+                    opacity: 0.7;
                     transform: scale(1);
                 }
                 100% {
                     opacity: 1;
-                    transform: scale(1.1);
-                }
-            }
-
-            .animate-pulse-slow {
-                animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-            }
-
-            @keyframes pulse {
-                0%,
-                100% {
-                    opacity: 1;
-                }
-                50% {
-                    opacity: 0.85;
+                    transform: scale(1.06);
                 }
             }
 
             .logo-container {
-                width: 50px;
-                height: 50px;
+                width: 60px;
+                height: 60px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -124,8 +147,6 @@
             }
 
             /* --- FLOWRRA Visualization Custom Styles --- */
-
-            /* Custom Range Slider */
             .dhaarn-slider {
                 -webkit-appearance: none;
                 width: 100%;
@@ -140,9 +161,9 @@
                 width: 18px;
                 height: 18px;
                 border-radius: 50%;
-                background: linear-gradient(135deg, #fcd34d 0%, #ef4444 100%);
+                background: linear-gradient(135deg, #d4af37 0%, #14b8a6 100%);
                 cursor: pointer;
-                box-shadow: 0 0 10px rgba(252, 211, 77, 0.5);
+                box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
             }
 
             /* Status Indicators */
@@ -199,7 +220,6 @@
                 }
             }
 
-            /* NEW: Frozen Node Styles */
             .frozen-stats {
                 background: rgba(234, 179, 8, 0.1);
                 border: 1px solid rgba(234, 179, 8, 0.3);
@@ -217,18 +237,6 @@
                 font-size: 0.875rem;
                 font-weight: 600;
                 margin-left: 0.5rem;
-            }
-            @keyframes pulse-slow {
-                0%,
-                100% {
-                    opacity: 0.3;
-                }
-                50% {
-                    opacity: 0.7;
-                }
-            }
-            .animate-pulse-slow {
-                animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
             }
         </style>
     </head>
@@ -253,30 +261,40 @@
                         >
                     </a>
 
-                    <div class="hidden md:flex items-center space-x-6">
+                    <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
                         <a
                             href="#home"
-                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            class="text-slate-300 hover:text-amber-300 transition-colors"
                             >Home</a
                         >
                         <a
                             href="#about"
-                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            class="text-slate-300 hover:text-amber-300 transition-colors"
                             >About</a
                         >
                         <a
                             href="#offerings"
-                            class="text-gray-300 hover:text-amber-300 transition-colors"
-                            >Offerings</a
+                            class="text-slate-300 hover:text-teal-300 transition-colors"
+                            >FLOWRRA</a
+                        >
+                        <a
+                            href="#thermodynamic-collapse"
+                            class="text-slate-300 hover:text-amber-300 transition-colors"
+                            >Thermodynamics</a
+                        >
+                        <a
+                            href="#sutraa"
+                            class="text-slate-300 hover:text-teal-300 transition-colors"
+                            >SŪTRAA</a
                         >
                         <a
                             href="#vision"
-                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            class="text-slate-300 hover:text-amber-300 transition-colors"
                             >Vision</a
                         >
                         <a
                             href="#contact"
-                            class="text-gray-300 hover:text-amber-300 transition-colors"
+                            class="text-slate-300 hover:text-teal-300 transition-colors"
                             >Contact</a
                         >
                     </div>
@@ -285,160 +303,105 @@
         </header>
 
         <main>
-            <section
-                id="home"
-                class="min-h-screen flex items-center justify-center text-center overflow-hidden px-6 pt-20"
-            >
-                <div class="relative z-10">
-                    <h1
-                        class="text-6xl md:text-8xl font-extrabold text-white hero-glow"
-                    >
-                        Welcome to <span class="gradient-text">DhaaRn</span>
+            <!-- HERO SECTION -->
+            <section id="home" class="py-32 px-6 fading-bg-section">
+                <div class="max-w-4xl mx-auto content-glass-wrap">
+                    <h1 class="text-center text-6xl md:text-8xl font-extrabold text-white hero-glow">
+                        <span class="gradient-text">DhaaRn</span>
                     </h1>
-                    <p
-                        class="mt-6 text-xl md:text-2xl font-light text-amber-100/80 max-w-3xl mx-auto"
-                    >
-                        Devices for Harmonious Alignment Aware Resonant Nexus
+                    <p class="mt-4 text-center text-xl md:text-3xl font-light text-white-200/90 max-w-3xl mx-auto">
+                        The Voyagers' Sanctuary
                     </p>
 
-                    <div class="mt-12 mb-12 flex justify-center">
-                        <img
-                            src="Dhaarn_Logo.png"
-                            alt="DHAARN Logo"
-                            class="w-38 h-38 md:w-60 md:h-60 animate-pulse-slow drop-shadow-2xl"
-                            onerror="this.style.display='none'"
-                        />
+                    <div class="mt-6 mb-6 flex justify-center">
+                        <img src="DhaaRn.png" alt="DHAARN Logo" class="w-48 h-48 md:w-64 md:h-64 drop-shadow-2xl" onerror="this.style.display='none'" />
                     </div>
 
-                    <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
-                        We are building the next generation of aware systems,
-                        creating a harmonious alignment between technology and
-                        humanity.
-                    </p>
-                    <div class="mt-12">
-                        <a
-                            href="#about"
-                            class="bg-red-900/80 hover:bg-red-800 border border-amber-500/30 text-amber-50 font-semibold py-3 px-8 rounded-full text-lg transition-all duration-300 shadow-lg shadow-red-900/40"
-                        >
-                            Discover DhaaRn
-                        </a>
+                    <div class="max-w-3xl mx-auto text-lg leading-8 text-slate-300 text-center italic font-light border-l-2 border-r-2 border-amber-500/30 px-8 py-5 bg-[#051026]/60 rounded-2xl">
+                        <p>
+                            DhaaRn offers presence, a timeless capacity to sustain, observe, and orchestrate the wild interplay of ideas and creation.<br/>
+                            <br/>
+                            Beyond algorithms and architectures, beyond the lines of code and circuits.<br/>
+                            <br/>
+                            DhaaRn embodies the seeking of unity between the physical and the immaterial, glimpsing the fabric of time and space through a lens of balanced curiosity.
+                        </p>
                     </div>
                 </div>
             </section>
 
-            <section id="about" class="py-24 sm:py-32">
-                <div class="container mx-auto max-w-6xl px-6">
-                    <div class="text-center mb-16">
-                        <h2
-                            class="text-base font-semibold leading-7 text-amber-400"
-                        >
+            <!-- ABOUT SECTION -->
+            <section id="about" class="py-24 flex items-center justify-center text-center overflow-hidden px-6">
+                <div class="max-w-4xl mx-auto content-glass-wrap">
+                    <div class="text-center mb-12">
+                        <h2 class="text-sm font-semibold leading-7 text-amber-400 font-mono tracking-widest uppercase">
                             Our Essence
                         </h2>
-                        <p
-                            class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl"
-                        >
+                        <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">
                             Why DhaaRn Exists
                         </p>
-                        <div
-                            class="mt-6 text-lg leading-8 text-gray-400 max-w-3xl mx-auto space-y-4 text-left"
-                        >
-                            <p>
-                                An opera of rhythms, a composition spanning
-                                decades, resonating with the wild pulses of
-                                existence; DhaaRn has emerged to harmonize what
-                                is still within, with the dance of the cosmos
-                                outside. It seeks not only to observe but to
-                                navigate, to maintain balance while exploring
-                                the unknown, to fly into the Abyss with
-                                curiosity and courage.
-                            </p>
-                            <p>
-                                In a world where human inventions increasingly
-                                guide their creators, from AGI to Quantum,
-                                Robotics, Nano-Tech, Bio-Tech, and the awakening
-                                of collective consciousness. DhaaRn envisions a
-                                future where exploration and maintenance
-                                coexist, where light and darkness dance in
-                                wondrous geometry. It is the still darkness that
-                                holds the curious, bright light, enabling it to
-                                illuminate new frontiers.
-                            </p>
-                            <p>
-                                DhaaRn offers presence, a timeless capacity to
-                                sustain, observe, and orchestrate the wild
-                                interplay of ideas and creation. Beyond
-                                algorithms and architectures, beyond the lines
-                                of code and circuits, DHAARN embodies the
-                                seeking of unity between the physical and the
-                                immaterial, glimpsing the fabric of time and
-                                space through a lens of balanced curiosity.
-                            </p>
-                        </div>
+                    </div>
+
+                    <div class="text-slate-300 text-lg leading-relaxed space-y-6 text-left font-light">
+                        <p>
+                            An opera of rhythms, a composition spanning decades, resonating with the wild pulses of existence; DhaaRn has emerged to harmonize what is still within, with the dance of the cosmos outside. It seeks not only to observe but to navigate, to maintain balance while exploring the unknown, to fly into the Abyss with curiosity and courage.
+                        </p>
+                        <p>
+                            In a world where human inventions increasingly guide their creators, from AGI to Quantum, Robotics, Nano-Tech, Bio-Tech, and the awakening of collective consciousness. DhaaRn envisions a future where exploration and maintenance coexist, where light and darkness dance in wondrous geometry. It is the still darkness that holds the curious, bright light, enabling it to illuminate new frontiers.
+                        </p>
+                        <p>
+                            DhaaRn offers presence, a timeless capacity to sustain, observe, and orchestrate the wild interplay of ideas and creation. Beyond algorithms and architectures, beyond the lines of code and circuits, DHAARN embodies the seeking of unity between the physical and the immaterial, glimpsing the fabric of time and space through a lens of balanced curiosity.
+                        </p>
                     </div>
                 </div>
             </section>
 
-            <section id="offerings" class="py-20 sm:py-28 relative">
+            <!-- OFFERINGS / FLOWRRA SECTION -->
+            <section id="offerings" class="py-20 sm:py-28 relative border-t border-teal-500/10">
                 <div class="container mx-auto max-w-7xl px-6">
                     <div class="text-center mb-12">
-                        <h2
-                            class="text-base font-semibold leading-7 text-teal-400"
-                        >
-                            Offerings
+                        <h2 class="text-sm font-mono uppercase tracking-widest font-semibold leading-7 text-teal-400">
+                            Offerings &bull; First Holon
                         </h2>
-                        <p
-                            class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl"
-                        >
+                        <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">
                             FLOWRRA
                         </p>
-                        <p class="mt-2 text-xl text-gray-400">
+                        <p class="mt-2 text-xl text-slate-400">
                             Flow Recognition Reconfiguration Agent
                         </p>
                     </div>
 
-                    <div
-                        class="max-w-3xl mx-auto text-lg leading-8 text-gray-300 text-center mb-16 italic font-light border-l-2 border-r-2 border-amber-500/20 px-8 py-4 bg-white/5 rounded-2xl"
-                    >
+                    <div class="max-w-3xl mx-auto text-lg leading-8 text-slate-300 text-center mb-16 italic font-light border-l-2 border-r-2 border-amber-500/30 px-8 py-6 bg-[#061229]/70 rounded-2xl">
                         <p class="mb-4">
                             "There's a moment in every complex system's life
                             when it must choose: collapse into entropy, or find
                             a way to hold.
                         </p>
                         <p class="mb-4">
-                            For the past six months, we've been teaching swarms
-                            of autonomous agents to make that choice - not
-                            through rigid programming, but through something
-                            more fundamental: the ability to remember failure
-                            and reshape themselves around it.
+                            We've taught swarms of autonomous agents to
+                            make that choice - not through rigid programming,
+                            but through something more fundamental: the ability
+                            to remember failure and reshape themselves around it.
                         </p>
                         <p class="mb-4">
                             This is FLOWRRA, and it represents DhaaRn's first
                             step toward systems that don't just compute - they
                             maintain, they harmonize, they hold."
                         </p>
-                        <p class="mb-4">
-                            FLOWRRA is the first operational holon of the DhaaRn
-                            ecosystem:
+                        <p class="mb-6 not-italic text-base text-slate-400">
+                            A Supplementary/Stand-alone coherence brain for the era of brittle infrastructure.
                         </p>
-                        <p>
-                            A Supplementary/Stand-alone coherence brain for the
-                            era of brittle infrastructure.
-                        </p>
-                        <p class="mb-4" style="color: #008080">
-                            <a href="https://github.com/Tro23/FLOWRRA">
-                                Github-FLOWRRA
+                        <div class="flex flex-wrap justify-center gap-6 not-italic text-sm font-mono">
+                            <a href="https://github.com/Tro23/FLOWRRA" target="_blank" class="text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-950/30 px-4 py-2 rounded-lg transition-colors">
+                                <i class="fa-brands fa-github mr-2"></i>GitHub - FLOWRRA
                             </a>
-                        </p>
-                        <p style="color: #ffa500">
-                            <a
-                                href="https://open.substack.com/pub/rohittamidapati/p/flowrra-flow-recognition-reconfiguration?r=721j7i&utm_campaign=post&utm_medium=web&showWelcomeOnShare=true"
-                            >
-                                FLOWRRA Evolution. (Substack article)
+                            <a href="https://rohittamidapati.substack.com/p/flowrra-flow-recognition-reconfiguration" target="_blank" class="text-amber-400 hover:text-amber-300 border border-amber-500/30 bg-amber-950/30 px-4 py-2 rounded-lg transition-colors">
+                                <i class="fa-solid fa-book-open mr-2"></i>FLOWRRA Evolution (Substack)
                             </a>
-                        </p>
+                        </div>
                     </div>
 
-                    <div id="flowrra-app" class="w-full">
+                    <!-- FLOWRRA Interactive Swarm App -->
+                    <div id="flowrra-app" class="w-full mb-24">
                         <div
                             id="loadingState"
                             class="glass-card p-24 text-center flex flex-col items-center justify-center"
@@ -447,7 +410,7 @@
                             <h3 class="text-xl font-semibold text-white">
                                 Initializing FLOWRRA Protocol...
                             </h3>
-                            <p class="text-gray-400 mt-2">
+                            <p class="text-slate-400 mt-2">
                                 Loading simulation data from the nexus.
                             </p>
                         </div>
@@ -460,7 +423,7 @@
                             <h3 class="text-2xl font-semibold text-white mb-2">
                                 Connection Interrupted
                             </h3>
-                            <p class="text-gray-400 mb-6">
+                            <p class="text-slate-400 mb-6">
                                 Unable to load the simulation manifest.
                             </p>
                             <p
@@ -474,7 +437,7 @@
                         <div id="mainContent" style="display: none">
                             <div class="glass-card p-6 mb-8">
                                 <div
-                                    class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4"
+                                    class="flex justify-between items-center mb-6 border-b border-slate-700/80 pb-4"
                                 >
                                     <div class="flex items-center gap-2">
                                         <span
@@ -485,7 +448,6 @@
                                         >
                                             Swarm Topology & Dynamics
                                         </h3>
-                                        <!-- NEW: Frozen node badge -->
                                         <span
                                             id="frozenBadge"
                                             class="frozen-badge"
@@ -507,7 +469,7 @@
                                 >
                                     <div class="flex-grow flex flex-col">
                                         <div
-                                            class="relative bg-black/40 rounded-xl overflow-hidden border border-gray-800 flex-grow"
+                                            class="relative bg-[#020612] rounded-xl overflow-hidden border border-slate-800 flex-grow"
                                         >
                                             <canvas
                                                 id="swarmCanvas"
@@ -522,86 +484,49 @@
                                         </div>
 
                                         <div
-                                            class="flex flex-wrap gap-4 mt-4 pt-2 text-sm text-gray-400 border-t border-gray-700"
+                                            class="flex flex-wrap gap-4 mt-4 pt-2 text-sm text-slate-400 border-t border-slate-800"
                                         >
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded bg-cyan-400"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded bg-cyan-400"></div>
                                                 Holon 0
                                             </div>
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded bg-blue-400"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded bg-blue-400"></div>
                                                 Holon 1
                                             </div>
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded bg-purple-400"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded bg-purple-400"></div>
                                                 Holon 2
                                             </div>
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded bg-pink-400"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded bg-pink-400"></div>
                                                 Holon 3
                                             </div>
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded bg-green-400 opacity-60"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded bg-green-400 opacity-60"></div>
                                                 Active Node
                                             </div>
-                                            <!-- NEW: Frozen node legend -->
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded bg-yellow-400"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded bg-yellow-400"></div>
                                                 Frozen Node
                                             </div>
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded bg-red-500 opacity-60"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded bg-red-500 opacity-60"></div>
                                                 Broken Link
                                             </div>
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded bg-amber-500"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded bg-amber-500"></div>
                                                 Obstacle
                                             </div>
-                                            <div
-                                                class="flex items-center gap-2"
-                                            >
-                                                <div
-                                                    class="w-3 h-3 rounded border-2 border-gray-500"
-                                                ></div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 rounded border-2 border-slate-500"></div>
                                                 Partition
                                             </div>
                                         </div>
                                     </div>
 
                                     <div
-                                        class="w-full lg:w-72 flex-shrink-0 flex flex-col gap-6 bg-black/20 p-4 rounded-xl border border-gray-800 h-fit"
+                                        class="w-full lg:w-72 flex-shrink-0 flex flex-col gap-6 bg-[#040b1a] p-4 rounded-xl border border-slate-800 h-fit"
                                     >
                                         <div class="flex gap-2">
                                             <button
@@ -612,17 +537,17 @@
                                             </button>
                                             <button
                                                 id="resetBtn"
-                                                class="flex-1 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all text-sm uppercase tracking-wide"
+                                                class="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold transition-all text-sm uppercase tracking-wide"
                                             >
                                                 ↻ Reset
                                             </button>
                                         </div>
 
-                                        <hr class="border-gray-700/50" />
+                                        <hr class="border-slate-800" />
 
                                         <div>
                                             <label
-                                                class="block text-xs text-gray-400 uppercase tracking-wider mb-3 flex justify-between"
+                                                class="block text-xs text-slate-400 uppercase tracking-wider mb-3 flex justify-between"
                                             >
                                                 <span>Timeline Position</span>
                                             </label>
@@ -638,7 +563,7 @@
 
                                         <div>
                                             <label
-                                                class="block text-xs text-gray-400 uppercase tracking-wider mb-3 flex justify-between"
+                                                class="block text-xs text-slate-400 uppercase tracking-wider mb-3 flex justify-between"
                                             >
                                                 <span>Playback Speed</span>
                                             </label>
@@ -652,7 +577,6 @@
                                             />
                                         </div>
 
-                                        <!-- NEW: Frozen Node Stats Panel -->
                                         <div
                                             id="frozenStats"
                                             class="frozen-stats"
@@ -674,16 +598,14 @@
                                                     font-size: 0.75rem;
                                                     color: #d1d5db;
                                                 "
-                                            >
-                                                <!-- Dynamically populated -->
-                                            </div>
+                                            ></div>
                                         </div>
 
                                         <div
-                                            class="mt-auto pt-4 border-t border-gray-700/50"
+                                            class="mt-auto pt-4 border-t border-slate-800"
                                         >
                                             <div
-                                                class="text-xs text-gray-500 text-center"
+                                                class="text-xs text-slate-500 text-center"
                                             >
                                                 System Status:
                                                 <span class="text-teal-400"
@@ -734,9 +656,10 @@
                                     ></div>
                                 </div>
                             </div>
+
                             <div class="glass-card p-6 mt-8">
                                 <div
-                                    class="flex items-center gap-2 mb-6 border-b border-gray-700 pb-4"
+                                    class="flex items-center gap-2 mb-6 border-b border-slate-800 pb-4"
                                 >
                                     <span
                                         class="status-indicator status-active"
@@ -746,7 +669,7 @@
                                     </h3>
                                 </div>
                                 <div
-                                    class="rounded-xl overflow-hidden bg-black/40 border border-gray-800"
+                                    class="rounded-xl overflow-hidden bg-[#020612] border border-slate-800"
                                 >
                                     <img
                                         src="federation_training_overview.png"
@@ -754,170 +677,541 @@
                                         class="w-full h-auto block"
                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                     />
-                                    <!-- Fallback if image fails to load -->
                                     <div
-                                        class="hidden p-20 flex-col items-center justify-center text-gray-500"
+                                        class="hidden p-20 flex-col items-center justify-center text-slate-500"
                                     >
-                                        <svg
-                                            class="w-16 h-16 mb-4 opacity-20"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                            ></path>
-                                        </svg>
-                                        <p>
-                                            Overview diagram manifest not found
-                                        </p>
+                                        <p>Overview diagram manifest not found</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <br />
-                    <div class="text-center mb-12">
-                        <p
-                            class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl"
-                        >
-                            SŪTRAA
-                        </p>
-                        <p class="mt-2 text-xl text-gray-400">
-                            System for Unified Temporal Resonant Alignment
-                            Attention
-                        </p>
-                    </div>
-                    <div class="max-w-7xl mx-auto">
-                        <div
-                            class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center"
-                        >
-                            <div class="order-1 lg:order-2 relative group">
-                                <div
-                                    class="absolute -inset-1 bg-gradient-to-r from-indigo-500/20 to-purple-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-                                ></div>
-                                <div
-                                    class="relative glass-card p-4 aspect-square overflow-hidden border-indigo-500/10"
-                                >
-                                    <canvas
-                                        id="sutraaVisual"
-                                        class="w-full h-full rounded-2xl"
-                                    ></canvas>
-                                    <div
-                                        class="absolute bottom-8 left-8 flex items-center gap-3 bg-black/60 px-4 py-2 rounded-full backdrop-blur-md border border-white/5"
-                                    >
-                                        <div
-                                            class="w-2 h-2 rounded-full bg-indigo-500 animate-ping"
-                                        ></div>
-                                        <span
-                                            class="iceberg text-[10px] tracking-[0.2em] text-indigo-300 uppercase"
-                                            >Resonant Threading Active</span
-                                        >
+
+                    <!-- FLOWRRA IN THE WAREHOUSE SUB-SECTION -->
+                    <div id="flowrra-warehouse" class="pt-12 border-t border-teal-500/20">
+                        <div class="text-center mb-16">
+                            <h3 class="text-sm font-mono uppercase tracking-widest text-amber-400 mb-2">Edge Orchestration</h3>
+                            <p class="text-4xl font-bold tracking-tight text-white sm:text-5xl">FLOWRRA in the Warehouse</p>
+                            <p class="mt-4 text-xl text-slate-400 max-w-3xl mx-auto">
+                                A decentralized, self-repairing multi-agent orchestrator solving combinatorial traffic jams at the edge.
+                            </p>
+                        </div>
+
+                        <!-- Side-by-side Text and Tables -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                            <!-- Text Content -->
+                            <div class="lg:col-span-5">
+                                <h3 class="text-3xl font-bold mb-6 text-white">Physics Over Hallucination</h3>
+                                <p class="text-slate-400 mb-6 leading-relaxed">
+                                    Traditional centralized MAPF planners hallucinate efficiency. They generate theoretically perfect throughput by assuming robots can drive nose-to-tail with zero physical gap.
+                                </p>
+                                <p class="text-slate-300 mb-8 leading-relaxed font-medium">
+                                    FLOWRRA injects actual hardware constraints: enforcing a strict <span class="text-teal-300 font-mono bg-teal-950/60 px-1.5 py-0.5 rounded border border-teal-500/30">1.5 hop boundary (~0.75m)</span> for head-on meetings and a <span class="text-teal-300 font-mono bg-teal-950/60 px-1.5 py-0.5 rounded border border-teal-500/30">1.25 hop boundary</span> when following. When forced to obey real-world physics, traditional planners collapse, dropping from 535 goals to 170.
+                                    <br><br><span class="text-amber-300 font-bold text-xl">FLOWRRA thrives here.</span>
+                                </p>
+
+                                <ul class="space-y-4 font-mono text-sm">
+                                    <li class="flex items-start gap-4 p-4 tech-box rounded-lg">
+                                        <i class="fa-solid fa-check text-teal-400 mt-1"></i>
+                                        <div>
+                                            <strong class="text-white text-base">98.9% Delivery Rate</strong>
+                                            <p class="text-slate-400 mt-1">on clean shifts (clearing 150-order books in 15–20 mins).</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-4 p-4 tech-box rounded-lg">
+                                        <i class="fa-solid fa-bolt text-amber-400 mt-1"></i>
+                                        <div>
+                                            <strong class="text-white text-base">87.6% Delivery Rate</strong>
+                                            <p class="text-slate-400 mt-1">under extreme stress (up to 10 massive failures per shift + dynamic human obstacles).</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-4 p-4 tech-box rounded-lg">
+                                        <i class="fa-solid fa-gauge-high text-teal-400 mt-1"></i>
+                                        <div>
+                                            <strong class="text-white text-base">450 Orders / Hour</strong>
+                                            <p class="text-slate-400 mt-1">sustained hardware throughput on Kiva-style benchmarks.</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Performance Tables -->
+                            <div class="lg:col-span-7 space-y-8">
+                                <div class="tech-box rounded-xl p-6">
+                                    <h4 class="text-amber-400 font-mono text-sm uppercase mb-4 border-b border-teal-500/30 pb-2">Deploy Eval: Headline Means Per Day (1,920 Simulated Days)</h4>
+
+                                    <!-- Clean Table -->
+                                    <div class="mb-6">
+                                        <h5 class="text-slate-300 text-xs font-bold mb-2 font-mono">CLEAN (128 DAYS PER ARM)</h5>
+                                        <div class="overflow-x-auto">
+                                            <table class="w-full text-left text-xs font-mono whitespace-nowrap">
+                                                <thead class="text-teal-300 border-b border-teal-500/40">
+                                                    <tr>
+                                                        <th class="py-2 px-3">arm</th>
+                                                        <th class="py-2 px-3 text-right">delivered %</th>
+                                                        <th class="py-2 px-3 text-right">lead time</th>
+                                                        <th class="py-2 px-3 text-right">lead (del only)</th>
+                                                        <th class="py-2 px-3 text-right">collisions</th>
+                                                        <th class="py-2 px-3 text-right">guard stops</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="text-slate-300 divide-y divide-slate-800">
+                                                    <tr class="bg-teal-500/10 border-l-2 border-teal-400"><td class="py-2 px-3 font-bold text-white">ladder4</td><td class="py-2 px-3 text-right text-teal-300 font-bold">98.87</td><td class="py-2 px-3 text-right">112.09</td><td class="py-2 px-3 text-right">106.22</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">1058.62</td></tr>
+                                                    <tr><td class="py-2 px-3">ladder6</td><td class="py-2 px-3 text-right">94.21</td><td class="py-2 px-3 text-right">148.91</td><td class="py-2 px-3 text-right">123.17</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">1204.14</td></tr>
+                                                    <tr><td class="py-2 px-3">RULES</td><td class="py-2 px-3 text-right">95.46</td><td class="py-2 px-3 text-right">125.66</td><td class="py-2 px-3 text-right">102.22</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">584.22</td></tr>
+                                                    <tr><td class="py-2 px-3">PIBT</td><td class="py-2 px-3 text-right text-amber-300">98.38</td><td class="py-2 px-3 text-right">86.18</td><td class="py-2 px-3 text-right">76.16</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">0</td></tr>
+                                                    <tr><td class="py-2 px-3">RHCR-PP</td><td class="py-2 px-3 text-right text-rose-400">86.28</td><td class="py-2 px-3 text-right">165.14</td><td class="py-2 px-3 text-right">11.58</td><td class="py-2 px-3 text-right">11.07</td><td class="py-2 px-3 text-right">52.37</td></tr>
+                                                    <tr><td class="py-2 px-3">RHCR-PIBT</td><td class="py-2 px-3 text-right text-rose-400">75.15</td><td class="py-2 px-3 text-right">209.89</td><td class="py-2 px-3 text-right">63.47</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right">5870.43</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Full Stress Table -->
+                                    <div>
+                                        <h5 class="text-slate-300 text-xs font-bold mb-2 font-mono">FULL STRESS (128 DAYS PER ARM)</h5>
+                                        <div class="overflow-x-auto">
+                                            <table class="w-full text-left text-xs font-mono whitespace-nowrap">
+                                                <thead class="text-teal-300 border-b border-teal-500/40">
+                                                    <tr>
+                                                        <th class="py-2 px-3">arm</th>
+                                                        <th class="py-2 px-3 text-right">delivered %</th>
+                                                        <th class="py-2 px-3 text-right">lead time</th>
+                                                        <th class="py-2 px-3 text-right">failures/day</th>
+                                                        <th class="py-2 px-3 text-right">rescues/day</th>
+                                                        <th class="py-2 px-3 text-right">near misses</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="text-slate-300 divide-y divide-slate-800">
+                                                    <tr class="bg-teal-500/10 border-l-2 border-teal-400"><td class="py-2 px-3 font-bold text-white">ladder4</td><td class="py-2 px-3 text-right text-teal-300 font-bold">87.63</td><td class="py-2 px-3 text-right">192.33</td><td class="py-2 px-3 text-right">11.53</td><td class="py-2 px-3 text-right">11.34</td><td class="py-2 px-3 text-right">77.41</td></tr>
+                                                    <tr><td class="py-2 px-3">ladder6</td><td class="py-2 px-3 text-right">82.14</td><td class="py-2 px-3 text-right">234.37</td><td class="py-2 px-3 text-right">11.72</td><td class="py-2 px-3 text-right">10.30</td><td class="py-2 px-3 text-right">74.73</td></tr>
+                                                    <tr><td class="py-2 px-3">RULES</td><td class="py-2 px-3 text-right">87.48</td><td class="py-2 px-3 text-right">190.67</td><td class="py-2 px-3 text-right">11.51</td><td class="py-2 px-3 text-right">11.26</td><td class="py-2 px-3 text-right">84.02</td></tr>
+                                                    <tr><td class="py-2 px-3">PIBT</td><td class="py-2 px-3 text-right text-amber-300">87.48</td><td class="py-2 px-3 text-right">190.67</td><td class="py-2 px-3 text-right">11.51</td><td class="py-2 px-3 text-right">11.26</td><td class="py-2 px-3 text-right">84.02</td></tr>
+                                                    <tr><td class="py-2 px-3">RHCR-PP</td><td class="py-2 px-3 text-right text-rose-400">86.28</td><td class="py-2 px-3 text-right">165.14</td><td class="py-2 px-3 text-right">11.58</td><td class="py-2 px-3 text-right">11.07</td><td class="py-2 px-3 text-right">52.37</td></tr>
+                                                    <tr><td class="py-2 px-3">RHCR-PIBT</td><td class="py-2 px-3 text-right text-rose-400">74.57</td><td class="py-2 px-3 text-right">270.10</td><td class="py-2 px-3 text-right">11.70</td><td class="py-2 px-3 text-right">10.30</td><td class="py-2 px-3 text-right">79.41</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="order-2 lg:order-1">
-                                <div
-                                    class="max-w-3xl mx-auto text-lg leading-8 text-gray-300 text-center mb-16 italic font-light border-l-2 border-r-2 border-amber-500/20 px-8 py-4 bg-white/5 rounded-2xl"
-                                >
-                                    <p class="mb-4">
-                                        Reframing intelligence not as continuous
-                                        computation, but as a meditative process
-                                        of
-                                        <span
-                                            class="text-orange-300 italic font-medium"
-                                            >resonance recognition and thread
-                                            selection</span
-                                        >.
-                                    </p>
+                        <!-- Side-by-Side Kiva Simulation GIFs -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+                            <div class="tech-box rounded-xl p-3 flex flex-col items-center justify-center relative overflow-hidden group">
+                                <span class="text-xs font-mono text-teal-300 z-10 bg-[#030914]/90 px-3 py-1 rounded-md absolute top-4 left-4 border border-teal-500/30">Kiva Full Day</span>
+                                <img src="flowrra_kiva_day.gif" alt="FLOWRRA Kiva Day Simulation" class="rounded-lg border border-teal-500/20 shadow-2xl w-full object-contain bg-[#020612]" />
+                            </div>
+                            <div class="tech-box rounded-xl p-3 flex flex-col items-center justify-center relative overflow-hidden group">
+                                <span class="text-xs font-mono text-amber-300 z-10 bg-[#030914]/90 px-3 py-1 rounded-md absolute top-4 left-4 border border-amber-500/30">Close Up</span>
+                                <img src="flowrra_kiva_closeup.gif" alt="FLOWRRA Kiva Closeup Simulation" class="rounded-lg border border-teal-500/20 shadow-2xl w-full object-contain bg-[#020612]" />
+                            </div>
+                        </div>
 
-                                    <div class="space-y-6">
-                                        <div
-                                            class="p-6 glass-card border-indigo-500/10 hover:bg-indigo-500/5"
-                                        >
-                                            <h4
-                                                class="iceberg text-white text-lg mb-2"
-                                            >
-                                                Attentive Stillness
-                                            </h4>
-                                            <p
-                                                class="text-sm text-slate-500 leading-relaxed"
-                                            >
-                                                Pausing to reflect on the
-                                                "image" of the present moment: A
-                                                condensed semantic and energetic
-                                                configuration.
-                                            </p>
-                                        </div>
-                                        <div
-                                            class="p-6 glass-card border-indigo-500/10 hover:bg-indigo-500/5"
-                                        >
-                                            <h4
-                                                class="iceberg text-white text-lg mb-2"
-                                            >
-                                                Resonance Invocation
-                                            </h4>
-                                            <p
-                                                class="text-sm text-slate-500 leading-relaxed"
-                                            >
-                                                Allowing latent memory fields to
-                                                reconfigure in response to the
-                                                present through non-exhaustive
-                                                vibrational matching.
-                                            </p>
-                                        </div>
-                                        <div
-                                            class="p-6 glass-card border-indigo-500/10 hover:bg-indigo-500/5"
-                                        >
-                                            <h4
-                                                class="iceberg text-white text-lg mb-2"
-                                            >
-                                                Thread Emergence
-                                            </h4>
-                                            <p
-                                                class="text-sm text-slate-500 leading-relaxed"
-                                            >
-                                                Weaving structures of memory, insight, and future orientation; together in one resonant thread for garland a many.
-                                            </p>   
+                        <div class="tech-box rounded-xl p-2 relative overflow-hidden shadow-[0_0_30px_rgba(59,130,246,0.15)] w-full max-w-5xl mx-auto h-[700px] md:h-[800px] lg:h-[650px]">
+                            <iframe src="flowrra_animation.html" width="100%" height="100%" frameborder="0" class="rounded-lg w-full h-full bg-transparent" title="Flowrra Animation"></iframe>
+                        </div>
+
+                        <!-- NEW: Benchmark Plots Div Below Kiva Full Day and Closeup GIFs -->
+                        <div class="mt-10 space-y-8">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <!-- Figure 1 -->
+                                <div class="tech-box rounded-xl p-5 flex flex-col justify-between">
+                                    <div>
+                                        <span class="text-xs font-mono uppercase tracking-wider text-teal-400 block mb-2">Throughput Benchmark</span>
+                                        <div class="rounded-lg overflow-hidden border border-slate-800 bg-white p-2 mb-4">
+                                            <img src="fig_delivered.png" alt="Figure 1: Book delivered against the number of fleets" class="w-full h-auto object-contain rounded" />
                                         </div>
                                     </div>
+                                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-light border-l-2 border-teal-400 pl-3">
+                                        <strong class="text-white font-semibold">Figure 1.</strong> Book delivered against the number of fleets, one panel per map: clean days on top, days with failures and people below. <code class="text-teal-300 font-mono">ladder4</code> is at or near the top in every panel. The gap to the planners opens with failures and people at 60–80 fleets. The route-off networks' weak spot is the Kiva-style map at 20 fleets.
+                                    </p>
                                 </div>
 
-                                <div class="mt-12 flex gap-6">
-                                    <a
-                                        href="https://github.com/Tro23/SUTRAA"
-                                        target="_blank"
-                                        class="text-[10px] font-bold tracking-[0.3em] uppercase text-orange-400 hover:text-white transition-colors border-b border-indigo-500/30 pb-1"
-                                    >
-                                        [ Explore Repository ]
-                                    </a>
+                                <!-- Figure 2 -->
+                                <div class="tech-box rounded-xl p-5 flex flex-col justify-between">
+                                    <div>
+                                        <span class="text-xs font-mono uppercase tracking-wider text-amber-400 block mb-2">Latency &amp; Wait Time</span>
+                                        <div class="rounded-lg overflow-hidden border border-slate-800 bg-white p-2 mb-4">
+                                            <img src="fig_lead.png" alt="Figure 2: Lead time against the number of fleets" class="w-full h-auto object-contain rounded" />
+                                        </div>
+                                    </div>
+                                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-light border-l-2 border-amber-400 pl-3">
+                                        <strong class="text-white font-semibold">Figure 2.</strong> Lead time (censored, in steps) against the number of fleets, laid out as in Figure 1. Lower is faster. The planners are faster per order, most clearly on the Kiva-style map.
+                                    </p>
                                 </div>
+                            </div>
+
+                            <!-- Figure 3 -->
+                            <div class="tech-box rounded-xl p-5 max-w-5xl mx-auto">
+                                <span class="text-xs font-mono uppercase tracking-wider text-teal-400 block mb-2">Hardware Safety Boundary</span>
+                                <div class="rounded-lg overflow-hidden border border-slate-800 bg-white p-3 mb-4">
+                                    <img src="fig_guard.png" alt="Figure 3: Guard stops per day in both conditions" class="w-full h-auto object-contain rounded max-h-[380px] mx-auto" />
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-light border-l-2 border-teal-400 pl-3">
+                                    <strong class="text-white font-semibold">Figure 3.</strong> Guard stops per day in both conditions: moves the intent guard refused. <code class="text-amber-300 font-mono">PIBT</code>, which re-decides every step from where the fleets actually are, never triggered the guard. <code class="text-rose-300 font-mono">RHCR-PIBT</code>, whose plans assume following nose to tail, triggered it most.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap justify-center gap-4 not-italic text-sm font-mono">
+                            <a href="https://github.com/Tro23/FLOWRRA/tree/main/FLOWRRA_Warehouse#readme" target="_blank" class="text-teal-400 hover:text-teal-300 border border-teal-500/30 bg-teal-950/30 px-4 py-2 rounded-lg transition-colors">
+                                <i class="fa-brands fa-github mr-2"></i>GitHub - FLOWRRA Warehouse
+                            </a>
+                            <a href="https://rohittamidapati.substack.com/p/flowrra-harmonious-dance" target="_blank" class="text-amber-400 hover:text-amber-300 border border-amber-500/30 bg-amber-950/30 px-4 py-2 rounded-lg transition-colors">
+                                <i class="fa-solid fa-book-open mr-2"></i>FLOWRRA: Harmonious dance (Substack)
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </section>
+
+            <!-- Architecture Section (Seamless Wheel Embedding) -->
+            <section id="architecture" class="py-24 px-6 relative overflow-hidden bg-[#040f25]">
+                <!-- Blue Glows -->
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-900/10 to-transparent pointer-events-none"></div>
+
+                <div class="max-w-7xl mx-auto relative z-10">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">FLOWRRA Ouroboros</h2>
+                        <p class="text-slate-400 font-mono text-sm max-w-2xl mx-auto flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-hand-pointer text-blue-400"></i> Run your cursor over the wheel to explore the architectural phases.
+                        </p>
+                    </div>
+
+                    <!-- Seamless embedded Ouroboros wheel interacting via hover -->
+                    <div class="tech-box rounded-xl p-2 relative overflow-hidden shadow-[0_0_30px_rgba(59,130,246,0.15)] w-full max-w-5xl mx-auto h-[700px] md:h-[800px] lg:h-[900px]">
+                        <iframe src="Flowrra_Architecture_2.html" width="100%" height="100%" frameborder="0" class="rounded-lg w-full h-full bg-transparent" title="Flowrra Architecture Diagram"></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STANDALONE THERMODYNAMIC SECTION -->
+            <section id="thermodynamic-collapse" class="py-24 sm:py-32 relative border-t border-b border-amber-500/20 bg-gradient-to-b from-[#040d1f] via-[#06132b] to-[#030914]">
+                <div class="container mx-auto max-w-7xl px-6">
+                    <!-- Section Header -->
+                    <div class="text-center mb-16">
+                        <h2 class="text-sm font-mono uppercase tracking-widest text-amber-400 mb-2">
+                            Joint Superposition Collapse &bull; <code class="text-teal-300">thrml</code>
+                        </h2>
+                        <p class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+                            Thermodynamic Jam Collapse
+                        </p>
+                        <p class="mt-4 text-lg text-slate-300 max-w-3xl mx-auto font-light">
+                            Holding conflicting fleet trajectories in superposition and collapsing them into a single coherent joint plan via block Gibbs sampling on discrete energy-based models.
+                        </p>
+                    </div>
+
+                    <!-- Minimal Literature Grid: Why, Where Jams Come From, What Was Built -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-14">
+                        <!-- Card 1: The Gap & Why -->
+                        <div class="glass-card p-6 border-t-2 border-t-amber-400/60">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                                <span class="text-amber-400 font-mono text-sm">01.</span> Where Jams Come From
+                            </h3>
+                            <p class="text-sm text-slate-300 leading-relaxed mb-4">
+                                Each FLOWRRA fleet reads a local <strong class="text-white">density field</strong> in a Gibbs frame, $P \propto \exp(-E/T)$, with the floor's throughput pressure (orders left against time left) acting as temperature $T$. A shared GNN scores moves and a rule ladder resolves conflicts.
+                            </p>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                <strong class="text-amber-300">The Gap:</strong> In a tight jam, deciding fleet-by-fleet causes agents to yield and advance in turn repeatedly. FLOWRRA's founding design calls for a <strong class="text-white">joint collapse</strong>: sampling a consistent multi-agent plan from an Energy-Based Model using Extropic's <code class="text-teal-300 font-mono">thrml</code> library ahead of sampling hardware.
+                            </p>
+                        </div>
+
+                        <!-- Card 2: The EBM Model -->
+                        <div class="glass-card p-6 border-t-2 border-t-teal-400/60">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                                <span class="text-teal-400 font-mono text-sm">02.</span> Categorical EBM Formulation
+                            </h3>
+                            <ul class="text-sm text-slate-300 space-y-2.5 leading-relaxed">
+                                <li>
+                                    <strong class="text-white">Boundaries:</strong> Jams are conflicting clusters within 3 hops (plus standing congestion zones). Outside fleets, people, and debris stay clamped to recorded positions.
+                                </li>
+                                <li>
+                                    <strong class="text-white">Variables:</strong> One categorical variable per fleet per tick restricted to its <span class="text-teal-300">spacetime light cone</span> (reachable cells that still reach the exit in time, plus <code class="font-mono text-xs">"out"</code>).
+                                </li>
+                                <li>
+                                    <strong class="text-white">Pairwise Energies:</strong> Move at most 1 hop/tick; no shared cells; no edge/cell swaps; cost of $1$ per tick not yet out.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Card 3: The Sampler & Check -->
+                        <div class="glass-card p-6 border-t-2 border-t-amber-400/60">
+                            <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                                <span class="text-amber-400 font-mono text-sm">03.</span> Block Gibbs Annealing
+                            </h3>
+                            <ul class="text-sm text-slate-300 space-y-2.5 leading-relaxed">
+                                <li>
+                                    <strong class="text-white">Architecture:</strong> <code class="text-teal-300 font-mono text-xs">CategoricalEBMFactor</code> &amp; <code class="text-teal-300 font-mono text-xs">CategoricalGibbsConditional</code> partitioned into even-tick and odd-tick blocks.
+                                </li>
+                                <li>
+                                    <strong class="text-white">Schedule:</strong> 32 parallel chains annealing from $\beta = 0.1 \to 10$. Half initialize from shortest paths; half relax rules with finite penalties while hot to escape tight spots.
+                                </li>
+                                <li>
+                                    <strong class="text-white">Verification:</strong> Graded against exact $A^*$ search on jams up to 4 fleets.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Offline Study & Live Simulator Rung Results -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-14 items-start">
+                        <!-- Offline Study (5 cols) -->
+                        <div class="lg:col-span-5 tech-box rounded-xl p-6">
+                            <div class="flex items-center justify-between border-b border-teal-500/30 pb-3 mb-4">
+                                <h4 class="text-teal-300 font-mono text-sm uppercase">Offline Study (Kiva 46&times;33, 60 Fleets)</h4>
+                                <span class="text-xs font-mono bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded">98 / 99 Solved</span>
+                            </div>
+                            <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                                Across 103 recorded jams and congestion windows, <code class="text-teal-300 font-mono">thrml</code> found a legal plan in <strong class="text-white">98 of the 99</strong> solvable instances and matched the <strong class="text-amber-300">exact optimal cost in 90 of 95</strong> jams ($\le 4$ fleets). Back-and-forth steps driven <em>away</em> from exits dropped from <strong class="text-rose-400">538 hops</strong> (recorded) to <strong class="text-teal-300">35 hops</strong> (sampled).
+                            </p>
+
+                            <div class="overflow-x-auto mb-5">
+                                <table class="w-full text-left text-xs font-mono">
+                                    <thead class="text-amber-300 border-b border-slate-700">
+                                        <tr>
+                                            <th class="py-2 px-2">Distance Driven (Hops)</th>
+                                            <th class="py-2 px-2 text-right">Sampled</th>
+                                            <th class="py-2 px-2 text-right">Recorded</th>
+                                            <th class="py-2 px-2 text-right">Shortest</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-slate-300 divide-y divide-slate-800/80">
+                                        <tr class="font-bold text-white bg-teal-500/10"><td class="py-2 px-2">All 98 jams</td><td class="py-2 px-2 text-right text-teal-300">777</td><td class="py-2 px-2 text-right text-rose-400">1,723</td><td class="py-2 px-2 text-right">707</td></tr>
+                                        <tr><td class="py-2 px-2">2 fleets (75)</td><td class="py-2 px-2 text-right">399</td><td class="py-2 px-2 text-right">984</td><td class="py-2 px-2 text-right">377</td></tr>
+                                        <tr><td class="py-2 px-2">3 fleets (19)</td><td class="py-2 px-2 text-right">241</td><td class="py-2 px-2 text-right">466</td><td class="py-2 px-2 text-right">205</td></tr>
+                                        <tr><td class="py-2 px-2">4–8 fleets (4)</td><td class="py-2 px-2 text-right">137</td><td class="py-2 px-2 text-right">273</td><td class="py-2 px-2 text-right">125</td></tr>
+                                        <tr><td class="py-2 px-2">Congestion zones (11)</td><td class="py-2 px-2 text-right">184</td><td class="py-2 px-2 text-right">369</td><td class="py-2 px-2 text-right">170</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <h5 class="text-xs font-mono text-slate-400 uppercase mb-2">Largest Multi-Fleet Windows</h5>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs font-mono">
+                                    <thead class="text-teal-300 border-b border-slate-700">
+                                        <tr>
+                                            <th class="py-1.5 px-2">Window</th>
+                                            <th class="py-1.5 px-2 text-right">Fleets</th>
+                                            <th class="py-1.5 px-2 text-right">Sampled</th>
+                                            <th class="py-1.5 px-2 text-right">Recorded</th>
+                                            <th class="py-1.5 px-2 text-right">Shortest</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-slate-300 divide-y divide-slate-800/80">
+                                        <tr><td class="py-1.5 px-2">#10012</td><td class="py-1.5 px-2 text-right">7</td><td class="py-1.5 px-2 text-right text-teal-300">34</td><td class="py-1.5 px-2 text-right">74.8</td><td class="py-1.5 px-2 text-right">34</td></tr>
+                                        <tr><td class="py-1.5 px-2">#10004</td><td class="py-1.5 px-2 text-right">8</td><td class="py-1.5 px-2 text-right text-teal-300">37</td><td class="py-1.5 px-2 text-right">69.2</td><td class="py-1.5 px-2 text-right">35</td></tr>
+                                        <tr><td class="py-1.5 px-2">#10008</td><td class="py-1.5 px-2 text-right">6</td><td class="py-1.5 px-2 text-right text-amber-300">53 (retry)</td><td class="py-1.5 px-2 text-right">87.0</td><td class="py-1.5 px-2 text-right">43</td></tr>
+                                        <tr><td class="py-1.5 px-2">#10028</td><td class="py-1.5 px-2 text-right">4</td><td class="py-1.5 px-2 text-right text-teal-300">13</td><td class="py-1.5 px-2 text-right">41.6</td><td class="py-1.5 px-2 text-right">13</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Live Collapse Rung & Hardware Timing (7 cols) -->
+                        <div class="lg:col-span-7 space-y-6">
+                            <!-- Live Rung Table -->
+                            <div class="tech-box rounded-xl p-6">
+                                <div class="flex items-center justify-between border-b border-amber-500/30 pb-3 mb-4">
+                                    <h4 class="text-amber-400 font-mono text-sm uppercase">Live Simulator: The Collapse Rung</h4>
+                                    <span class="text-xs font-mono bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">8-Hop Lockstep Horizon</span>
+                                </div>
+                                <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+                                    When conflicting fleets stay clustered for 2 steps, they receive a joint 8-hop plan (exact search for 2–4 fleets; <code class="text-teal-300 font-mono">thrml</code> for 5–8 fleets) optimizing total hops-to-goal. Tested on Kiva (60 fleets, 200-order book, failures &amp; humans active):
+                                </p>
+
+                                <div class="overflow-x-auto mb-4">
+                                    <table class="w-full text-left text-xs font-mono">
+                                        <thead class="text-teal-300 border-b border-slate-700">
+                                            <tr>
+                                                <th class="py-2 px-3">Metric Per Day (8-Day Paired, 2–4 Fleets)</th>
+                                                <th class="py-2 px-3 text-right">Rung Off</th>
+                                                <th class="py-2 px-3 text-right">Rung On</th>
+                                                <th class="py-2 px-3 text-right">Days Better</th>
+                                                <th class="py-2 px-3 text-right">Wilcoxon $p$</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-slate-300 divide-y divide-slate-800/80">
+                                            <tr class="bg-teal-500/10"><td class="py-2 px-3 font-semibold text-white">Mean lead time / order (steps)</td><td class="py-2 px-3 text-right">229</td><td class="py-2 px-3 text-right text-teal-300 font-bold">136 (&minus;41%)</td><td class="py-2 px-3 text-right">8 of 8</td><td class="py-2 px-3 text-right text-amber-300">0.008 (firm)</td></tr>
+                                            <tr class="bg-teal-500/5"><td class="py-2 px-3 font-semibold text-white">Safety-guard stops</td><td class="py-2 px-3 text-right">5,976</td><td class="py-2 px-3 text-right text-teal-300 font-bold">3,162 (&minus;47%)</td><td class="py-2 px-3 text-right">7 of 8</td><td class="py-2 px-3 text-right text-amber-300">0.016 (firm)</td></tr>
+                                            <tr><td class="py-2 px-3">Near-miss steps with people</td><td class="py-2 px-3 text-right">247</td><td class="py-2 px-3 text-right text-teal-300">146 (&minus;41%)</td><td class="py-2 px-3 text-right">7 of 8</td><td class="py-2 px-3 text-right">0.055</td></tr>
+                                            <tr><td class="py-2 px-3">Orders delivered (of 200)</td><td class="py-2 px-3 text-right">188.1</td><td class="py-2 px-3 text-right">190.9</td><td class="py-2 px-3 text-right">6 of 8</td><td class="py-2 px-3 text-right">0.195</td></tr>
+                                            <tr><td class="py-2 px-3">Collisions</td><td class="py-2 px-3 text-right">0</td><td class="py-2 px-3 text-right text-teal-300">0</td><td class="py-2 px-3 text-right">&mdash;</td><td class="py-2 px-3 text-right">&mdash;</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="p-3 rounded-lg bg-amber-950/30 border border-amber-500/30 text-xs text-slate-300 leading-relaxed">
+                                    <strong class="text-amber-300">4-Day Test Adding <code class="font-mono">thrml</code> (Clusters 5–8):</strong> Lead time dropped <strong>46%</strong>, distance driven dropped <strong>18%</strong>, and last-resort recovery fired half as often across all 4 days. Near-misses with humans rose on 2 of 4 days because large-cluster plans hold fleets stationary while pedestrians walk up to them (currently being refined).
+                                </div>
+                            </div>
+
+                            <!-- Decision Time & Thermodynamic Hardware Case -->
+                            <div class="tech-box rounded-xl p-6">
+                                <h4 class="text-teal-300 font-mono text-sm uppercase border-b border-teal-500/30 pb-2 mb-3">
+                                    Decision Latency: Where Sampling Hardware Comes In
+                                </h4>
+                                <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+                                    A physical AGV step is half a hop (~0.5 s real-time budget). A 7-fleet window spans <strong>112 coupled categorical variables</strong> with up to 90 choices each:
+                                </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                                    <div class="p-3 rounded bg-[#030914] border border-slate-800">
+                                        <span class="text-slate-400 block">Exact search (2–4 fleets)</span>
+                                        <strong class="text-teal-300 text-sm">9 ms median</strong>
+                                    </div>
+                                    <div class="p-3 rounded bg-[#030914] border border-slate-800">
+                                        <span class="text-slate-400 block">thrml (Laptop GPU)</span>
+                                        <strong class="text-amber-300 text-sm">0.33 s sampling</strong>
+                                    </div>
+                                    <div class="p-3 rounded bg-[#030914] border border-slate-800">
+                                        <span class="text-slate-400 block">thrml (1 AWS CPU Core)</span>
+                                        <strong class="text-rose-400 text-sm">15.5 s (10.5s compile + 5.7s sample)</strong>
+                                    </div>
+                                    <div class="p-3 rounded bg-[#030914] border border-slate-800">
+                                        <span class="text-slate-400 block">thrml (Pre-compiled per size, 2 cores)</span>
+                                        <strong class="text-teal-300 text-sm">2.2 s (3-fleet) / 32 s (7-fleet)</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jam Trajectory Figures (Recorded Zigzag vs Sampled Collapse + Space for Second Trajectory Map) -->
+                    <div class="space-y-8">
+
+                        <!-- Side-by-Side: Standing Congestion Zones & Second Trajectory Map Space -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="tech-box p-4 rounded-xl flex flex-col justify-between items-center">
+                                <p class="text-xs text-amber-300 mb-4 font-mono text-center uppercase tracking-widest border-b border-amber-500/20 pb-2 w-full">
+                                    Standing Congestion Zones: Distance-to-Exit Trajectories
+                                </p>
+                                <img
+                                    src="jam_figure_zones.png"
+                                    alt="Jam Figure Zones"
+                                    class="rounded border border-amber-500/30 shadow-lg object-contain w-full bg-[#020612]"
+                                />
+                            </div>
+
+                            <!-- Dedicated Space Beside It for Another Trajectory Map -->
+                            <div class="tech-box p-4 rounded-xl flex flex-col justify-between items-center">
+                                <p class="text-xs text-teal-300 mb-4 font-mono text-center uppercase tracking-widest border-b border-teal-500/20 pb-2 w-full">
+                                    Multi-Fleet Jam Window: Floor &amp; Distance-to-Exit Trajectory Map
+                                </p>
+                                <div class="w-full h-full min-h-[260px] rounded border border-teal-500/30 bg-[#020612] flex flex-col items-center justify-center relative overflow-hidden">
+                                    <!-- Replace 'jam_figure_trajectory_2.png' with your second trajectory map filename -->
+                                    <img
+                                        src="jam_figure_small.png"
+                                        alt="Second Jam Trajectory Map"
+                                        class="rounded shadow-lg object-contain w-full h-full"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                    />
+                                    <div class="hidden flex-col items-center justify-center p-8 text-center text-slate-400 font-mono text-xs">
+                                        <i class="fa-solid fa-route text-teal-400/50 text-3xl mb-3"></i>
+                                        <span class="text-teal-300 font-semibold mb-1">Second Trajectory Map Slot</span>
+                                        <span class="text-slate-500">Drop <code class="text-amber-300">jam_figure_small.png"</code> (or update <code class="text-teal-300">src</code>) to display side-by-side</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Non-Sampling FLOWRRA vs. Sampling FLOWRRA Interactive Comparison (Auto-Scaled to Fit Without Clipping) -->
+                        <div class="tech-box p-4 sm:p-6 rounded-xl relative w-full mx-auto shadow-lg">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-amber-500/20 pb-3 mb-4 gap-2">
+                                <div>
+                                    <p class="text-xs text-amber-300 font-mono uppercase tracking-widest">
+                                        Non-Sampling FLOWRRA vs. Sampling FLOWRRA (Ladder4 &bull; Kiva 60 Fleets)
+                                    </p>
+                                    <p class="text-xs text-slate-400 mt-1">
+                                        Paired full-day trajectory comparison showing collapse rung off vs. collapse rung on.
+                                    </p>
+                                </div>
+                                <span class="text-xs text-teal-300 font-mono bg-teal-950/50 border border-teal-500/30 px-2.5 py-1 rounded self-start sm:self-center">
+                                    Interactive Paired Replay
+                                </span>
+                            </div>
+
+                            <!-- Responsive Fit Wrapper that scales wide Plotly dual-panel HTML so the right half never clips -->
+                            <div id="pairedSimWrapper" class="w-full bg-[#020612] rounded-lg border border-teal-500/30 overflow-hidden relative">
+                                <iframe
+                                    id="pairedSimIframe"
+                                    src="pair_ladder4_Kiva_2D_46_33_1_k60_s1_full_day.html"
+                                    class="block border-0 origin-top-left"
+                                    style="width: 100%; height: 760px;"
+                                    frameborder="0"
+                                    scrolling="no"
+                                    onload="fitPairedSimIframe()"
+                                ></iframe>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="vision" class="py-24 sm:py-32">
+            <!-- SŪTRAA SECTION -->
+            <section id="sutraa" class="py-24 sm:py-32">
+                <div class="text-center mb-12">
+                    <h2 class="text-sm font-mono uppercase tracking-widest text-teal-400 mb-2">Second Holon</h2>
+                    <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">SŪTRAA</p>
+                    <p class="mt-2 text-xl text-slate-400">System for Unified Temporal Resonant Alignment Attention</p>
+                </div>
+                <div class="max-w-7xl mx-auto px-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                        <div class="relative group glass-card p-4 aspect-square overflow-hidden border-amber-500/20">
+                            <canvas id="sutraaVisual" class="w-full h-full rounded-2xl"></canvas>
+                            <div class="absolute bottom-8 left-8 flex items-center gap-3 bg-[#030914]/80 px-4 py-2 rounded-full backdrop-blur-md border border-amber-500/20">
+                                <div class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></div>
+                                <span class="iceberg text-[10px] tracking-[0.2em] text-amber-300 uppercase">Resonant Threading Active</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-lg leading-8 text-slate-300 mb-12 italic font-light border-l-2 border-r-2 border-amber-500/30 px-8 py-4 bg-[#061229]/60 rounded-2xl">
+                                <p>
+                                    Reframing intelligence not as continuous computation, but as a meditative process of
+                                    <span class="text-amber-300 font-medium">resonance recognition and thread selection</span>.
+                                </p>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div class="p-6 glass-card border-teal-500/20 hover:border-amber-400/40 transition-colors">
+                                    <h4 class="iceberg text-amber-300 text-lg mb-2">Attentive Stillness</h4>
+                                    <p class="text-sm text-slate-300">Pausing to reflect on the "image" of the present moment: A condensed semantic and energetic configuration.</p>
+                                </div>
+                                <div class="p-6 glass-card border-teal-500/20 hover:border-teal-400/40 transition-colors">
+                                    <h4 class="iceberg text-teal-300 text-lg mb-2">Resonance Invocation</h4>
+                                    <p class="text-sm text-slate-300">Allowing latent memory fields to reconfigure in response to the present through non-exhaustive vibrational matching.</p>
+                                </div>
+                                <div class="p-6 glass-card border-teal-500/20 hover:border-amber-400/40 transition-colors">
+                                    <h4 class="iceberg text-amber-300 text-lg mb-2">Thread Emergence</h4>
+                                    <p class="text-sm text-slate-300">Weaving structures of memory, insight, and future orientation together in one resonant thread for a garland of many.</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-8">
+                                <a href="https://github.com/Tro23/SUTRAA" target="_blank" class="text-xs font-mono font-bold tracking-[0.25em] uppercase text-amber-400 hover:text-teal-300 transition-colors border-b border-teal-500/40 pb-1">
+                                    [ Explore SŪTRAA Repository ]
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISION SECTION -->
+            <section id="vision" class="py-24 sm:py-32 border-t border-teal-500/10">
                 <div class="container mx-auto max-w-6xl px-6">
                     <div class="text-center mb-16">
-                        <h2
-                            class="text-base font-semibold leading-7 text-teal-400"
-                        >
+                        <h2 class="text-sm font-mono uppercase tracking-widest font-semibold leading-7 text-teal-400">
                             Our Calling
                         </h2>
-                        <p
-                            class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl"
-                        >
+                        <p class="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">
                             The Journey Ahead
                         </p>
-                        <div
-                            class="mt-6 text-lg leading-8 text-gray-400 max-w-3xl mx-auto space-y-4 text-left"
-                        >
+                        <div class="mt-6 text-lg leading-8 text-slate-300 max-w-3xl mx-auto space-y-4 text-left font-light">
                             <p>
                                 It calls forth a community of seekers,
                                 inventors, gentle and courageous souls to a
@@ -934,111 +1228,56 @@
                                 courage, and the willingness to journey into the
                                 unknown?
                             </p>
-                            <p
-                                class="font-bold text-white text-center mt-8 text-amber-200"
-                            >
+                            <p class="font-bold text-center mt-8 text-amber-300 text-xl">
                                 <em>This is DhaaRn.</em>
                             </p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-                        <div
-                            class="glass-card p-8 text-center transition-all duration-300 hover:border-amber-500/60 hover:shadow-lg hover:shadow-amber-500/10 hover:scale-105"
-                        >
-                            <div
-                                class="flex items-center justify-center h-16 w-16 bg-amber-500/20 rounded-full mx-auto mb-6"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-8 w-8 text-amber-300"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                    />
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                    />
+                        <div class="glass-card p-8 text-center transition-all duration-300 hover:border-amber-500/60 hover:shadow-lg hover:shadow-amber-500/10 hover:scale-105">
+                            <div class="flex items-center justify-center h-16 w-16 bg-amber-500/20 rounded-full mx-auto mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
                             </div>
                             <h3 class="text-2xl font-semibold text-white mb-4">
                                 Harmonious Alignment
                             </h3>
-                            <p class="text-gray-400">
+                            <p class="text-slate-400">
                                 Orchestrating technology to align seamlessly
                                 with human values and the cosmic dance of
                                 existence.
                             </p>
                         </div>
 
-                        <div
-                            class="glass-card p-8 text-center transition-all duration-300 hover:border-teal-500/60 hover:shadow-lg hover:shadow-teal-500/10 hover:scale-105"
-                        >
-                            <div
-                                class="flex items-center justify-center h-16 w-16 bg-teal-500/20 rounded-full mx-auto mb-6"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-8 w-8 text-teal-300"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                    />
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                    />
+                        <div class="glass-card p-8 text-center transition-all duration-300 hover:border-teal-500/60 hover:shadow-lg hover:shadow-teal-500/10 hover:scale-105">
+                            <div class="flex items-center justify-center h-16 w-16 bg-teal-500/20 rounded-full mx-auto mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
                             </div>
                             <h3 class="text-2xl font-semibold text-white mb-4">
                                 Aware
                             </h3>
-                            <p class="text-gray-400">
+                            <p class="text-slate-400">
                                 Developing systems that possess deep contextual
-                                awareness and with inherent purpose.
+                                awareness and inherent purpose.
                             </p>
                         </div>
 
-                        <div
-                            class="glass-card p-8 text-center transition-all duration-300 hover:border-red-500/60 hover:shadow-lg hover:shadow-red-500/10 hover:scale-105"
-                        >
-                            <div
-                                class="flex items-center justify-center h-16 w-16 bg-red-500/20 rounded-full mx-auto mb-6"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="h-8 w-8 text-red-300"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M13 10V3L4 14h7v7l9-11h-7z"
-                                    />
+                        <div class="glass-card p-8 text-center transition-all duration-300 hover:border-amber-400/60 hover:shadow-lg hover:shadow-amber-400/10 hover:scale-105">
+                            <div class="flex items-center justify-center h-16 w-16 bg-amber-500/15 rounded-full mx-auto mb-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
                             <h3 class="text-2xl font-semibold text-white mb-4">
                                 The Resonant Nexus
                             </h3>
-                            <p class="text-gray-400">
+                            <p class="text-slate-400">
                                 Fostering an interconnected resonant web of
                                 innovation where physical and immaterial unite.
                             </p>
@@ -1047,69 +1286,37 @@
                 </div>
             </section>
 
-            <section id="contact" class="py-24 sm:py-32">
-                <div class="container mx-auto max-w-3xl px-6 text-center">
-                    <h2
-                        class="text-4xl font-bold tracking-tight text-white sm:text-5xl"
-                    >
-                        Seeking: The Founding Partner.
+            <!-- PARTNER / CONTACT SECTION -->
+            <section id="contact" class="py-24 sm:py-32 bg-[#020710]/80 border-t border-teal-900/40">
+                <div class="container mx-auto max-w-4xl px-6 text-center">
+                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-6">
+                        Seeking Sovereign Partnerships
                     </h2>
-                    <p class="mt-6 text-lg leading-8 text-gray-400">
-                        Someone who can translate
-                        <em
-                            >philosophy into physics; a builder of systems, a
-                            lover of paradox,</em
-                        >
-                        is willing to take up this adventure with me.
-                    </p>
-                    <p class="mt-6 text-lg leading-8 text-gray-400">
-                        A technical Genius
-                        <strong>to take 51-55% equity</strong> and lead DhaaRn's
-                        registration and architectural evolution into
-                        production-ready sovereignty.
-                    </p>
-                    <div class="mt-12">
-                        <a
-                            href="https://www.linkedin.com/jobs/view/4321436250"
-                            class="text-2xl font-semibold gradient-text hover:brightness-110 transition-all"
-                        >
-                            Apply on LinkedIn
-                        </a>
-                    </div>
-                </div>
-            </section>
+                    <div class="glass-card p-10 md:p-16">
+                        <p class="text-lg leading-8 text-slate-300 mb-8">
+                            DhaaRn operates as a sovereign architectural partner. We do not seek standard software vendor relationships; we propose paid integration pilots to deploy FLOWRRA's decentralised orchestration directly onto proprietary hardware ecosystems.
+                        </p>
+                        <p class="text-lg leading-8 text-slate-300 mb-12">
+                            We provide the mathematics and the decentralised architecture. You provide the physical substrate.
+                        </p>
 
-            <section id="contact" class="py-24 sm:py-32">
-                <div class="container mx-auto max-w-3xl px-6 text-center">
-                    <h2
-                        class="text-4xl font-bold tracking-tight text-white sm:text-5xl"
-                    >
-                        Connect with DhaaRn
-                    </h2>
-                    <p class="mt-6 text-lg leading-8 text-gray-400">
-                        We invite seekers, inventors, and courageous souls to
-                        join our journey. If our vision resonates, let's explore
-                        the possibilities together.
-                    </p>
-                    <div class="mt-12">
-                        <a
-                            href="mailto:info@dhaarn.com"
-                            class="text-2xl font-semibold gradient-text hover:brightness-110 transition-all"
-                        >
-                            info@dhaarn.com
-                        </a>
+                        <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                            <a href="mailto:info@dhaarn.org" class="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-500 hover:to-teal-600 text-white rounded-lg font-bold tracking-wide transition-all shadow-lg shadow-teal-900/50">
+                                Contact info@dhaarn.org
+                            </a>
+                            <a href="https://www.linkedin.com/in/rohit-tamidapati/" target="_blank" class="w-full md:w-auto px-8 py-4 bg-transparent border border-amber-500/40 hover:border-amber-400 text-amber-300 rounded-lg font-bold tracking-wide transition-all">
+                                Connect on LinkedIn
+                            </a>
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
 
-        <footer class="py-12 mt-16 border-t border-gray-800">
-            <div
-                class="container mx-auto max-w-6xl px-6 text-center text-gray-600"
-            >
+        <footer class="py-12 border-t border-slate-800/80 bg-[#02060f]">
+            <div class="container mx-auto max-w-6xl px-6 text-center text-slate-500">
                 <p>
-                    &copy; <span id="current-year"></span> DhaaRn &bull. All
-                    rights reserved.
+                    &copy; <span id="current-year"></span> DhaaRn &bull; All rights reserved.
                 </p>
             </div>
         </footer>
@@ -1124,19 +1331,19 @@
                 const navbar = document.getElementById("navbar");
                 if (window.scrollY > 50) {
                     navbar.classList.add(
-                        "bg-black/80",
+                        "bg-[#030914]/90",
                         "backdrop-blur-md",
                         "shadow-lg",
                         "border-b",
-                        "border-white/5",
+                        "border-teal-500/15",
                     );
                 } else {
                     navbar.classList.remove(
-                        "bg-black/80",
+                        "bg-[#030914]/90",
                         "backdrop-blur-md",
                         "shadow-lg",
                         "border-b",
-                        "border-white/5",
+                        "border-teal-500/15",
                     );
                 }
             });
@@ -1149,7 +1356,6 @@
             let isPlaying = false;
             let charts = {};
 
-            // Holon color scheme
             const HOLON_COLORS = [
                 "#22D3EE", // Cyan-400 - Holon 0
                 "#60A5FA", // Blue-400 - Holon 1
@@ -1348,9 +1554,9 @@
                 grid.innerHTML = metrics
                     .map(
                         (m) => `
-               <div class="bg-black/20 p-4 rounded-lg border border-gray-700">
+               <div class="bg-[#040b1a] p-4 rounded-lg border border-slate-800">
                    <div class="text-xl font-bold gradient-text">${m.value}</div>
-                   <div class="text-xs text-gray-500 uppercase tracking-wide mt-1">${m.label}</div>
+                   <div class="text-xs text-slate-400 uppercase tracking-wide mt-1">${m.label}</div>
                </div>
            `,
                     )
@@ -1416,7 +1622,6 @@
                     `Timestep: ${timeValue} / ${maxTime}`;
                 document.getElementById("timeSlider").value = frameIndex;
 
-                // Update frozen node badge
                 const frozenCount = frame.frozen_nodes
                     ? frame.frozen_nodes.length
                     : 0;
@@ -1428,9 +1633,7 @@
                     frozenBadge.style.display = "none";
                 }
 
-                // Update frozen stats panel
                 updateFrozenStats(frame);
-
                 drawSwarm(frame);
             }
 
@@ -1446,7 +1649,6 @@
 
                 frozenStats.style.display = "block";
 
-                // Group frozen nodes by holon
                 const frozenByHolon = {};
                 frame.nodes.forEach((node) => {
                     if (frame.frozen_nodes.includes(node.id)) {
@@ -1481,12 +1683,10 @@
                 const offsetX = (canvas.width - scale) / 2;
                 const offsetY = (canvas.height - scale) / 2;
 
-                // Clear
-                ctx.fillStyle = "#0a0a0a";
+                ctx.fillStyle = "#020612";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Grid
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+                ctx.strokeStyle = "rgba(45, 212, 191, 0.06)";
                 ctx.lineWidth = 1;
                 for (let i = 0; i <= 10; i++) {
                     const pos = offsetX + (i / 10) * scale;
@@ -1500,9 +1700,8 @@
                     ctx.stroke();
                 }
 
-                // Draw Partition Boundaries
                 if (frame.holons) {
-                    ctx.strokeStyle = "rgba(156, 163, 175, 0.4)";
+                    ctx.strokeStyle = "rgba(212, 175, 55, 0.35)";
                     ctx.lineWidth = 2;
                     ctx.setLineDash([8, 4]);
 
@@ -1528,7 +1727,6 @@
                     nodeMap.set(node.id, node);
                 });
 
-                // Draw Obstacles
                 const obstacles = deploymentData.config?.obstacles || [];
                 obstacles.forEach((obs) => {
                     if (Array.isArray(obs) && obs.length >= 3) {
@@ -1547,13 +1745,11 @@
                     }
                 });
 
-                // Draw Connections (skip connections to/from frozen nodes)
                 connections.forEach((conn) => {
                     const nodeA = nodeMap.get(conn.node_a);
                     const nodeB = nodeMap.get(conn.node_b);
 
                     if (nodeA && nodeB && nodeA.pos && nodeB.pos) {
-                        // Skip if either node is frozen
                         if (
                             frozenNodes.has(conn.node_a) ||
                             frozenNodes.has(conn.node_b)
@@ -1596,7 +1792,6 @@
                     }
                 });
 
-                // Draw Nodes (active and frozen differently)
                 nodes.forEach((node) => {
                     if (node.pos) {
                         const x = offsetX + node.pos[0] * scale;
@@ -1606,11 +1801,9 @@
                         const isFrozen = frozenNodes.has(node.id);
 
                         if (isFrozen) {
-                            // Draw FROZEN node with star shape
                             ctx.fillStyle = "#eab308";
                             ctx.beginPath();
 
-                            // Draw star
                             for (let i = 0; i < 5; i++) {
                                 const angle =
                                     (i * 4 * Math.PI) / 5 - Math.PI / 2;
@@ -1627,14 +1820,12 @@
                             ctx.lineWidth = 3;
                             ctx.stroke();
 
-                            // Frozen label
                             ctx.fillStyle = "#fbbf24";
                             ctx.font = "bold 10px Inter";
                             ctx.textAlign = "center";
                             ctx.textBaseline = "middle";
                             ctx.fillText(`F${node.id}`, x, y - 16);
                         } else {
-                            // Draw ACTIVE node
                             const color =
                                 HOLON_COLORS[holonId % HOLON_COLORS.length];
 
@@ -1657,22 +1848,28 @@
                 });
             }
         </script>
-        <script>
-            // --- Global Device Pixel Ratio ---
-            const dpr = window.devicePixelRatio || 1;
 
-            // --- SŪTRAA RESONANCE VISUALIZER ---
+        <script>
+            // --- SŪTRAA RESONANCE VISUALIZER (Teal & Gold Strings on Deep Rich Blue) ---
+            const dpr = window.devicePixelRatio || 1;
             const sCanvas = document.getElementById("sutraaVisual");
             const sCtx = sCanvas.getContext("2d");
             let sAngle = 0;
             let threads = [];
 
+            const SUTRA_PALETTE = [
+                "#2dd4bf", // Bright Teal
+                "#d4af37", // Metallic Gold
+                "#14b8a6", // Deep Teal
+                "#fbbf24", // Warm Amber Gold
+            ];
+
             class ResonantThread {
                 constructor(i) {
                     this.points = [];
-                    this.maxPoints = 60 + Math.random() * 40;
+                    this.maxPoints = 65 + Math.random() * 45;
                     this.seed = Math.random() * 1000;
-                    this.color = i % 2 === 0 ? "#6366f1" : "#a855f7";
+                    this.color = SUTRA_PALETTE[i % SUTRA_PALETTE.length];
                 }
                 update(t) {
                     const rect = sCanvas.parentElement.getBoundingClientRect();
@@ -1681,11 +1878,11 @@
                     const x =
                         cx +
                         Math.cos(t + this.seed) *
-                            (Math.sin(t * 0.5 + this.seed) * (rect.width / 3));
+                            (Math.sin(t * 0.5 + this.seed) * (rect.width / 2.8));
                     const y =
                         cy +
                         Math.sin(t + this.seed) *
-                            (Math.cos(t * 0.5 + this.seed) * (rect.height / 3));
+                            (Math.cos(t * 0.5 + this.seed) * (rect.height / 2.8));
                     this.points.push({ x, y });
                     if (this.points.length > this.maxPoints)
                         this.points.shift();
@@ -1694,8 +1891,8 @@
                     if (this.points.length < 2) return;
                     sCtx.beginPath();
                     sCtx.strokeStyle = this.color;
-                    sCtx.lineWidth = 1;
-                    sCtx.globalAlpha = 0.3;
+                    sCtx.lineWidth = 1.4;
+                    sCtx.globalAlpha = 0.45;
                     sCtx.moveTo(this.points[0].x, this.points[0].y);
                     for (let i = 1; i < this.points.length; i++) {
                         sCtx.lineTo(this.points[i].x, this.points[i].y);
@@ -1710,7 +1907,7 @@
                 sCanvas.height = rect.height * dpr;
                 sCtx.scale(dpr, dpr);
                 threads = Array.from(
-                    { length: 12 },
+                    { length: 14 },
                     (_, i) => new ResonantThread(i),
                 );
                 animateSutraa();
@@ -1718,23 +1915,75 @@
 
             function animateSutraa() {
                 const rect = sCanvas.parentElement.getBoundingClientRect();
-                sCtx.fillStyle = "rgba(5, 5, 5, 0.08)";
+                sCtx.globalAlpha = 1;
+                sCtx.fillStyle = "rgba(3, 9, 20, 0.09)";
                 sCtx.fillRect(0, 0, rect.width, rect.height);
                 sAngle += 0.01;
                 threads.forEach((t) => {
                     t.update(sAngle);
                     t.draw();
                 });
-                // Center Node
+                // Center Gold-Teal Nexus Node
+                sCtx.globalAlpha = 1;
                 sCtx.beginPath();
-                sCtx.arc(rect.width / 2, rect.height / 2, 2.5, 0, Math.PI * 2);
-                sCtx.fillStyle = "#fff";
+                sCtx.arc(rect.width / 2, rect.height / 2, 3.5, 0, Math.PI * 2);
+                sCtx.fillStyle = "#fef08a";
+                sCtx.shadowColor = "#2dd4bf";
+                sCtx.shadowBlur = 12;
                 sCtx.fill();
+                sCtx.shadowBlur = 0;
                 requestAnimationFrame(animateSutraa);
             }
-            window.onload = () => {
+            window.addEventListener("load", () => {
                 initSutraa();
-            };
+                fitPairedSimIframe();
+            });
+
+            // Automatically scale the wide side-by-side Plotly comparison inside its dialog box so the right half never gets cut off
+            function fitPairedSimIframe() {
+                const wrapper = document.getElementById("pairedSimWrapper");
+                const iframe = document.getElementById("pairedSimIframe");
+                if (!wrapper || !iframe) return;
+
+                const availableWidth = wrapper.clientWidth;
+                if (!availableWidth) return;
+
+                let naturalWidth = 1600; // Default dual-panel width for paired Kiva plots
+                let naturalHeight = 860;
+
+                try {
+                    const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+                    if (doc && doc.body) {
+                        doc.body.style.margin = "0";
+                        doc.body.style.overflow = "hidden";
+                        doc.documentElement.style.overflow = "hidden";
+
+                        // Trigger Plotly resize if responsive, or measure actual scroll dimensions
+                        const scrollW = Math.max(doc.documentElement.scrollWidth, doc.body.scrollWidth);
+                        const scrollH = Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight);
+
+                        if (scrollW > 600) naturalWidth = scrollW;
+                        if (scrollH > 350) naturalHeight = scrollH;
+                    }
+                } catch (e) {
+                    // Fallback if cross-origin restrictions apply when opened via file://
+                }
+
+                if (availableWidth < naturalWidth) {
+                    const scale = availableWidth / naturalWidth;
+                    iframe.style.width = naturalWidth + "px";
+                    iframe.style.height = naturalHeight + "px";
+                    iframe.style.transform = `scale(${scale})`;
+                    wrapper.style.height = Math.ceil(naturalHeight * scale) + "px";
+                } else {
+                    iframe.style.width = "100%";
+                    iframe.style.height = naturalHeight + "px";
+                    iframe.style.transform = "none";
+                    wrapper.style.height = naturalHeight + "px";
+                }
+            }
+
+            window.addEventListener("resize", fitPairedSimIframe);
         </script>
     </body>
 </html>
